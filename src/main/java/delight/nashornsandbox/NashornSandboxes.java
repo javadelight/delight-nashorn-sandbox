@@ -1,5 +1,5 @@
 package delight.nashornsandbox;
 
 @SuppressWarnings("all")
-public interface NashornSandbox {
+public class NashornSandboxes {
 }

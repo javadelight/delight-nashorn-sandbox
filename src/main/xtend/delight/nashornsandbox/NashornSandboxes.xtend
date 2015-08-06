@@ -1,5 +1,8 @@
 package delight.nashornsandbox
 
-interface NashornSandbox {
+class NashornSandboxes {
+	
+	
+	
 	
 }
