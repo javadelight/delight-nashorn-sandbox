@@ -26,14 +26,14 @@ class NashornSandboxImpl implements NashornSandbox {
 	}
 	
 	
-	def Object eval(String js) {
+	override Object eval(String js) {
 		assertScriptEngine
 		
 		scriptEngine.eval(js)
 		
 	}
 	
-	def void allow(Class<?> clazz) {
+	override void allow(Class<?> clazz) {
 		allowedClasses.add(clazz.name)
 		scriptEngine = null
 	}

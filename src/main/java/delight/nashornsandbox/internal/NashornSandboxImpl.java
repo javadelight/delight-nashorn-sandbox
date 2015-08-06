@@ -26,6 +26,7 @@ public class NashornSandboxImpl implements NashornSandbox {
     this.scriptEngine = _scriptEngine;
   }
   
+  @Override
   public Object eval(final String js) {
     try {
       Object _xblockexpression = null;
@@ -39,6 +40,7 @@ public class NashornSandboxImpl implements NashornSandbox {
     }
   }
   
+  @Override
   public void allow(final Class<?> clazz) {
     String _name = clazz.getName();
     this.allowedClasses.add(_name);
