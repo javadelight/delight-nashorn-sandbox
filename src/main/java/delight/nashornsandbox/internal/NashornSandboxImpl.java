@@ -21,6 +21,11 @@ public class NashornSandboxImpl implements NashornSandbox {
     return _xblockexpression;
   }
   
+  public void allow(final Class<?> clazz) {
+    String _name = clazz.getName();
+    this.allowedClasses.add(_name);
+  }
+  
   public NashornSandboxImpl() {
     HashSet<String> _hashSet = new HashSet<String>();
     this.allowedClasses = _hashSet;
