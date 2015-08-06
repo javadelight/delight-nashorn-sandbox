@@ -1,5 +1,6 @@
 package delight.nashornsandbox.internal;
 
+import com.google.common.base.Objects;
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.internal.SandboxClassFilter;
 import java.util.HashSet;
@@ -11,19 +12,27 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 public class NashornSandboxImpl implements NashornSandbox {
   private final Set<String> allowedClasses;
   
-  public ScriptEngine createScriptEngine() {
-    ScriptEngine _xblockexpression = null;
-    {
-      final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
-      SandboxClassFilter _sandboxClassFilter = new SandboxClassFilter(this.allowedClasses);
-      _xblockexpression = factory.getScriptEngine(_sandboxClassFilter);
+  private ScriptEngine scriptEngine;
+  
+  public void assertScriptEngine() {
+    boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
+    if (_notEquals) {
+      return;
     }
-    return _xblockexpression;
+    final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
+    SandboxClassFilter _sandboxClassFilter = new SandboxClassFilter(this.allowedClasses);
+    ScriptEngine _scriptEngine = factory.getScriptEngine(_sandboxClassFilter);
+    this.scriptEngine = _scriptEngine;
+  }
+  
+  public void run(final String js) {
+    this.assertScriptEngine();
   }
   
   public void allow(final Class<?> clazz) {
     String _name = clazz.getName();
     this.allowedClasses.add(_name);
+    this.scriptEngine = null;
   }
   
   public NashornSandboxImpl() {

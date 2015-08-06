@@ -10,17 +10,30 @@ class NashornSandboxImpl implements NashornSandbox {
 	
 	val Set<String> allowedClasses
 	
-	def ScriptEngine createScriptEngine() {
+	var ScriptEngine scriptEngine
+	
+	def void assertScriptEngine() {
+		if (scriptEngine != null) {
+			return
+		}
+		
 		/*
 		 * If eclipse shows an error here, see http://stackoverflow.com/a/10642163/270662
 		 */
 		val NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
 		
-		factory.getScriptEngine(new SandboxClassFilter(allowedClasses));
+		scriptEngine = factory.getScriptEngine(new SandboxClassFilter(allowedClasses));
+	}
+	
+	
+	def void run(String js) {
+		assertScriptEngine
+		
 	}
 	
 	def void allow(Class<?> clazz) {
 		allowedClasses.add(clazz.name)
+		scriptEngine = null
 	}
 	
 	new () {
