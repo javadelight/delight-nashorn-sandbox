@@ -17,6 +17,9 @@
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
+		<accessrules>
+			<accessrule kind="accessible" pattern="jdk/nashorn/**"/>
+		</accessrules>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
