@@ -10,7 +10,9 @@ class TestSimpleEval {
 		
 		val sandbox = NashornSandboxes.create()
 		
+		val res = sandbox.eval('var x = 1 + 1; x;')
 		
+		println(res)
 		
 	}
 	

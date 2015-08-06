@@ -5,7 +5,7 @@ import delight.nashornsandbox.internal.NashornSandboxImpl;
 
 @SuppressWarnings("all")
 public class NashornSandboxes {
-  public NashornSandbox create() {
+  public static NashornSandbox create() {
     return new NashornSandboxImpl();
   }
 }

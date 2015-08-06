@@ -4,7 +4,7 @@ import delight.nashornsandbox.internal.NashornSandboxImpl
 
 class NashornSandboxes {
 	
-	def NashornSandbox create() {
+	def static NashornSandbox create() {
 		
 		new NashornSandboxImpl
 		
