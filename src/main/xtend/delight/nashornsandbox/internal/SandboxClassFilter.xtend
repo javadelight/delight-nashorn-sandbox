@@ -11,5 +11,7 @@ class SandboxClassFilter implements ClassFilter {
 		return allowed.contains(className)
 	}
 	
-	
+	new(Set<String> allowed) {
+		this.allowed = allowed
+	}
 }
