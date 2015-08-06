@@ -26,8 +26,10 @@ class NashornSandboxImpl implements NashornSandbox {
 	}
 	
 	
-	def void run(String js) {
+	def Object eval(String js) {
 		assertScriptEngine
+		
+		scriptEngine.eval(js)
 		
 	}
 	

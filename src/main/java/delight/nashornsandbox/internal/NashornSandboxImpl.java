@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.script.ScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 
 @SuppressWarnings("all")
 public class NashornSandboxImpl implements NashornSandbox {
@@ -25,8 +26,17 @@ public class NashornSandboxImpl implements NashornSandbox {
     this.scriptEngine = _scriptEngine;
   }
   
-  public void run(final String js) {
-    this.assertScriptEngine();
+  public Object eval(final String js) {
+    try {
+      Object _xblockexpression = null;
+      {
+        this.assertScriptEngine();
+        _xblockexpression = this.scriptEngine.eval(js);
+      }
+      return _xblockexpression;
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
   }
   
   public void allow(final Class<?> clazz) {
