@@ -6,6 +6,6 @@ import delight.nashornsandbox.NashornSandbox;
 public class NashornSandboxes {
   public NashornSandbox create() {
     throw new Error("Unresolved compilation problems:"
-      + "\nType mismatch: cannot convert from void to NashornSandbox");
+      + "\nno viable alternative at input \'}\'");
   }
 }
