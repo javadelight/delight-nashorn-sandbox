@@ -36,6 +36,8 @@ class NashornSandboxImpl implements NashornSandbox {
 	override Object eval(String js, ScriptContext context) {
 		assertScriptEngine
 		
+		//scriptEngine.
+		
 		scriptEngine.eval(js, context)
 	}
 	

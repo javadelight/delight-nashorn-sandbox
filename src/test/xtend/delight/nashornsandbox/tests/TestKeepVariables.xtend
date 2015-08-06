@@ -10,7 +10,7 @@ class TestKeepVariables {
 		
 		val sandbox = NashornSandboxes.create()
 		
-		
+		sandbox.eval('var window={};')
 		
 		sandbox.eval('window.val1 = "myval";')
 		
