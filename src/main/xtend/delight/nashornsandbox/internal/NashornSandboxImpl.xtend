@@ -11,6 +11,7 @@ class NashornSandboxImpl implements NashornSandbox {
 	val Set<String> allowedClasses
 	
 	var ScriptEngine scriptEngine
+	var Integer maxCPUTimeInMs = 0
 	
 	def void assertScriptEngine() {
 		if (scriptEngine != null) {
@@ -22,12 +23,13 @@ class NashornSandboxImpl implements NashornSandbox {
 		 */
 		val NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
 		
+		
 		scriptEngine = factory.getScriptEngine(new SandboxClassFilter(allowedClasses));
 	}
 	
 	
 	override Object eval(String js) {
-		assertScriptEngine
+		assertScriptEngine		
 		
 		scriptEngine.eval(js)	
 	}

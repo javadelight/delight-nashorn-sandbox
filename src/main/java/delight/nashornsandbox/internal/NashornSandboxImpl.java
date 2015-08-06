@@ -15,6 +15,8 @@ public class NashornSandboxImpl implements NashornSandbox {
   
   private ScriptEngine scriptEngine;
   
+  private Integer maxCPUTimeInMs = Integer.valueOf(0);
+  
   public void assertScriptEngine() {
     boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
     if (_notEquals) {
