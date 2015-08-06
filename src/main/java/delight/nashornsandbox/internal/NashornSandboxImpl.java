@@ -5,6 +5,7 @@ import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.internal.SandboxClassFilter;
 import java.util.HashSet;
 import java.util.Set;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.eclipse.xtext.xbase.lib.Exceptions;
@@ -33,6 +34,20 @@ public class NashornSandboxImpl implements NashornSandbox {
       {
         this.assertScriptEngine();
         _xblockexpression = this.scriptEngine.eval(js);
+      }
+      return _xblockexpression;
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  @Override
+  public Object eval(final String js, final ScriptContext context) {
+    try {
+      Object _xblockexpression = null;
+      {
+        this.assertScriptEngine();
+        _xblockexpression = this.scriptEngine.eval(js, context);
       }
       return _xblockexpression;
     } catch (Throwable _e) {
