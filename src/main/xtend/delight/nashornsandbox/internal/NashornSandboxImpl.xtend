@@ -3,7 +3,6 @@ package delight.nashornsandbox.internal
 import delight.nashornsandbox.NashornSandbox
 import java.util.HashSet
 import java.util.Set
-import javax.script.ScriptContext
 import javax.script.ScriptEngine
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 
@@ -33,13 +32,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		scriptEngine.eval(js)	
 	}
 	
-	override Object eval(String js, ScriptContext context) {
-		assertScriptEngine
-		
-		//scriptEngine.
-		
-		scriptEngine.eval(js, context)
-	}
+	
 	
 	override void allow(Class<?> clazz) {
 		allowedClasses.add(clazz.name)
