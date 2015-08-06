@@ -2,7 +2,7 @@ package delight.nashornsandbox.tests;
 
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.NashornSandboxes;
-import org.eclipse.xtext.xbase.lib.InputOutput;
+import org.junit.Assert;
 import org.junit.Test;
 
 @SuppressWarnings("all")
@@ -13,6 +13,6 @@ public class TestKeepVariables {
     sandbox.eval("var window={};");
     sandbox.eval("window.val1 = \"myval\";");
     final Object res = sandbox.eval("window.val1;");
-    InputOutput.<Object>println(res);
+    Assert.assertEquals("myval", res);
   }
 }
