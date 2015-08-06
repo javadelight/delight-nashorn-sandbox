@@ -1,7 +1,6 @@
 package delight.nashornsandbox.tests
 
 import delight.nashornsandbox.NashornSandboxes
-import java.io.File
 import org.junit.Test
 
 class TestInaccessible {
