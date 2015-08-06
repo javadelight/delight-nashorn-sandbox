@@ -1,10 +1,15 @@
 package delight.nashornsandbox.internal
 
-import jdk.nashorn.api.scripting.ClassFilter;
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import java.util.Set
+import jdk.nashorn.api.scripting.ClassFilter
 
 class SandboxClassFilter implements ClassFilter {
-	override exposeToScripts(String arg0) {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	
+	final Set<String> allowed;
+	
+	override exposeToScripts(String className) {
+		return allowed.contains(className)
 	}
+	
+	
 }
