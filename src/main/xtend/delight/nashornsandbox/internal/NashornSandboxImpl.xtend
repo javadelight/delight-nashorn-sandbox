@@ -19,7 +19,6 @@ class NashornSandboxImpl implements NashornSandbox {
 		factory.getScriptEngine(new SandboxClassFilter(allowedClasses));
 	}
 	
-	
 	def void allow(Class<?> clazz) {
 		allowedClasses.add(clazz.name)
 	}
