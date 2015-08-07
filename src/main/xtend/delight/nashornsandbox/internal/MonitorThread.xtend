@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class MonitorThread extends Thread {
 	
+	
 	val long maxCPUTime
 	val AtomicBoolean stop
 	val AtomicBoolean operationInterrupted
@@ -13,13 +14,14 @@ class MonitorThread extends Thread {
 	val AtomicBoolean cpuLimitExceeded;
 	
 	override run() {
-	
+		val bean = ManagementFactory.getThreadMXBean()
+		val startCPUTime = bean.getThreadCpuTime(threadToMonitor.id)
 		while (!stop.get) {
-			val bean = ManagementFactory.getThreadMXBean()
+			
 			
 			val threadCPUTime = bean.getThreadCpuTime(threadToMonitor.id)
 			
-			if (threadCPUTime > maxCPUTime) {
+			if ((threadCPUTime -startCPUTime) > maxCPUTime) {
 				cpuLimitExceeded.set(true)
 				stop.set(true)
 				onInvalid.run

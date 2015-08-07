@@ -23,12 +23,14 @@ public class MonitorThread extends Thread {
   @Override
   public void run() {
     try {
+      final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+      long _id = this.threadToMonitor.getId();
+      final long startCPUTime = bean.getThreadCpuTime(_id);
       while ((!this.stop.get())) {
         {
-          final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
-          long _id = this.threadToMonitor.getId();
-          final long threadCPUTime = bean.getThreadCpuTime(_id);
-          if ((threadCPUTime > this.maxCPUTime)) {
+          long _id_1 = this.threadToMonitor.getId();
+          final long threadCPUTime = bean.getThreadCpuTime(_id_1);
+          if (((threadCPUTime - startCPUTime) > this.maxCPUTime)) {
             this.cpuLimitExceeded.set(true);
             this.stop.set(true);
             this.onInvalid.run();
