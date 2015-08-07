@@ -61,7 +61,7 @@ public class NashornSandboxImpl implements NashornSandbox {
             final Value<Object> resVal = new Value<Object>(null);
             final Value<Throwable> exceptionVal = new Value<Throwable>(null);
             final Thread outerThread = Thread.currentThread();
-            final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000));
+            final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000000));
             boolean _equals = Objects.equal(this.exectuor, null);
             if (_equals) {
               throw new IllegalStateException(

@@ -49,7 +49,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 			val outerThread = Thread.currentThread
 
-			val monitorThread = new MonitorThread(maxCPUTimeInMs * 1000)
+			val monitorThread = new MonitorThread(maxCPUTimeInMs * 1000000)
 
 			if (exectuor == null) {
 				throw new IllegalStateException(
