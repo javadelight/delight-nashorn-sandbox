@@ -135,6 +135,7 @@ public class NashornSandboxImpl implements NashornSandbox {
                   } catch (final Throwable _t) {
                     if (_t instanceof ScriptException) {
                       final ScriptException e = (ScriptException)_t;
+                      InputOutput.<String>println(("received exception " + e));
                       String _message = e.getMessage();
                       boolean _contains_1 = _message.contains(("Interrupted" + Integer.valueOf(randomToken)));
                       if (_contains_1) {

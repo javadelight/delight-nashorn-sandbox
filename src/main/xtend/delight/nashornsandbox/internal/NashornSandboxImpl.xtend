@@ -99,6 +99,7 @@ class NashornSandboxImpl implements NashornSandbox {
 						val res = scriptEngine.eval(js)
 						resVal.set(res)
 					} catch (ScriptException e) {
+						println("received exception "+e)
 						if (e.message.contains("Interrupted" + randomToken)) {
 							monitorThread.notifyOperationInterrupted
 
