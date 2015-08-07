@@ -143,9 +143,10 @@ public class NashornSandboxImpl implements NashornSandbox {
                     } else {
                       throw Exceptions.sneakyThrow(_t);
                     }
+                  } finally {
+                    monitorThread.stopMonitor();
+                    outerThread.notify();
                   }
-                  monitorThread.stopMonitor();
-                  outerThread.notify();
                 } catch (final Throwable _t_1) {
                   if (_t_1 instanceof Throwable) {
                     final Throwable t = (Throwable)_t_1;

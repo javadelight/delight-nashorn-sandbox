@@ -103,12 +103,11 @@ class NashornSandboxImpl implements NashornSandbox {
 							monitorThread.notifyOperationInterrupted
 
 						}
+					} finally {
+						monitorThread.stopMonitor
+
+						outerThread.notify
 					}
-					monitorThread.stopMonitor
-
-					
-
-					outerThread.notify
 
 				} catch (Throwable t) {
 					exceptionVal.set(t)
