@@ -3,6 +3,7 @@ package delight.nashornsandbox.tests
 import delight.nashornsandbox.NashornSandboxes
 import java.util.concurrent.Executors
 import org.junit.Test
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException
 
 class TestLimitCPU {
 
@@ -22,7 +23,7 @@ class TestLimitCPU {
 
 	}
 
-	@Test
+	@Test(expected=ScriptCPUAbuseException)
 	def void test_evil_script() {
 
 		val sandbox = NashornSandboxes.create()
