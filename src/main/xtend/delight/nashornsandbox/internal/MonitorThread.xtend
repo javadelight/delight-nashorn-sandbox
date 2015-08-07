@@ -6,7 +6,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 class MonitorThread extends Thread {
 	
 	val long maxCPUTime
-	val AtomicBoolean stop;
+	val AtomicBoolean stop
+	val AtomicBoolean operationInterrupted
 	val Thread threadToMonitor
 	val Runnable onInvalid
 	
@@ -23,7 +24,7 @@ class MonitorThread extends Thread {
 				stop.set(true)
 				onInvalid.run
 				Thread.sleep(50)
-				if (threadToMonitor.alive) {
+				if (threadToMonitor.) {
 					println('Thread hard shutdown!')
 					threadToMonitor.stop
 				}
@@ -44,5 +45,6 @@ class MonitorThread extends Thread {
 		this.threadToMonitor = threadToMonitor
 		this.onInvalid = onInvalid
 		this.stop = new AtomicBoolean(false)
+		this.operationInterrupted = new AtomicBoolean(false)
 	}
 }

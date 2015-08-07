@@ -1,10 +1,6 @@
 package delight.nashornsandbox.internal;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.eclipse.xtext.xbase.lib.Exceptions;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
 public class MonitorThread extends Thread {
@@ -12,36 +8,17 @@ public class MonitorThread extends Thread {
   
   private final AtomicBoolean stop;
   
+  private final AtomicBoolean operationInterrupted;
+  
   private final Thread threadToMonitor;
   
   private final Runnable onInvalid;
   
   @Override
   public void run() {
-    try {
-      while ((!this.stop.get())) {
-        {
-          final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
-          long _id = this.threadToMonitor.getId();
-          final long threadCPUTime = bean.getThreadCpuTime(_id);
-          InputOutput.<Long>println(Long.valueOf(threadCPUTime));
-          if ((threadCPUTime > this.maxCPUTime)) {
-            this.stop.set(true);
-            this.onInvalid.run();
-            Thread.sleep(50);
-            boolean _isAlive = this.threadToMonitor.isAlive();
-            if (_isAlive) {
-              InputOutput.<String>println("Thread hard shutdown!");
-              this.threadToMonitor.stop();
-            }
-            return;
-          }
-          Thread.sleep(5);
-        }
-      }
-    } catch (Throwable _e) {
-      throw Exceptions.sneakyThrow(_e);
-    }
+    throw new Error("Unresolved compilation problems:"
+      + "\nno viable alternative at input \')\'"
+      + "\nType mismatch: cannot convert from null to boolean");
   }
   
   public void stopMonitor() {
@@ -54,5 +31,7 @@ public class MonitorThread extends Thread {
     this.onInvalid = onInvalid;
     AtomicBoolean _atomicBoolean = new AtomicBoolean(false);
     this.stop = _atomicBoolean;
+    AtomicBoolean _atomicBoolean_1 = new AtomicBoolean(false);
+    this.operationInterrupted = _atomicBoolean_1;
   }
 }
