@@ -20,9 +20,13 @@ class MonitorThread extends Thread {
 			println(threadCPUTime)
 			
 			if (threadCPUTime > maxCPUTime) {
-				println('was invalid!')
 				stop.set(true)
 				onInvalid.run
+				Thread.sleep(10)
+				if (threadToMonitor.alive) {
+					println('Thread hard shutdown!')
+					threadToMonitor.stop
+				}
 				return
 			}
 			
