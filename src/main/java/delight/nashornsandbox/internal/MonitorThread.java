@@ -36,6 +36,10 @@ public class MonitorThread extends Thread {
     }
   }
   
+  public void stop() {
+    this.stop.set(true);
+  }
+  
   public MonitorThread(final long maxCPUTimne, final Thread threadToMonitor, final Runnable onInvalid) {
     this.maxCPUTime = maxCPUTimne;
     this.threadToMonitor = threadToMonitor;

@@ -28,6 +28,10 @@ class MonitorThread extends Thread {
 	
 	}
 	
+	def void stop() {
+		stop.set(true)
+	}
+	
 	new (long maxCPUTimne, Thread threadToMonitor, Runnable onInvalid) {
 		this.maxCPUTime = maxCPUTimne
 		this.threadToMonitor = threadToMonitor
