@@ -64,6 +64,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		
 		println(securedJs)
 		
+		monitorThread.start
 		scriptEngine.eval(securedJs)
 
 		val res = scriptEngine.eval(js)

@@ -4,6 +4,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
 public class MonitorThread extends Thread {
@@ -23,6 +24,7 @@ public class MonitorThread extends Thread {
           final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
           long _id = this.threadToMonitor.getId();
           final long threadCPUTime = bean.getThreadCpuTime(_id);
+          InputOutput.<Long>println(Long.valueOf(threadCPUTime));
           if ((threadCPUTime > this.maxCPUTime)) {
             this.stop.set(true);
             this.onInvalid.run();
