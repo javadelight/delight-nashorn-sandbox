@@ -28,7 +28,7 @@ public class MonitorThread extends Thread {
           if ((threadCPUTime > this.maxCPUTime)) {
             this.stop.set(true);
             this.onInvalid.run();
-            Thread.sleep(10);
+            Thread.sleep(50);
             boolean _isAlive = this.threadToMonitor.isAlive();
             if (_isAlive) {
               InputOutput.<String>println("Thread hard shutdown!");
