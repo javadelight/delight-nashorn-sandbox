@@ -26,6 +26,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 		scriptEngine = factory.getScriptEngine(new SandboxClassFilter(allowedClasses));
 		
+		scriptEngine.eval('var window = {};')
 		scriptEngine.eval(BeautifyJs.CODE)
 	}
 
@@ -40,7 +41,7 @@ class NashornSandboxImpl implements NashornSandbox {
 			Thread.currentThread.interrupt
 		])
 		
-		val Invocable invocable = scriptEngine.eval('jsbeautifier;') as Invocable
+		val Invocable invocable = scriptEngine.eval('window.js_beautify.beautify;') as Invocable
 
 		val Object result = invocable.invokeFunction("beautify", js);
 		

@@ -31,6 +31,7 @@ public class NashornSandboxImpl implements NashornSandbox {
       SandboxClassFilter _sandboxClassFilter = new SandboxClassFilter(this.allowedClasses);
       ScriptEngine _scriptEngine = factory.getScriptEngine(_sandboxClassFilter);
       this.scriptEngine = _scriptEngine;
+      this.scriptEngine.eval("var window = {};");
       this.scriptEngine.eval(BeautifyJs.CODE);
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
@@ -55,7 +56,7 @@ public class NashornSandboxImpl implements NashornSandbox {
           }
         };
         final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000), _currentThread, _function);
-        Object _eval = this.scriptEngine.eval("jsbeautifier;");
+        Object _eval = this.scriptEngine.eval("window.js_beautify.beautify;");
         final Invocable invocable = ((Invocable) _eval);
         final Object result = invocable.invokeFunction("beautify", js);
         InputOutput.<Object>println(result);
