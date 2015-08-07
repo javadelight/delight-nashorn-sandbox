@@ -24,8 +24,8 @@ class MonitorThread extends Thread {
 				stop.set(true)
 				onInvalid.run
 				Thread.sleep(50)
-				if (threadToMonitor.) {
-					println('Thread hard shutdown!')
+				if (this.operationInterrupted.get() == false) {
+					println(delight.nashornsandbox.internal.MonitorThread.this+': Thread hard shutdown!')
 					threadToMonitor.stop
 				}
 				return
@@ -38,6 +38,10 @@ class MonitorThread extends Thread {
 	
 	def void stopMonitor() {
 		stop.set(true)
+	}
+	
+	def void notifyOperationInterrupted() {
+		this.operationInterrupted.set(true)
 	}
 	
 	new (long maxCPUTimne, Thread threadToMonitor, Runnable onInvalid) {
