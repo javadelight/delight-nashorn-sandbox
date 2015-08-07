@@ -31,7 +31,6 @@ public class MonitorThread extends Thread {
           long _id_1 = this.threadToMonitor.getId();
           final long threadCPUTime = bean.getThreadCpuTime(_id_1);
           final long runtime = (threadCPUTime - startCPUTime);
-          InputOutput.<Long>println(Long.valueOf(runtime));
           if ((runtime > this.maxCPUTime)) {
             this.cpuLimitExceeded.set(true);
             this.stop.set(true);
