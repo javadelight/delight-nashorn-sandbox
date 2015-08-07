@@ -1,0 +1,5 @@
+Multi-Licensed under
+
+Apache 2.0: http://www.apache.org/licenses/LICENSE-2.0
+
+The MIT License (MIT): http://opensource.org/licenses/MIT
