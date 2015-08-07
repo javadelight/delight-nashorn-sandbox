@@ -17,7 +17,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 	var ScriptEngine scriptEngine
 	var Integer maxCPUTimeInMs = 0
-	val ExecutorService exectuor
+	var ExecutorService exectuor
 
 	def void assertScriptEngine() {
 		if (scriptEngine != null) {
