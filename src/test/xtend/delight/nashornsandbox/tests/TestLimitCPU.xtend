@@ -43,4 +43,21 @@ class TestLimitCPU {
 		}
 	}
 
+	@Test
+	def void test_nice_script() {
+		val sandbox = NashornSandboxes.create()
+
+		sandbox.maxCPUTime = 50
+		sandbox.executor = Executors.newSingleThreadExecutor
+
+		sandbox.eval('''
+			var x = 1;
+			for (var i=0;i<=1000;i++) {
+				x = x + i
+			}
+		''')
+		
+		sandbox.executor.shutdown()
+	}
+
 }

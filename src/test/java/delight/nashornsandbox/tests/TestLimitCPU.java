@@ -52,4 +52,25 @@ public class TestLimitCPU {
       _executor.shutdown();
     }
   }
+  
+  @Test
+  public void test_nice_script() {
+    final NashornSandbox sandbox = NashornSandboxes.create();
+    sandbox.setMaxCPUTime(50);
+    ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+    sandbox.setExecutor(_newSingleThreadExecutor);
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("var x = 1;");
+    _builder.newLine();
+    _builder.append("for (var i=0;i<=1000;i++) {");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("x = x + i");
+    _builder.newLine();
+    _builder.append("}");
+    _builder.newLine();
+    sandbox.eval(_builder.toString());
+    ExecutorService _executor = sandbox.getExecutor();
+    _executor.shutdown();
+  }
 }
