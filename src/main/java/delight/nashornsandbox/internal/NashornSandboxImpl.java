@@ -57,7 +57,6 @@ public class NashornSandboxImpl implements NashornSandbox {
   public NashornSandboxImpl() {
     HashSet<String> _hashSet = new HashSet<String>();
     this.allowedClasses = _hashSet;
-    String _name = InterruptTest.class.getName();
-    this.allowedClasses.add(_name);
+    this.allow(InterruptTest.class);
   }
 }

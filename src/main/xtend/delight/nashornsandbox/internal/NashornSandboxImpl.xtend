@@ -70,7 +70,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 	new() {
 		this.allowedClasses = new HashSet()
-		allowedClasses.add(InterruptTest.name)
+		allow(InterruptTest)
 	}
 
 }
