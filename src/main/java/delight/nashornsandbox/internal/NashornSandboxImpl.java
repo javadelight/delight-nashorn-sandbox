@@ -7,6 +7,7 @@ import delight.nashornsandbox.internal.InterruptTest;
 import delight.nashornsandbox.internal.MonitorThread;
 import delight.nashornsandbox.internal.SandboxClassFilter;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 import javax.script.ScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
@@ -66,6 +67,9 @@ public class NashornSandboxImpl implements NashornSandbox {
         final ScriptObjectMirror jsBeautify = ((ScriptObjectMirror) _eval);
         Object _call = jsBeautify.call("beautify", js);
         final String beautifiedJs = ((String) _call);
+        Random _random = new Random();
+        int _nextInt = _random.nextInt();
+        final int randomToken = Math.abs(_nextInt);
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("var InterruptTest = Java.type(\'");
         String _name = InterruptTest.class.getName();

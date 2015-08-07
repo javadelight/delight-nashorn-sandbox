@@ -6,6 +6,7 @@ import java.util.Set
 import javax.script.ScriptEngine
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 import jdk.nashorn.api.scripting.ScriptObjectMirror
+import java.util.Random
 
 class NashornSandboxImpl implements NashornSandbox {
 
@@ -48,6 +49,8 @@ class NashornSandboxImpl implements NashornSandbox {
 		val  jsBeautify = scriptEngine.eval('window.js_beautify;') as ScriptObjectMirror
 
 		val String beautifiedJs = jsBeautify.call("beautify", js) as String 
+		
+		val randomToken = Math.abs(new Random().nextInt)
 		
 		val securedJs = '''
 			var InterruptTest = Java.type('«InterruptTest.name»');
