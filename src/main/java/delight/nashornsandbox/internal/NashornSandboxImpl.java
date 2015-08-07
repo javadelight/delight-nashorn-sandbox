@@ -68,6 +68,7 @@ public class NashornSandboxImpl implements NashornSandbox {
               throw new IllegalStateException(
                 "When a CPU time limit is set, an executor needs to be provided by calling .setExecutor(...)");
             }
+            final Object monitor = new Object();
             final Runnable _function = new Runnable() {
               @Override
               public void run() {
@@ -149,9 +150,9 @@ public class NashornSandboxImpl implements NashornSandbox {
                     final Throwable t = (Throwable)_t_1;
                     exceptionVal.set(t);
                     monitorThread.stopMonitor();
-                    /* NashornSandboxImpl.this; */
-                    synchronized (NashornSandboxImpl.this) {
-                      NashornSandboxImpl.this.notify();
+                    /* monitor; */
+                    synchronized (monitor) {
+                      monitor.notify();
                     }
                   } else {
                     throw Exceptions.sneakyThrow(_t_1);
@@ -160,7 +161,10 @@ public class NashornSandboxImpl implements NashornSandbox {
               }
             };
             this.exectuor.execute(_function);
-            this.wait();
+            /* monitor; */
+            synchronized (monitor) {
+              monitor.wait();
+            }
             boolean _isCPULimitExceeded = monitorThread.isCPULimitExceeded();
             if (_isCPULimitExceeded) {
               String notGraceful = "";

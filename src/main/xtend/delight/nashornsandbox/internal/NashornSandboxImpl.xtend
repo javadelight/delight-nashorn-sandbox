@@ -57,6 +57,8 @@ class NashornSandboxImpl implements NashornSandbox {
 					"When a CPU time limit is set, an executor needs to be provided by calling .setExecutor(...)")
 			}
 
+			val monitor = new Object()
+
 			exectuor.execute([
 				try {
 					val mainThread = Thread.currentThread
@@ -116,14 +118,17 @@ class NashornSandboxImpl implements NashornSandbox {
 					
 					exceptionVal.set(t)
 					monitorThread.stopMonitor
-					synchronized (NashornSandboxImpl.this) {
-						NashornSandboxImpl.this.notify
+					synchronized (monitor) {
+						monitor.notify
 
 					}
 				}
 			])
-
-			this.wait
+			
+			synchronized (monitor) {
+				monitor.wait
+			}
+			
 
 			if (monitorThread.CPULimitExceeded) {
 				var notGraceful = ""
