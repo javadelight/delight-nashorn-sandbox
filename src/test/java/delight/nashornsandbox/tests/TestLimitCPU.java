@@ -9,6 +9,7 @@ public class TestLimitCPU {
   @Test
   public void test() {
     final NashornSandbox sandbox = NashornSandboxes.create();
-    sandbox.eval("java.lang.System.exit(0);");
+    sandbox.setMaxCPUTime(5);
+    sandbox.eval("var x= 1+1;x;");
   }
 }

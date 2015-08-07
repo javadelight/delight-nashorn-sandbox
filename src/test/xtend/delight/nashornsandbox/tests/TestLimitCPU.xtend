@@ -10,9 +10,9 @@ class TestLimitCPU {
 		
 		val sandbox = NashornSandboxes.create()
 		
+		sandbox.maxCPUTime = 5
 		
-		
-		sandbox.eval('java.lang.System.exit(0);')
+		sandbox.eval('var x= 1+1;x;')
 		
 	}
 	
