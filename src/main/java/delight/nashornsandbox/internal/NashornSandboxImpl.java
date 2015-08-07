@@ -50,12 +50,12 @@ public class NashornSandboxImpl implements NashornSandbox {
         if (((this.maxCPUTimeInMs).intValue() == 0)) {
           return this.scriptEngine.eval(js);
         }
+        final Thread mainThread = Thread.currentThread();
         Thread _currentThread = Thread.currentThread();
         final Runnable _function = new Runnable() {
           @Override
           public void run() {
-            Thread _currentThread = Thread.currentThread();
-            _currentThread.interrupt();
+            mainThread.interrupt();
           }
         };
         final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000), _currentThread, _function);

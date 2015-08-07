@@ -26,6 +26,7 @@ public class MonitorThread extends Thread {
           final long threadCPUTime = bean.getThreadCpuTime(_id);
           InputOutput.<Long>println(Long.valueOf(threadCPUTime));
           if ((threadCPUTime > this.maxCPUTime)) {
+            InputOutput.<String>println("was invalid!");
             this.stop.set(true);
             this.onInvalid.run();
             return;

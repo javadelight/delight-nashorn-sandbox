@@ -38,8 +38,10 @@ class NashornSandboxImpl implements NashornSandbox {
 			return scriptEngine.eval(js)
 		}
 		
+		val mainThread = Thread.currentThread
+		
 		val monitorThread = new MonitorThread(maxCPUTimeInMs*1000, Thread.currentThread, [
-			Thread.currentThread.interrupt
+			mainThread.interrupt
 		])
 		
 		if (js.contains("intCheckForInterruption")) {
