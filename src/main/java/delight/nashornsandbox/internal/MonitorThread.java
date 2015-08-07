@@ -70,6 +70,10 @@ public class MonitorThread extends Thread {
     return this.cpuLimitExceeded.get();
   }
   
+  public boolean gracefullyInterrputed() {
+    return this.operationInterrupted.get();
+  }
+  
   public MonitorThread(final long maxCPUTimne) {
     this.maxCPUTime = maxCPUTimne;
     AtomicBoolean _atomicBoolean = new AtomicBoolean(false);

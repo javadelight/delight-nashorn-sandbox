@@ -56,6 +56,10 @@ class MonitorThread extends Thread {
 		this.cpuLimitExceeded.get
 	}
 	
+	def gracefullyInterrputed() {
+		this.operationInterrupted.get()
+	}
+	
 	new (long maxCPUTimne) {
 		this.maxCPUTime = maxCPUTimne
 		

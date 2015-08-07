@@ -105,6 +105,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		}
 
 		if (monitorThread.CPULimitExceeded) {
+			
 			throw new ScriptCPUAbuseException(
 				"Script used more than the allowed [" + maxCPUTimeInMs + " ms] of CPU time.", exceptionVal.get())
 		}
