@@ -58,7 +58,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		
 	}
 
-	override void setCPUTimeLimitInMs(long limit) {
+	override void setMaxCPUTime(int limit) {
 		this.maxCPUTimeInMs = limit
 	}
 

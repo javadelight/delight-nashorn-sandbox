@@ -8,6 +8,9 @@ public interface NashornSandbox {
    */
   public abstract void allow(final Class<?> clazz);
   
+  /**
+   * Sets the maximum CPU time in milliseconds allowed for script execution.
+   */
   public abstract void setMaxCPUTime(final int limit);
   
   public abstract Object eval(final String js);

@@ -10,6 +10,9 @@ interface NashornSandbox {
 	 */
 	def void allow(Class<?> clazz)
 
+	/**
+	 * Sets the maximum CPU time in milliseconds allowed for script execution.
+	 */
 	def void setMaxCPUTime(int limit)
 
 	def Object eval(String js)
