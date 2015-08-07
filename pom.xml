@@ -5,7 +5,7 @@
 	<groupId>org.javadelight</groupId>
 	<artifactId>delight-nashorn-sandbox</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
-	<description>A save sandbox to execute JavaScript code from Nashorn.</description>
+	<description>A safe sandbox to execute JavaScript code from Nashorn.</description>
 	<url>https://github.com/javadelight/delight-nashorn-sandbox</url>
 	<properties>
 		<module.gwtVersion>2.5.1</module.gwtVersion>
@@ -50,10 +50,6 @@
 			
 		</dependency>
 
-
-
-
-
 	</dependencies>
 
 
@@ -95,10 +91,6 @@
 					</instructions>
 				</configuration>
 			</plugin>
-
-
-
-
 
 
 			<!-- Keep the MANIFEST.MF used by eclipse in sync with the MANIFEST.MF 
