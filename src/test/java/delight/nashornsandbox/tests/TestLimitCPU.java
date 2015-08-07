@@ -31,7 +31,7 @@ public class TestLimitCPU {
   public void test_evil_script() {
     final Operation<Object> _function = new Operation<Object>() {
       @Override
-      public void apply(final ValueCallback<Object> it) {
+      public void apply(final ValueCallback<Object> cb) {
         final Runnable _function = new Runnable() {
           @Override
           public void run() {
@@ -45,7 +45,8 @@ public class TestLimitCPU {
             sandbox.eval(_builder.toString());
           }
         };
-        new Thread(_function);
+        Thread _thread = new Thread(_function);
+        _thread.start();
       }
     };
     Async.<Object>waitFor(_function);

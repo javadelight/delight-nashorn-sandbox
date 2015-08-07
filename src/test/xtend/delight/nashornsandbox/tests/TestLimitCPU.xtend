@@ -25,7 +25,7 @@ class TestLimitCPU {
 	@Test
 	def void test_evil_script() {
 
-		Async.waitFor [
+		Async.waitFor [ cb |
 			new Thread([
 				val sandbox = NashornSandboxes.create()
 
@@ -35,7 +35,7 @@ class TestLimitCPU {
 					var x = 1;
 					while (true) { }
 				''')
-			])
+			]).start
 		]
 
 	}
