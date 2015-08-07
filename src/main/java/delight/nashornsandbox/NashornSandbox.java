@@ -20,5 +20,7 @@ public interface NashornSandbox {
    */
   public abstract NashornSandbox setExecutor(final ExecutorService executor);
   
+  public abstract ExecutorService getExecutor();
+  
   public abstract Object eval(final String js);
 }

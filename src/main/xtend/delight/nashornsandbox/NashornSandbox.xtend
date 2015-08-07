@@ -20,6 +20,8 @@ interface NashornSandbox {
 	 */
 	def NashornSandbox setExecutor(ExecutorService executor)
 	
+	def ExecutorService getExecutor()
+	
 	def Object eval(String js)
 
 	

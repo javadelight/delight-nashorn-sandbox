@@ -190,6 +190,11 @@ public class NashornSandboxImpl implements NashornSandbox {
     return _xblockexpression;
   }
   
+  @Override
+  public ExecutorService getExecutor() {
+    return this.exectuor;
+  }
+  
   public NashornSandboxImpl() {
     HashSet<String> _hashSet = new HashSet<String>();
     this.allowedClasses = _hashSet;

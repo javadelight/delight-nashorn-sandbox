@@ -138,6 +138,10 @@ class NashornSandboxImpl implements NashornSandbox {
 		this
 	}
 
+	override ExecutorService getExecutor() {
+		this.exectuor
+	}
+
 	new() {
 		this.allowedClasses = new HashSet()
 		allow(InterruptTest)
