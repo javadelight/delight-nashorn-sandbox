@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService
 import javax.script.ScriptEngine
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 import jdk.nashorn.api.scripting.ScriptObjectMirror
+import javax.script.ScriptException
 
 class NashornSandboxImpl implements NashornSandbox {
 
@@ -90,12 +91,17 @@ class NashornSandboxImpl implements NashornSandbox {
 					''' +
 						beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n').
 							replace(') {', ') {intCheckForInterruption' + randomToken + '();\n')
-
+					
+					
+					
 					monitorThread.start
 					scriptEngine.eval(securedJs)
-
-					val res = scriptEngine.eval(js)
-
+					
+					try {
+					  val res = scriptEngine.eval(js)
+					} catch (ScriptException e) {
+						monitorThread.notifyOperationInterrupted
+					}
 					monitorThread.stopMonitor
 
 					resVal.set(res)
