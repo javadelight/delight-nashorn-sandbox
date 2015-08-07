@@ -13,7 +13,7 @@ public class TestLimitCPU {
   @Test(expected = ScriptCPUAbuseException.class)
   public void test() {
     final NashornSandbox sandbox = NashornSandboxes.create();
-    sandbox.setMaxCPUTime(5);
+    sandbox.setMaxCPUTime(50);
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("var x = 1;");
     _builder.newLine();
@@ -30,16 +30,19 @@ public class TestLimitCPU {
   @Test(expected = ScriptCPUAbuseException.class)
   public void test_evil_script() {
     final NashornSandbox sandbox = NashornSandboxes.create();
-    sandbox.setMaxCPUTime(50);
-    ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
-    sandbox.setExecutor(_newSingleThreadExecutor);
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("var x = 1;");
-    _builder.newLine();
-    _builder.append("while (true) { }");
-    _builder.newLine();
-    sandbox.eval(_builder.toString());
-    ExecutorService _executor = sandbox.getExecutor();
-    _executor.shutdown();
+    try {
+      sandbox.setMaxCPUTime(50);
+      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+      sandbox.setExecutor(_newSingleThreadExecutor);
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("var x = 1;");
+      _builder.newLine();
+      _builder.append("while (true) { }");
+      _builder.newLine();
+      sandbox.eval(_builder.toString());
+    } finally {
+      ExecutorService _executor = sandbox.getExecutor();
+      _executor.shutdown();
+    }
   }
 }
