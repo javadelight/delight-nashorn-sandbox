@@ -1,6 +1,8 @@
 package delight.nashornsandbox
 
 import javax.script.ScriptContext
+import java.lang.reflect.Executable
+import java.util.concurrent.Executor
 
 interface NashornSandbox {
 
@@ -15,6 +17,11 @@ interface NashornSandbox {
 	 */
 	def void setMaxCPUTime(int limit)
 
+	/**
+	 * Specifies the executor which is used to run scripts when a CPU time limit is specified.
+	 */
+	def void setExecutor(Executor executor)
+	
 	def Object eval(String js)
 
 	
