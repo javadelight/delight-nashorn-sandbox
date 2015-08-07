@@ -10,6 +10,7 @@ class MonitorThread extends Thread {
 	val AtomicBoolean operationInterrupted
 	val Thread threadToMonitor
 	val Runnable onInvalid
+	val AtomicBoolean cpuLimitExceeded;
 	
 	override run() {
 	
@@ -18,12 +19,11 @@ class MonitorThread extends Thread {
 			
 			val threadCPUTime = bean.getThreadCpuTime(threadToMonitor.id)
 			
-			println(threadCPUTime)
-			
 			if (threadCPUTime > maxCPUTime) {
+				cpuLimitExceeded.set(true)
 				stop.set(true)
 				onInvalid.run
-				Thread.sleep(50)
+				Thread.sleep(20)
 				if (this.operationInterrupted.get() == false) {
 					println(MonitorThread.this+': Thread hard shutdown!')
 					threadToMonitor.stop

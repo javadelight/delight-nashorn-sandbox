@@ -18,6 +18,8 @@ public class MonitorThread extends Thread {
   
   private final Runnable onInvalid;
   
+  private final AtomicBoolean cpuLimitExceeded;
+  
   @Override
   public void run() {
     try {
@@ -26,11 +28,11 @@ public class MonitorThread extends Thread {
           final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
           long _id = this.threadToMonitor.getId();
           final long threadCPUTime = bean.getThreadCpuTime(_id);
-          InputOutput.<Long>println(Long.valueOf(threadCPUTime));
           if ((threadCPUTime > this.maxCPUTime)) {
+            this.cpuLimitExceeded.set(true);
             this.stop.set(true);
             this.onInvalid.run();
-            Thread.sleep(50);
+            Thread.sleep(20);
             boolean _get = this.operationInterrupted.get();
             boolean _equals = (_get == false);
             if (_equals) {
