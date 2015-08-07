@@ -42,8 +42,8 @@ public class NashornSandboxImpl implements NashornSandbox {
   @Override
   public Object eval(final String js) {
     throw new Error("Unresolved compilation problems:"
-      + "\nType mismatch: cannot convert from void to Object"
-      + "\nThis expression is not allowed in this context, since it doesn\'t cause any side effects.");
+      + "\nInvalid number of arguments. The method set(T) is not applicable without arguments"
+      + "\nType mismatch: cannot convert from void to Object");
   }
   
   @Override

@@ -1,5 +1,6 @@
 package delight.nashornsandbox.internal
 
+import delight.async.Value
 import delight.nashornsandbox.NashornSandbox
 import java.util.HashSet
 import java.util.Random
@@ -28,7 +29,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		val NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
 
 		scriptEngine = factory.getScriptEngine(new SandboxClassFilter(allowedClasses));
-		
+
 		scriptEngine.eval('var window = {};')
 		scriptEngine.eval(BeautifyJs.CODE)
 	}
@@ -39,49 +40,56 @@ class NashornSandboxImpl implements NashornSandbox {
 		if (maxCPUTimeInMs == 0) {
 			return scriptEngine.eval(js)
 		}
+
+		val resVal = new Value<Object>(null)
+		
+		val outerThread = Thread.currentThread
 		
 		exectuor.execute([
 			val mainThread = Thread.currentThread
-		
-		val monitorThread = new MonitorThread(maxCPUTimeInMs*1000, Thread.currentThread, [
-			mainThread.interrupt
-		])
-		
-		if (js.contains("intCheckForInterruption")) {
-			throw new IllegalArgumentException('Script contains the illegal string [intCheckForInterruption]')
-		}
-		
-		val  jsBeautify = scriptEngine.eval('window.js_beautify;') as ScriptObjectMirror
 
-		val String beautifiedJs = jsBeautify.call("beautify", js) as String 
-		
-		val randomToken = Math.abs(new Random().nextInt)
-		
-		val securedJs = '''
-			var InterruptTest = Java.type('«InterruptTest.name»');
-			var isInterrupted = InterruptTest.isInterrupted;
-			var intCheckForInterruption«randomToken» = function() {
-				if (isInterrupted()) {
-				    throw new Error('Interrupted')
-				}
-			};
-		'''+beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption'+randomToken+'();\n').replace(') {', ') {intCheckForInterruption'+randomToken+'();\n')
-		
-		println(securedJs)
-		
-		monitorThread.start
-		scriptEngine.eval(securedJs)
+			val monitorThread = new MonitorThread(maxCPUTimeInMs * 1000, Thread.currentThread, [
+				mainThread.interrupt
+			])
 
-		val res = scriptEngine.eval(js)
-		
-		monitorThread.stopMonitor
-		
-		res
+			if (js.contains("intCheckForInterruption")) {
+				throw new IllegalArgumentException('Script contains the illegal string [intCheckForInterruption]')
+			}
+
+			val jsBeautify = scriptEngine.eval('window.js_beautify;') as ScriptObjectMirror
+
+			val String beautifiedJs = jsBeautify.call("beautify", js) as String
+
+			val randomToken = Math.abs(new Random().nextInt)
+
+			val securedJs = '''
+				var InterruptTest = Java.type('«InterruptTest.name»');
+				var isInterrupted = InterruptTest.isInterrupted;
+				var intCheckForInterruption«randomToken» = function() {
+					if (isInterrupted()) {
+					    throw new Error('Interrupted')
+					}
+				};
+			''' +
+				beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n').replace(') {',
+					') {intCheckForInterruption' + randomToken + '();\n')
+
+			println(securedJs)
+
+			monitorThread.start
+			scriptEngine.eval(securedJs)
+
+			val res = scriptEngine.eval(js)
+
+			monitorThread.stopMonitor
+
+			resVal.set()
 		])
+
+		Thread.wait
 		
 		
-		
-		
+
 	}
 
 	override void setMaxCPUTime(int limit) {
