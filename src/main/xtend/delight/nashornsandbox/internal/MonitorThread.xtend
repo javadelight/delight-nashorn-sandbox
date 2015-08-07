@@ -44,11 +44,16 @@ class MonitorThread extends Thread {
 		this.operationInterrupted.set(true)
 	}
 	
+	def void isCPULimitExceeded() {
+		this.cpuLimitExceeded.get
+	}
+	
 	new (long maxCPUTimne, Thread threadToMonitor, Runnable onInvalid) {
 		this.maxCPUTime = maxCPUTimne
 		this.threadToMonitor = threadToMonitor
 		this.onInvalid = onInvalid
 		this.stop = new AtomicBoolean(false)
 		this.operationInterrupted = new AtomicBoolean(false)
+		this.cpuLimitExceeded = new AtomicBoolean(false)
 	}
 }

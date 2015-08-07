@@ -58,6 +58,10 @@ public class MonitorThread extends Thread {
     this.operationInterrupted.set(true);
   }
   
+  public void isCPULimitExceeded() {
+    this.cpuLimitExceeded.get();
+  }
+  
   public MonitorThread(final long maxCPUTimne, final Thread threadToMonitor, final Runnable onInvalid) {
     this.maxCPUTime = maxCPUTimne;
     this.threadToMonitor = threadToMonitor;
@@ -66,5 +70,7 @@ public class MonitorThread extends Thread {
     this.stop = _atomicBoolean;
     AtomicBoolean _atomicBoolean_1 = new AtomicBoolean(false);
     this.operationInterrupted = _atomicBoolean_1;
+    AtomicBoolean _atomicBoolean_2 = new AtomicBoolean(false);
+    this.cpuLimitExceeded = _atomicBoolean_2;
   }
 }
