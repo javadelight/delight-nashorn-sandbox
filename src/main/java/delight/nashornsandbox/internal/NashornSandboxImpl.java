@@ -94,8 +94,8 @@ public class NashornSandboxImpl implements NashornSandbox {
         _builder.append("};");
         _builder.newLine();
         String _replaceAll = beautifiedJs.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-        String _replaceAll_1 = _replaceAll.replaceAll("\\) {", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-        final String securedJs = (_builder.toString() + _replaceAll_1);
+        String _replace = _replaceAll.replace(") {", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
+        final String securedJs = (_builder.toString() + _replace);
         InputOutput.<String>println(securedJs);
         monitorThread.start();
         this.scriptEngine.eval(securedJs);
