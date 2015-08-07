@@ -137,7 +137,8 @@ public class NashornSandboxImpl implements NashornSandbox {
         boolean _isCPULimitExceeded = monitorThread.isCPULimitExceeded();
         if (_isCPULimitExceeded) {
           Throwable _get_1 = exceptionVal.get();
-          throw new ScriptCPUAbuseException("", _get_1);
+          throw new ScriptCPUAbuseException(
+            (("Script used more than the allowed [" + this.maxCPUTimeInMs) + " ms] of CPU time."), _get_1);
         }
         _xblockexpression = resVal.get();
       }
