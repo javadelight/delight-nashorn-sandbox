@@ -6,6 +6,7 @@ import java.util.Set
 import javax.script.Invocable
 import javax.script.ScriptEngine
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
+import jdk.nashorn.api.scripting.ScriptObjectMirror
 
 class NashornSandboxImpl implements NashornSandbox {
 
@@ -41,7 +42,7 @@ class NashornSandboxImpl implements NashornSandbox {
 			Thread.currentThread.interrupt
 		])
 		
-		val Invocable invocable = scriptEngine.eval('window.js_beautify.beautify;') as Invocable
+		val ScriptObjectMirror jsBeautify = scriptEngine.eval('window.js_beautify;') as Invocable
 
 		val Object result = invocable.invokeFunction("beautify", js);
 		
