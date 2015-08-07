@@ -40,11 +40,11 @@ class NashornSandboxImpl implements NashornSandbox {
 			Thread.currentThread.interrupt
 		])
 		
-		
-		
-		val Invocable invocable = scriptEngine.eval('jsbeautifier.beautify;') as Invocable
+		val Invocable invocable = scriptEngine.eval('jsbeautifier;') as Invocable
 
-		val Object result = invocable.invokeFunction("fun1", "Peter Parker");
+		val Object result = invocable.invokeFunction("beautify", js);
+		
+		println(result)
 		
 		scriptEngine.eval(js)
 

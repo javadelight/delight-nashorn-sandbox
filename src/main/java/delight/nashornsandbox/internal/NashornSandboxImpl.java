@@ -11,6 +11,7 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
 public class NashornSandboxImpl implements NashornSandbox {
@@ -54,9 +55,10 @@ public class NashornSandboxImpl implements NashornSandbox {
           }
         };
         final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000), _currentThread, _function);
-        Object _eval = this.scriptEngine.eval("jsbeautifier.beautify;");
+        Object _eval = this.scriptEngine.eval("jsbeautifier;");
         final Invocable invocable = ((Invocable) _eval);
-        final Object result = invocable.invokeFunction("fun1", "Peter Parker");
+        final Object result = invocable.invokeFunction("beautify", js);
+        InputOutput.<Object>println(result);
         this.scriptEngine.eval(js);
         final Object res = this.scriptEngine.eval(js);
         monitorThread.stopMonitor();
