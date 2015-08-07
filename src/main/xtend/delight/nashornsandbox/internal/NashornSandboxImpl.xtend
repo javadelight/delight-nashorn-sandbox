@@ -42,7 +42,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		}
 
 		val resVal = new Value<Object>(null)
-		
+		val exceptionVal = new Value<Throwable>(null)
 		val outerThread = Thread.currentThread
 		
 		exectuor.execute([
@@ -83,12 +83,14 @@ class NashornSandboxImpl implements NashornSandbox {
 
 			monitorThread.stopMonitor
 
-			resVal.set()
+			resVal.set(res)
+			
+			outerThread.notify
 		])
 
 		Thread.wait
 		
-		
+		resVal.get()
 
 	}
 
