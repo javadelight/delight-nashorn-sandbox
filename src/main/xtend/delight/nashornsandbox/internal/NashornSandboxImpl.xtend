@@ -42,7 +42,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		
 		
 		
-		val Invocable invocable = scriptEngine.eval('') as Invocable
+		val Invocable invocable = scriptEngine.eval('jsbeautifier.beautify;') as Invocable
 
 		val Object result = invocable.invokeFunction("fun1", "Peter Parker");
 		

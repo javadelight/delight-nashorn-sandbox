@@ -54,7 +54,7 @@ public class NashornSandboxImpl implements NashornSandbox {
           }
         };
         final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000), _currentThread, _function);
-        Object _eval = this.scriptEngine.eval("");
+        Object _eval = this.scriptEngine.eval("jsbeautifier.beautify;");
         final Invocable invocable = ((Invocable) _eval);
         final Object result = invocable.invokeFunction("fun1", "Peter Parker");
         this.scriptEngine.eval(js);
