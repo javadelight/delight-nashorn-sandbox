@@ -61,15 +61,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 			exectuor.execute([
 				try {
-					val mainThread = Thread.currentThread
-
-					monitorThread.threadToMonitor = Thread.currentThread
-
-					monitorThread.onInvalidHandler = [
-
-						mainThread.interrupt
-
-					]
+					
 
 					if (js.contains("intCheckForInterruption")) {
 						throw new IllegalArgumentException(
@@ -93,7 +85,17 @@ class NashornSandboxImpl implements NashornSandbox {
 					''' +
 						beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n').
 							replace(') {', ') {intCheckForInterruption' + randomToken + '();\n')
+					
+					val mainThread = Thread.currentThread
 
+					monitorThread.threadToMonitor = Thread.currentThread
+
+					monitorThread.onInvalidHandler = [
+
+						mainThread.interrupt
+
+					]
+					
 					monitorThread.start
 
 					try {

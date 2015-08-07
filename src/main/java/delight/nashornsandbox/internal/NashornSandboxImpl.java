@@ -73,16 +73,6 @@ public class NashornSandboxImpl implements NashornSandbox {
               @Override
               public void run() {
                 try {
-                  final Thread mainThread = Thread.currentThread();
-                  Thread _currentThread = Thread.currentThread();
-                  monitorThread.setThreadToMonitor(_currentThread);
-                  final Runnable _function = new Runnable() {
-                    @Override
-                    public void run() {
-                      mainThread.interrupt();
-                    }
-                  };
-                  monitorThread.setOnInvalidHandler(_function);
                   boolean _contains = js.contains("intCheckForInterruption");
                   if (_contains) {
                     throw new IllegalArgumentException(
@@ -123,6 +113,16 @@ public class NashornSandboxImpl implements NashornSandbox {
                   String _replaceAll = beautifiedJs.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
                   String _replace = _replaceAll.replace(") {", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
                   final String securedJs = (_builder.toString() + _replace);
+                  final Thread mainThread = Thread.currentThread();
+                  Thread _currentThread = Thread.currentThread();
+                  monitorThread.setThreadToMonitor(_currentThread);
+                  final Runnable _function = new Runnable() {
+                    @Override
+                    public void run() {
+                      mainThread.interrupt();
+                    }
+                  };
+                  monitorThread.setOnInvalidHandler(_function);
                   monitorThread.start();
                   try {
                     final Object res = NashornSandboxImpl.this.scriptEngine.eval(securedJs);
