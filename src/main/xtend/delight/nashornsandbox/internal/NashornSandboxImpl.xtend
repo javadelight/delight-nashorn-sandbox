@@ -48,8 +48,6 @@ class NashornSandboxImpl implements NashornSandbox {
 			val resVal = new Value<Object>(null)
 			val exceptionVal = new Value<Throwable>(null)
 
-			val outerThread = Thread.currentThread
-
 			val monitorThread = new MonitorThread(maxCPUTimeInMs * 1000000)
 
 			if (exectuor == null) {
