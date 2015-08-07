@@ -8,11 +8,14 @@ public class InterruptTest {
     boolean _xblockexpression = false;
     {
       Thread _currentThread = Thread.currentThread();
-      boolean _isInterrupted = _currentThread.isInterrupted();
-      String _plus = ("test " + Boolean.valueOf(_isInterrupted));
-      InputOutput.<String>println(_plus);
+      String _plus = ("test " + _currentThread);
+      String _plus_1 = (_plus + " ");
       Thread _currentThread_1 = Thread.currentThread();
-      _xblockexpression = _currentThread_1.isInterrupted();
+      boolean _isInterrupted = _currentThread_1.isInterrupted();
+      String _plus_2 = (_plus_1 + Boolean.valueOf(_isInterrupted));
+      InputOutput.<String>println(_plus_2);
+      Thread _currentThread_2 = Thread.currentThread();
+      _xblockexpression = _currentThread_2.isInterrupted();
     }
     return _xblockexpression;
   }

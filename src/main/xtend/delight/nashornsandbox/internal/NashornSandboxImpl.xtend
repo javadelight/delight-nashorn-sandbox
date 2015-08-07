@@ -61,7 +61,7 @@ class NashornSandboxImpl implements NashornSandbox {
 					val mainThread = Thread.currentThread
 
 					monitorThread.threadToMonitor = Thread.currentThread
-
+					println(Thread.currentThread)
 					monitorThread.onInvalidHandler = [
 						mainThread.interrupt
 					]
