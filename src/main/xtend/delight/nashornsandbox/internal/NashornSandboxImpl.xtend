@@ -64,11 +64,11 @@ class NashornSandboxImpl implements NashornSandbox {
 					val mainThread = Thread.currentThread
 
 					monitorThread.threadToMonitor = Thread.currentThread
-					
+
 					monitorThread.onInvalidHandler = [
-						
+
 						mainThread.interrupt
-						
+
 					]
 
 					if (js.contains("intCheckForInterruption")) {
@@ -95,7 +95,6 @@ class NashornSandboxImpl implements NashornSandbox {
 							replace(') {', ') {intCheckForInterruption' + randomToken + '();\n')
 
 					monitorThread.start
-					
 
 					try {
 						val res = scriptEngine.eval(securedJs)
@@ -115,7 +114,7 @@ class NashornSandboxImpl implements NashornSandbox {
 					}
 
 				} catch (Throwable t) {
-					
+
 					exceptionVal.set(t)
 					monitorThread.stopMonitor
 					synchronized (monitor) {
@@ -124,11 +123,10 @@ class NashornSandboxImpl implements NashornSandbox {
 					}
 				}
 			])
-			
+
 			synchronized (monitor) {
 				monitor.wait
 			}
-			
 
 			if (monitorThread.CPULimitExceeded) {
 				var notGraceful = ""

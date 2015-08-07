@@ -23,7 +23,7 @@ class TestLimitCPU {
 
 	}
 
-	@Test(expected=ScriptCPUAbuseException)
+	@Test
 	def void test_evil_script() {
 
 		val sandbox = NashornSandboxes.create()
