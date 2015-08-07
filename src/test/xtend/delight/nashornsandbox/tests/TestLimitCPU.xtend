@@ -27,7 +27,7 @@ class TestLimitCPU {
 
 		val sandbox = NashornSandboxes.create()
 
-		sandbox.maxCPUTime = 5
+		sandbox.maxCPUTime = 5000
 		sandbox.executor = Executors.newSingleThreadExecutor
 		
 		sandbox.eval('''

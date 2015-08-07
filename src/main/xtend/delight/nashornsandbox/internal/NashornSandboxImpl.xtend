@@ -111,9 +111,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 			this.wait
 
-			if (exceptionVal.get != null) {
-				throw exceptionVal.get
-			}
+			
 
 			if (monitorThread.CPULimitExceeded) {
 				var notGraceful = ""
@@ -123,6 +121,10 @@ class NashornSandboxImpl implements NashornSandbox {
 				throw new ScriptCPUAbuseException(
 					"Script used more than the allowed [" + maxCPUTimeInMs + " ms] of CPU time. " + notGraceful,
 					exceptionVal.get())
+			}
+			
+			if (exceptionVal.get != null) {
+				throw exceptionVal.get
 			}
 
 			resVal.get()

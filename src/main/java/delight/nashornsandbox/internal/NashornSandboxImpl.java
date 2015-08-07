@@ -141,11 +141,6 @@ public class NashornSandboxImpl implements NashornSandbox {
             };
             this.exectuor.execute(_function);
             this.wait();
-            Throwable _get = exceptionVal.get();
-            boolean _notEquals = (!Objects.equal(_get, null));
-            if (_notEquals) {
-              throw exceptionVal.get();
-            }
             boolean _isCPULimitExceeded = monitorThread.isCPULimitExceeded();
             if (_isCPULimitExceeded) {
               String notGraceful = "";
@@ -154,9 +149,14 @@ public class NashornSandboxImpl implements NashornSandbox {
               if (_not) {
                 notGraceful = " The operation could not be gracefully interrupted.";
               }
-              Throwable _get_1 = exceptionVal.get();
+              Throwable _get = exceptionVal.get();
               throw new ScriptCPUAbuseException(
-                ((("Script used more than the allowed [" + this.maxCPUTimeInMs) + " ms] of CPU time. ") + notGraceful), _get_1);
+                ((("Script used more than the allowed [" + this.maxCPUTimeInMs) + " ms] of CPU time. ") + notGraceful), _get);
+            }
+            Throwable _get_1 = exceptionVal.get();
+            boolean _notEquals = (!Objects.equal(_get_1, null));
+            if (_notEquals) {
+              throw exceptionVal.get();
             }
             _xblockexpression_1 = resVal.get();
           }

@@ -29,7 +29,7 @@ public class TestLimitCPU {
   @Test
   public void test_evil_script() {
     final NashornSandbox sandbox = NashornSandboxes.create();
-    sandbox.setMaxCPUTime(5);
+    sandbox.setMaxCPUTime(5000);
     ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
     sandbox.setExecutor(_newSingleThreadExecutor);
     StringConcatenation _builder = new StringConcatenation();
