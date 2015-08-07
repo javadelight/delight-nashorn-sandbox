@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService
 import javax.script.ScriptEngine
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 import jdk.nashorn.api.scripting.ScriptObjectMirror
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException
 
 class NashornSandboxImpl implements NashornSandbox {
 
@@ -101,6 +102,10 @@ class NashornSandboxImpl implements NashornSandbox {
 
 		if (exceptionVal.get != null) {
 			throw exceptionVal.get
+		}
+
+		if (monitorThread.CPULimitExceeded) {
+			throw new ScriptCPUAbuseException("", exceptionVal.get())
 		}
 
 		resVal.get()

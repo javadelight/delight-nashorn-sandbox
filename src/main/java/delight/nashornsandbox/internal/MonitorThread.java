@@ -66,8 +66,8 @@ public class MonitorThread extends Thread {
     this.operationInterrupted.set(true);
   }
   
-  public void isCPULimitExceeded() {
-    this.cpuLimitExceeded.get();
+  public boolean isCPULimitExceeded() {
+    return this.cpuLimitExceeded.get();
   }
   
   public MonitorThread(final long maxCPUTimne) {

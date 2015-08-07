@@ -52,7 +52,7 @@ class MonitorThread extends Thread {
 		this.operationInterrupted.set(true)
 	}
 	
-	def void isCPULimitExceeded() {
+	def isCPULimitExceeded() {
 		this.cpuLimitExceeded.get
 	}
 	
