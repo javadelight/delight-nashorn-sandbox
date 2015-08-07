@@ -80,7 +80,10 @@ public class NashornSandboxImpl implements NashornSandbox {
                   final Runnable _function = new Runnable() {
                     @Override
                     public void run() {
+                      InputOutput.<String>println("do interrupt");
                       mainThread.interrupt();
+                      boolean _isInterrupted = mainThread.isInterrupted();
+                      InputOutput.<Boolean>println(Boolean.valueOf(_isInterrupted));
                     }
                   };
                   monitorThread.setOnInvalidHandler(_function);

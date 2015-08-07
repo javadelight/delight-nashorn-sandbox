@@ -63,7 +63,9 @@ class NashornSandboxImpl implements NashornSandbox {
 					monitorThread.threadToMonitor = Thread.currentThread
 					println(Thread.currentThread)
 					monitorThread.onInvalidHandler = [
+						println('do interrupt')
 						mainThread.interrupt
+						println(mainThread.interrupted)
 					]
 
 					if (js.contains("intCheckForInterruption")) {

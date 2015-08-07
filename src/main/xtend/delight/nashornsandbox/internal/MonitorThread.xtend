@@ -23,7 +23,7 @@ class MonitorThread extends Thread {
 				cpuLimitExceeded.set(true)
 				stop.set(true)
 				onInvalid.run
-				Thread.sleep(20)
+				Thread.sleep(1000)
 				if (this.operationInterrupted.get() == false) {
 					println(MonitorThread.this+': Thread hard shutdown!')
 					threadToMonitor.stop

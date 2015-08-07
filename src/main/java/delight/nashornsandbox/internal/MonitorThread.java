@@ -35,7 +35,7 @@ public class MonitorThread extends Thread {
             this.cpuLimitExceeded.set(true);
             this.stop.set(true);
             this.onInvalid.run();
-            Thread.sleep(20);
+            Thread.sleep(1000);
             boolean _get = this.operationInterrupted.get();
             boolean _equals = (_get == false);
             if (_equals) {
