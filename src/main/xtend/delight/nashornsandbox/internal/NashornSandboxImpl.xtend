@@ -108,8 +108,8 @@ class NashornSandboxImpl implements NashornSandbox {
 					} finally {
 						monitorThread.stopMonitor
 
-						synchronized (NashornSandboxImpl.this) {
-							NashornSandboxImpl.this.notify
+						synchronized (monitor) {
+							monitor.notify
 
 						}
 					}
