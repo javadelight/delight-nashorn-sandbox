@@ -58,6 +58,10 @@ class NashornSandboxImpl implements NashornSandbox {
 		
 	}
 
+	override void setCPUTimeLimitInMs(long limit) {
+		this.maxCPUTimeInMs = limit
+	}
+
 	override void allow(Class<?> clazz) {
 		allowedClasses.add(clazz.name)
 		scriptEngine = null

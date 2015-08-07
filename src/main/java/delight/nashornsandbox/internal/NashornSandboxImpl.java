@@ -71,6 +71,12 @@ public class NashornSandboxImpl implements NashornSandbox {
   }
   
   @Override
+  public void setCPUTimeLimitInMs(final long limit) {
+    throw new Error("Unresolved compilation problems:"
+      + "\nType mismatch: cannot convert from long to Integer");
+  }
+  
+  @Override
   public void allow(final Class<?> clazz) {
     String _name = clazz.getName();
     this.allowedClasses.add(_name);

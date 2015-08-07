@@ -10,7 +10,7 @@ interface NashornSandbox {
 	 */
 	def void allow(Class<?> clazz)
 
-	def void setCPUTimeLimitInMs(long limit)
+	def void setMaxCPUTime(int limit)
 
 	def Object eval(String js)
 

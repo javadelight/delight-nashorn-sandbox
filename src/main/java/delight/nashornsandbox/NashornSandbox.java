@@ -8,7 +8,7 @@ public interface NashornSandbox {
    */
   public abstract void allow(final Class<?> clazz);
   
-  public abstract void setCPUTimeLimitInMs(final long limit);
+  public abstract void setMaxCPUTime(final int limit);
   
   public abstract Object eval(final String js);
 }
