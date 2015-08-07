@@ -19,8 +19,9 @@ The sandbox also allows limiting the CPU time of scripts. This allows terminatin
      NashornSandbox sandbox = NashornSandboxes.create();
      
      sandbox.setMaxCPUTime(100);
-     
      sandbox.setExecutor(Executors.newSingleThreadExecutor());
      
      sandbox.eval("while (true) { };");
-      
+
+This code will raise a ScriptCPUAbuseException.
+
