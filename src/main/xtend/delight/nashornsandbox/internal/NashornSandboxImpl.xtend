@@ -3,7 +3,6 @@ package delight.nashornsandbox.internal
 import delight.nashornsandbox.NashornSandbox
 import java.util.HashSet
 import java.util.Set
-import javax.script.Invocable
 import javax.script.ScriptEngine
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 import jdk.nashorn.api.scripting.ScriptObjectMirror
@@ -46,7 +45,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 		val String beautifiedJs = jsBeautify.call("beautify", js) as String 
 		
-		val securedJs = 
+		val securedJs = beautifiedJs.replaceAll()
 		
 		scriptEngine.eval(js)
 
@@ -71,6 +70,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 	new() {
 		this.allowedClasses = new HashSet()
+		allowedClasses.add(InterruptTest.name)
 	}
 
 }
