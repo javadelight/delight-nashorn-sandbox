@@ -3,6 +3,7 @@ package delight.nashornsandbox.internal
 import delight.nashornsandbox.NashornSandbox
 import java.util.HashSet
 import java.util.Set
+import javax.script.Invocable
 import javax.script.ScriptEngine
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 
@@ -41,7 +42,12 @@ class NashornSandboxImpl implements NashornSandbox {
 		
 		
 		
+		val Invocable invocable = scriptEngine.eval('') as Invocable
+
+		val Object result = invocable.invokeFunction("fun1", "Peter Parker");
 		
+		scriptEngine.eval(js)
+
 		
 		val res = scriptEngine.eval(js)
 		

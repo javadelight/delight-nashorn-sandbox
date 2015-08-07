@@ -7,6 +7,7 @@ import delight.nashornsandbox.internal.MonitorThread;
 import delight.nashornsandbox.internal.SandboxClassFilter;
 import java.util.HashSet;
 import java.util.Set;
+import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.eclipse.xtext.xbase.lib.Exceptions;
@@ -53,6 +54,10 @@ public class NashornSandboxImpl implements NashornSandbox {
           }
         };
         final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000), _currentThread, _function);
+        Object _eval = this.scriptEngine.eval("");
+        final Invocable invocable = ((Invocable) _eval);
+        final Object result = invocable.invokeFunction("fun1", "Peter Parker");
+        this.scriptEngine.eval(js);
         final Object res = this.scriptEngine.eval(js);
         monitorThread.stopMonitor();
         _xblockexpression = res;
