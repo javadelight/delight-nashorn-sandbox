@@ -28,7 +28,7 @@ public class MonitorThread extends Thread {
           final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
           long _id = this.threadToMonitor.getId();
           final long threadCPUTime = bean.getThreadCpuTime(_id);
-          String _plus = (Long.valueOf(threadCPUTime) + " > ");
+          String _plus = (Long.valueOf(threadCPUTime) + " > \n");
           String _plus_1 = (_plus + Long.valueOf(this.maxCPUTime));
           InputOutput.<String>println(_plus_1);
           if ((threadCPUTime > this.maxCPUTime)) {

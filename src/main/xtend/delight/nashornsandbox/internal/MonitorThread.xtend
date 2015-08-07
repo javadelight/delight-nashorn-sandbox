@@ -18,7 +18,7 @@ class MonitorThread extends Thread {
 			val bean = ManagementFactory.getThreadMXBean()
 			
 			val threadCPUTime = bean.getThreadCpuTime(threadToMonitor.id)
-			println(threadCPUTime +" > "+maxCPUTime)
+			println(threadCPUTime +" > \n"+maxCPUTime)
 			if (threadCPUTime > maxCPUTime) {
 				cpuLimitExceeded.set(true)
 				stop.set(true)
