@@ -8,20 +8,24 @@ The sandbox by default blocks access to **all** Java classes.
 
 Classes, which should be used in JavaScript, must be explicitly allowed.
 
-     NashornSandbox sandbox = NashornSandboxes.create();
+```java
+NashornSandbox sandbox = NashornSandboxes.create();
      
-     sandbox.allow(File.class);
+sandbox.allow(File.class);
      
-     sandbox.eval("var File = Java.type('java.io.File'); File;")
+sandbox.eval("var File = Java.type('java.io.File'); File;")
+```
 
 The sandbox also allows limiting the CPU time of scripts. This allows terminating scripts which contain infinite loops and other problematic code.
 
-     NashornSandbox sandbox = NashornSandboxes.create();
+```java
+NashornSandbox sandbox = NashornSandboxes.create();
      
-     sandbox.setMaxCPUTime(100);
-     sandbox.setExecutor(Executors.newSingleThreadExecutor());
+sandbox.setMaxCPUTime(100);
+sandbox.setExecutor(Executors.newSingleThreadExecutor());
      
-     sandbox.eval("while (true) { };");
+sandbox.eval("while (true) { };");
+```
 
 This code will raise a ScriptCPUAbuseException.
 
