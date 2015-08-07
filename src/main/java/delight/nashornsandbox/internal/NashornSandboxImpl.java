@@ -4,17 +4,13 @@ import com.google.common.base.Objects;
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.internal.BeautifyJs;
 import delight.nashornsandbox.internal.InterruptTest;
-import delight.nashornsandbox.internal.MonitorThread;
 import delight.nashornsandbox.internal.SandboxClassFilter;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import javax.script.ScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Exceptions;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
 public class NashornSandboxImpl implements NashornSandbox {
@@ -23,6 +19,8 @@ public class NashornSandboxImpl implements NashornSandbox {
   private ScriptEngine scriptEngine;
   
   private Integer maxCPUTimeInMs = Integer.valueOf(0);
+  
+  private final ExecutorService exectuor;
   
   public void assertScriptEngine() {
     try {
@@ -43,70 +41,9 @@ public class NashornSandboxImpl implements NashornSandbox {
   
   @Override
   public Object eval(final String js) {
-    try {
-      Object _xblockexpression = null;
-      {
-        this.assertScriptEngine();
-        if (((this.maxCPUTimeInMs).intValue() == 0)) {
-          return this.scriptEngine.eval(js);
-        }
-        final Thread mainThread = Thread.currentThread();
-        Thread _currentThread = Thread.currentThread();
-        final Runnable _function = new Runnable() {
-          @Override
-          public void run() {
-            mainThread.interrupt();
-          }
-        };
-        final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000), _currentThread, _function);
-        boolean _contains = js.contains("intCheckForInterruption");
-        if (_contains) {
-          throw new IllegalArgumentException("Script contains the illegal string [intCheckForInterruption]");
-        }
-        Object _eval = this.scriptEngine.eval("window.js_beautify;");
-        final ScriptObjectMirror jsBeautify = ((ScriptObjectMirror) _eval);
-        Object _call = jsBeautify.call("beautify", js);
-        final String beautifiedJs = ((String) _call);
-        Random _random = new Random();
-        int _nextInt = _random.nextInt();
-        final int randomToken = Math.abs(_nextInt);
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append("var InterruptTest = Java.type(\'");
-        String _name = InterruptTest.class.getName();
-        _builder.append(_name, "");
-        _builder.append("\');");
-        _builder.newLineIfNotEmpty();
-        _builder.append("var isInterrupted = InterruptTest.isInterrupted;");
-        _builder.newLine();
-        _builder.append("var intCheckForInterruption");
-        _builder.append(randomToken, "");
-        _builder.append(" = function() {");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.append("if (isInterrupted()) {");
-        _builder.newLine();
-        _builder.append("\t    ");
-        _builder.append("throw new Error(\'Interrupted\')");
-        _builder.newLine();
-        _builder.append("\t");
-        _builder.append("}");
-        _builder.newLine();
-        _builder.append("};");
-        _builder.newLine();
-        String _replaceAll = beautifiedJs.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-        String _replace = _replaceAll.replace(") {", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-        final String securedJs = (_builder.toString() + _replace);
-        InputOutput.<String>println(securedJs);
-        monitorThread.start();
-        this.scriptEngine.eval(securedJs);
-        final Object res = this.scriptEngine.eval(js);
-        monitorThread.stopMonitor();
-        _xblockexpression = res;
-      }
-      return _xblockexpression;
-    } catch (Throwable _e) {
-      throw Exceptions.sneakyThrow(_e);
-    }
+    throw new Error("Unresolved compilation problems:"
+      + "\nType mismatch: cannot convert from void to Object"
+      + "\nThis expression is not allowed in this context, since it doesn\'t cause any side effects.");
   }
   
   @Override

@@ -2,11 +2,12 @@ package delight.nashornsandbox.internal
 
 import delight.nashornsandbox.NashornSandbox
 import java.util.HashSet
+import java.util.Random
 import java.util.Set
+import java.util.concurrent.ExecutorService
 import javax.script.ScriptEngine
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 import jdk.nashorn.api.scripting.ScriptObjectMirror
-import java.util.Random
 
 class NashornSandboxImpl implements NashornSandbox {
 
@@ -14,6 +15,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 	var ScriptEngine scriptEngine
 	var Integer maxCPUTimeInMs = 0
+	val ExecutorService exectuor
 
 	def void assertScriptEngine() {
 		if (scriptEngine != null) {
@@ -38,7 +40,8 @@ class NashornSandboxImpl implements NashornSandbox {
 			return scriptEngine.eval(js)
 		}
 		
-		val mainThread = Thread.currentThread
+		exectuor.execute([
+			val mainThread = Thread.currentThread
 		
 		val monitorThread = new MonitorThread(maxCPUTimeInMs*1000, Thread.currentThread, [
 			mainThread.interrupt
@@ -74,6 +77,9 @@ class NashornSandboxImpl implements NashornSandbox {
 		monitorThread.stopMonitor
 		
 		res
+		])
+		
+		
 		
 		
 	}
