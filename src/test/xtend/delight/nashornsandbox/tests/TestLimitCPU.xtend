@@ -12,7 +12,12 @@ class TestLimitCPU {
 		
 		sandbox.maxCPUTime = 5
 		
-		sandbox.eval('var x= 1+1;x;')
+		sandbox.eval('''
+		var x = 1;
+		while (true) {
+			x=x+1;
+		}
+		''')
 		
 	}
 	
