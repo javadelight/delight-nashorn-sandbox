@@ -105,9 +105,12 @@ class NashornSandboxImpl implements NashornSandbox {
 		}
 
 		if (monitorThread.CPULimitExceeded) {
-			
+			var notGraceful = ""
+			if (!monitorThread.gracefullyInterrputed) {
+				notGraceful = " The operation could not be gracefully interrupted."
+			}
 			throw new ScriptCPUAbuseException(
-				"Script used more than the allowed [" + maxCPUTimeInMs + " ms] of CPU time.", exceptionVal.get())
+				"Script used more than the allowed [" + maxCPUTimeInMs + " ms] of CPU time. "+notGraceful, exceptionVal.get())
 		}
 
 		resVal.get()

@@ -136,9 +136,15 @@ public class NashornSandboxImpl implements NashornSandbox {
         }
         boolean _isCPULimitExceeded = monitorThread.isCPULimitExceeded();
         if (_isCPULimitExceeded) {
+          String notGraceful = "";
+          boolean _gracefullyInterrputed = monitorThread.gracefullyInterrputed();
+          boolean _not = (!_gracefullyInterrputed);
+          if (_not) {
+            notGraceful = " The operation could not be gracefully interrupted.";
+          }
           Throwable _get_1 = exceptionVal.get();
           throw new ScriptCPUAbuseException(
-            (("Script used more than the allowed [" + this.maxCPUTimeInMs) + " ms] of CPU time."), _get_1);
+            ((("Script used more than the allowed [" + this.maxCPUTimeInMs) + " ms] of CPU time. ") + notGraceful), _get_1);
         }
         _xblockexpression = resVal.get();
       }
