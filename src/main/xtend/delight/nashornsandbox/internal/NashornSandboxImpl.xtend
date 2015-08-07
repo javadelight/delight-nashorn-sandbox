@@ -37,6 +37,8 @@ class NashornSandboxImpl implements NashornSandbox {
 			Thread.currentThread.interrupt
 		])
 		
+		scriptEngine.eval(BeautifyJs.CODE)
+		
 		val res = scriptEngine.eval(js)
 		
 		monitorThread.stopMonitor

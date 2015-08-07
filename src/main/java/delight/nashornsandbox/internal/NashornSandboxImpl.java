@@ -2,6 +2,7 @@ package delight.nashornsandbox.internal;
 
 import com.google.common.base.Objects;
 import delight.nashornsandbox.NashornSandbox;
+import delight.nashornsandbox.internal.BeautifyJs;
 import delight.nashornsandbox.internal.MonitorThread;
 import delight.nashornsandbox.internal.SandboxClassFilter;
 import java.util.HashSet;
@@ -47,6 +48,7 @@ public class NashornSandboxImpl implements NashornSandbox {
           }
         };
         final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000), _currentThread, _function);
+        this.scriptEngine.eval(BeautifyJs.CODE);
         final Object res = this.scriptEngine.eval(js);
         monitorThread.stopMonitor();
         _xblockexpression = res;
