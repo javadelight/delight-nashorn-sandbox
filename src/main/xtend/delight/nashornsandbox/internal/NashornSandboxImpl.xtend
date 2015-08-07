@@ -64,7 +64,7 @@ class NashornSandboxImpl implements NashornSandbox {
 					monitorThread.threadToMonitor = Thread.currentThread
 					println(Thread.currentThread)
 					monitorThread.onInvalidHandler = [
-						//println('do interrupt')
+						// println('do interrupt')
 						mainThread.interrupt
 						println(mainThread.interrupted)
 					]
@@ -85,26 +85,28 @@ class NashornSandboxImpl implements NashornSandbox {
 						var isInterrupted = InterruptTest.isInterrupted;
 						var intCheckForInterruption«randomToken» = function() {
 							if (isInterrupted()) {
-							    throw new Error('Interrupted')
+							    throw new Error('Interrupted«randomToken»')
 							}
 						};
 					''' +
 						beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n').
 							replace(') {', ') {intCheckForInterruption' + randomToken + '();\n')
-					
-					
-					
+
 					monitorThread.start
 					scriptEngine.eval(securedJs)
-					
+
 					try {
-					  val res = scriptEngine.eval(js)
+						val res = scriptEngine.eval(js)
+						resVal.set(res)
 					} catch (ScriptException e) {
-						monitorThread.notifyOperationInterrupted
+						if (e.message.contains("Interrupted" + randomToken)) {
+							monitorThread.notifyOperationInterrupted
+
+						}
 					}
 					monitorThread.stopMonitor
 
-					resVal.set(res)
+					
 
 					outerThread.notify
 
@@ -119,8 +121,6 @@ class NashornSandboxImpl implements NashornSandbox {
 
 			this.wait
 
-			
-
 			if (monitorThread.CPULimitExceeded) {
 				var notGraceful = ""
 				if (!monitorThread.gracefullyInterrputed) {
@@ -130,7 +130,7 @@ class NashornSandboxImpl implements NashornSandbox {
 					"Script used more than the allowed [" + maxCPUTimeInMs + " ms] of CPU time. " + notGraceful,
 					exceptionVal.get())
 			}
-			
+
 			if (exceptionVal.get != null) {
 				throw exceptionVal.get
 			}
