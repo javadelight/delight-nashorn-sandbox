@@ -21,4 +21,18 @@ class TestLimitCPU {
 		
 	}
 	
+	@Test
+	def void test_evil_script() {
+		
+		val sandbox = NashornSandboxes.create()
+		
+		sandbox.maxCPUTime = 5
+		
+		sandbox.eval('''
+		var x = 1;
+		while (true) { }
+		''')
+		
+	}
+	
 }

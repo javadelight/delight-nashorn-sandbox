@@ -23,4 +23,16 @@ public class TestLimitCPU {
     _builder.newLine();
     sandbox.eval(_builder.toString());
   }
+  
+  @Test
+  public void test_evil_script() {
+    final NashornSandbox sandbox = NashornSandboxes.create();
+    sandbox.setMaxCPUTime(5);
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("var x = 1;");
+    _builder.newLine();
+    _builder.append("while (true) { }");
+    _builder.newLine();
+    sandbox.eval(_builder.toString());
+  }
 }

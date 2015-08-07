@@ -25,7 +25,7 @@ class MonitorThread extends Thread {
 				onInvalid.run
 				Thread.sleep(50)
 				if (this.operationInterrupted.get() == false) {
-					println(delight.nashornsandbox.internal.MonitorThread.this+': Thread hard shutdown!')
+					println(MonitorThread.this+': Thread hard shutdown!')
 					threadToMonitor.stop
 				}
 				return
