@@ -46,12 +46,17 @@ class NashornSandboxImpl implements NashornSandbox {
 		
 		val outerThread = Thread.currentThread
 		
+		val monitorThread = new MonitorThread(maxCPUTimeInMs * 1000)
+		
 		exectuor.execute([
 			val mainThread = Thread.currentThread
 
-			val monitorThread = new MonitorThread(maxCPUTimeInMs * 1000, Thread.currentThread, [
+			monitorThread.threadToMonitor = Thread.currentThread
+
+			monitorThread.onInvalidHandler = [
 				mainThread.interrupt
-			])
+			]
+			
 
 			if (js.contains("intCheckForInterruption")) {
 				throw new IllegalArgumentException('Script contains the illegal string [intCheckForInterruption]')
