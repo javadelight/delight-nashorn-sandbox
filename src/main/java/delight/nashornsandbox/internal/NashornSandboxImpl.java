@@ -129,7 +129,7 @@ public class NashornSandboxImpl implements NashornSandbox {
                   if (_t instanceof Throwable) {
                     final Throwable t = (Throwable)_t;
                     exceptionVal.set(t);
-                    outerThread.notify();
+                    NashornSandboxImpl.class.notify();
                   } else {
                     throw Exceptions.sneakyThrow(_t);
                   }
@@ -137,7 +137,7 @@ public class NashornSandboxImpl implements NashornSandbox {
               }
             };
             this.exectuor.execute(_function);
-            Thread.class.wait();
+            this.wait();
             Throwable _get = exceptionVal.get();
             boolean _notEquals = (!Objects.equal(_get, null));
             if (_notEquals) {

@@ -102,11 +102,11 @@ class NashornSandboxImpl implements NashornSandbox {
 
 				} catch (Throwable t) {
 					exceptionVal.set(t)
-					outerThread.notify
+					delight.nashornsandbox.internal.NashornSandboxImpl.notify
 				}
 			])
 
-			Thread.wait
+			this.wait
 
 			if (exceptionVal.get != null) {
 				throw exceptionVal.get
