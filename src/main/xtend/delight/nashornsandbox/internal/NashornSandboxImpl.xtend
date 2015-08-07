@@ -49,6 +49,10 @@ class NashornSandboxImpl implements NashornSandbox {
 
 		val monitorThread = new MonitorThread(maxCPUTimeInMs * 1000)
 
+		if (exectuor == null) {
+			throw new IllegalStateException("When a CPU time limit is set, an executor needs to be provided by calling .setExecutor(...)")
+		}
+
 		exectuor.execute([
 			try {
 				val mainThread = Thread.currentThread

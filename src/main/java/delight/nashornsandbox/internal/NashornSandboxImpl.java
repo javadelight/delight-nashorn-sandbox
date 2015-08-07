@@ -58,6 +58,10 @@ public class NashornSandboxImpl implements NashornSandbox {
         final Value<Throwable> exceptionVal = new Value<Throwable>(null);
         final Thread outerThread = Thread.currentThread();
         final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000));
+        boolean _equals = Objects.equal(this.exectuor, null);
+        if (_equals) {
+          throw new IllegalStateException("When a CPU time limit is set, an executor needs to be provided by calling .setExecutor(...)");
+        }
         final Runnable _function = new Runnable() {
           @Override
           public void run() {
