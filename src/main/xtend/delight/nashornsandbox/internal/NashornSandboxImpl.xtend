@@ -102,7 +102,10 @@ class NashornSandboxImpl implements NashornSandbox {
 
 				} catch (Throwable t) {
 					exceptionVal.set(t)
-					delight.nashornsandbox.internal.NashornSandboxImpl.notify
+					synchronized (NashornSandboxImpl.this) {
+						NashornSandboxImpl.this.notify
+
+					}
 				}
 			])
 

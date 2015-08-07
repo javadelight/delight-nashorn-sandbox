@@ -129,7 +129,10 @@ public class NashornSandboxImpl implements NashornSandbox {
                   if (_t instanceof Throwable) {
                     final Throwable t = (Throwable)_t;
                     exceptionVal.set(t);
-                    NashornSandboxImpl.class.notify();
+                    /* NashornSandboxImpl.this; */
+                    synchronized (NashornSandboxImpl.this) {
+                      NashornSandboxImpl.this.notify();
+                    }
                   } else {
                     throw Exceptions.sneakyThrow(_t);
                   }
