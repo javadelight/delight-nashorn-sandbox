@@ -159,15 +159,35 @@ public class NashornSandboxImpl implements NashornSandbox {
   }
   
   @Override
-  public void setMaxCPUTime(final int limit) {
-    this.maxCPUTimeInMs = Integer.valueOf(limit);
+  public NashornSandbox setMaxCPUTime(final int limit) {
+    NashornSandboxImpl _xblockexpression = null;
+    {
+      this.maxCPUTimeInMs = Integer.valueOf(limit);
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
   }
   
   @Override
-  public void allow(final Class<?> clazz) {
-    String _name = clazz.getName();
-    this.allowedClasses.add(_name);
-    this.scriptEngine = null;
+  public NashornSandbox allow(final Class<?> clazz) {
+    NashornSandboxImpl _xblockexpression = null;
+    {
+      String _name = clazz.getName();
+      this.allowedClasses.add(_name);
+      this.scriptEngine = null;
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+  
+  @Override
+  public NashornSandbox setExecutor(final ExecutorService executor) {
+    NashornSandboxImpl _xblockexpression = null;
+    {
+      this.exectuor = executor;
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
   }
   
   public NashornSandboxImpl() {

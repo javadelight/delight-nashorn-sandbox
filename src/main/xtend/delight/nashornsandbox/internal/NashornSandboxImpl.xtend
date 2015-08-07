@@ -2,14 +2,15 @@ package delight.nashornsandbox.internal
 
 import delight.async.Value
 import delight.nashornsandbox.NashornSandbox
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException
 import java.util.HashSet
 import java.util.Random
 import java.util.Set
+import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 import javax.script.ScriptEngine
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 import jdk.nashorn.api.scripting.ScriptObjectMirror
-import delight.nashornsandbox.exceptions.ScriptCPUAbuseException
 
 class NashornSandboxImpl implements NashornSandbox {
 
@@ -121,13 +122,20 @@ class NashornSandboxImpl implements NashornSandbox {
 
 	}
 
-	override void setMaxCPUTime(int limit) {
+	override NashornSandbox setMaxCPUTime(int limit) {
 		this.maxCPUTimeInMs = limit
+		this
 	}
 
-	override void allow(Class<?> clazz) {
+	override NashornSandbox allow(Class<?> clazz) {
 		allowedClasses.add(clazz.name)
 		scriptEngine = null
+		this
+	}
+
+	override NashornSandbox setExecutor(ExecutorService executor) {
+		this.exectuor = executor
+		this
 	}
 
 	new() {
