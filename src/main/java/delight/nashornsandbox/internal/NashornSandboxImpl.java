@@ -13,6 +13,7 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
 public class NashornSandboxImpl implements NashornSandbox {
@@ -66,7 +67,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         Object _call = jsBeautify.call("beautify", js);
         final String beautifiedJs = ((String) _call);
         StringConcatenation _builder = new StringConcatenation();
-        _builder.append("var InterruptTest = var Java.type(\'");
+        _builder.append("var InterruptTest = Java.type(\'");
         String _name = InterruptTest.class.getName();
         _builder.append(_name, "");
         _builder.append("\');");
@@ -76,7 +77,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         _builder.append("var intCheckForInterruption = function() {");
         _builder.newLine();
         _builder.append("\t");
-        _builder.append("if (isInterrupted) {");
+        _builder.append("if (isInterrupted()) {");
         _builder.newLine();
         _builder.append("\t    ");
         _builder.append("throw new Error(\'Interrupted\')");
@@ -86,9 +87,10 @@ public class NashornSandboxImpl implements NashornSandbox {
         _builder.newLine();
         _builder.append("};");
         _builder.newLine();
-        String _replaceAll = beautifiedJs.replaceAll(";\\n", ";intCheckForInterruption();");
+        String _replaceAll = beautifiedJs.replaceAll(";\\n", ";intCheckForInterruption();\\n");
         final String securedJs = (_builder.toString() + _replaceAll);
-        this.scriptEngine.eval(js);
+        InputOutput.<String>println(securedJs);
+        this.scriptEngine.eval(securedJs);
         final Object res = this.scriptEngine.eval(js);
         monitorThread.stopMonitor();
         _xblockexpression = res;
