@@ -145,12 +145,16 @@ public class NashornSandboxImpl implements NashornSandbox {
                     }
                   } finally {
                     monitorThread.stopMonitor();
-                    outerThread.notify();
+                    /* NashornSandboxImpl.this; */
+                    synchronized (NashornSandboxImpl.this) {
+                      NashornSandboxImpl.this.notify();
+                    }
                   }
                 } catch (final Throwable _t_1) {
                   if (_t_1 instanceof Throwable) {
                     final Throwable t = (Throwable)_t_1;
                     exceptionVal.set(t);
+                    monitorThread.stopMonitor();
                     /* NashornSandboxImpl.this; */
                     synchronized (NashornSandboxImpl.this) {
                       NashornSandboxImpl.this.notify();
