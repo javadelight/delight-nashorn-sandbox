@@ -42,9 +42,9 @@ class NashornSandboxImpl implements NashornSandbox {
 			Thread.currentThread.interrupt
 		])
 		
-		val ScriptObjectMirror jsBeautify = scriptEngine.eval('window.js_beautify;') as Invocable
+		val  jsBeautify = scriptEngine.eval('window.js_beautify;') as ScriptObjectMirror
 
-		val Object result = invocable.invokeFunction("beautify", js);
+		val Object result = jsBeautify.call("beautify", js) 
 		
 		println(result)
 		
