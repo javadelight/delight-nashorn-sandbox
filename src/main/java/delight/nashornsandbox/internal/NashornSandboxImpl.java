@@ -2,6 +2,7 @@ package delight.nashornsandbox.internal;
 
 import com.google.common.base.Objects;
 import delight.nashornsandbox.NashornSandbox;
+import delight.nashornsandbox.internal.MonitorThread;
 import delight.nashornsandbox.internal.SandboxClassFilter;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,10 +32,21 @@ public class NashornSandboxImpl implements NashornSandbox {
   @Override
   public Object eval(final String js) {
     try {
-      Object _xblockexpression = null;
+      MonitorThread _xblockexpression = null;
       {
         this.assertScriptEngine();
-        _xblockexpression = this.scriptEngine.eval(js);
+        if (((this.maxCPUTimeInMs).intValue() == 0)) {
+          return this.scriptEngine.eval(js);
+        }
+        Thread _currentThread = Thread.currentThread();
+        final Runnable _function = new Runnable() {
+          @Override
+          public void run() {
+            Thread _currentThread = Thread.currentThread();
+            _currentThread.interrupt();
+          }
+        };
+        _xblockexpression = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000), _currentThread, _function);
       }
       return _xblockexpression;
     } catch (Throwable _e) {
