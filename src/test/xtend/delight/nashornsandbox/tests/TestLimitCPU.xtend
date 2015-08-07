@@ -7,7 +7,7 @@ import delight.nashornsandbox.exceptions.ScriptCPUAbuseException
 
 class TestLimitCPU {
 
-	@Test
+	@Test(expected=ScriptCPUAbuseException)
 	def void test() {
 
 		val sandbox = NashornSandboxes.create()
@@ -23,7 +23,7 @@ class TestLimitCPU {
 
 	}
 
-	@Test
+	@Test(expected=ScriptCPUAbuseException)
 	def void test_evil_script() {
 
 		val sandbox = NashornSandboxes.create()

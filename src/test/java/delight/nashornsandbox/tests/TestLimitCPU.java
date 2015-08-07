@@ -2,6 +2,7 @@ package delight.nashornsandbox.tests;
 
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.NashornSandboxes;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -9,7 +10,7 @@ import org.junit.Test;
 
 @SuppressWarnings("all")
 public class TestLimitCPU {
-  @Test
+  @Test(expected = ScriptCPUAbuseException.class)
   public void test() {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.setMaxCPUTime(5);
@@ -26,7 +27,7 @@ public class TestLimitCPU {
     sandbox.eval(_builder.toString());
   }
   
-  @Test
+  @Test(expected = ScriptCPUAbuseException.class)
   public void test_evil_script() {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.setMaxCPUTime(50);
