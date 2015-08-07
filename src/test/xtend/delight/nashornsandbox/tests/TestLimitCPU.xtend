@@ -1,7 +1,7 @@
 package delight.nashornsandbox.tests
 
-import delight.async.jre.Async
 import delight.nashornsandbox.NashornSandboxes
+import java.util.concurrent.Executors
 import org.junit.Test
 
 class TestLimitCPU {
@@ -28,11 +28,14 @@ class TestLimitCPU {
 		val sandbox = NashornSandboxes.create()
 
 		sandbox.maxCPUTime = 5
-
+		sandbox.executor = Executors.newSingleThreadExecutor
+		
 		sandbox.eval('''
 			var x = 1;
 			while (true) { }
 		''')
+		
+		sandbox.executor.shutdown()
 
 	}
 
