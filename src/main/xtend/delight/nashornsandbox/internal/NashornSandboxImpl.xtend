@@ -62,7 +62,7 @@ class NashornSandboxImpl implements NashornSandbox {
 				    throw new Error('Interrupted')
 				}
 			};
-		'''+beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption'+randomToken+'();\n').replaceAll(') {', ') {intCheckForInterruption'+randomToken+'();\n')
+		'''+beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption'+randomToken+'();\n').replaceAll('\\) {', ') {intCheckForInterruption'+randomToken+'();\n')
 		
 		println(securedJs)
 		
