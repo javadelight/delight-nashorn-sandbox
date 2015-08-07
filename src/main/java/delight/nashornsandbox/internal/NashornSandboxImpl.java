@@ -20,14 +20,19 @@ public class NashornSandboxImpl implements NashornSandbox {
   private Integer maxCPUTimeInMs = Integer.valueOf(0);
   
   public void assertScriptEngine() {
-    boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
-    if (_notEquals) {
-      return;
+    try {
+      boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
+      if (_notEquals) {
+        return;
+      }
+      final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
+      SandboxClassFilter _sandboxClassFilter = new SandboxClassFilter(this.allowedClasses);
+      ScriptEngine _scriptEngine = factory.getScriptEngine(_sandboxClassFilter);
+      this.scriptEngine = _scriptEngine;
+      this.scriptEngine.eval(BeautifyJs.CODE);
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
     }
-    final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
-    SandboxClassFilter _sandboxClassFilter = new SandboxClassFilter(this.allowedClasses);
-    ScriptEngine _scriptEngine = factory.getScriptEngine(_sandboxClassFilter);
-    this.scriptEngine = _scriptEngine;
   }
   
   @Override
@@ -48,7 +53,6 @@ public class NashornSandboxImpl implements NashornSandbox {
           }
         };
         final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000), _currentThread, _function);
-        this.scriptEngine.eval(BeautifyJs.CODE);
         final Object res = this.scriptEngine.eval(js);
         monitorThread.stopMonitor();
         _xblockexpression = res;

@@ -24,6 +24,8 @@ class NashornSandboxImpl implements NashornSandbox {
 		val NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
 
 		scriptEngine = factory.getScriptEngine(new SandboxClassFilter(allowedClasses));
+		
+		scriptEngine.eval(BeautifyJs.CODE)
 	}
 
 	override Object eval(String js) {
@@ -37,7 +39,9 @@ class NashornSandboxImpl implements NashornSandbox {
 			Thread.currentThread.interrupt
 		])
 		
-		scriptEngine.eval(BeautifyJs.CODE)
+		
+		
+		
 		
 		val res = scriptEngine.eval(js)
 		
