@@ -55,12 +55,12 @@ class NashornSandboxImpl implements NashornSandbox {
 		val securedJs = '''
 			var InterruptTest = Java.type('«InterruptTest.name»');
 			var isInterrupted = InterruptTest.isInterrupted;
-			var intCheckForInterruption = function() {
+			var intCheckForInterruption«randomToken» = function() {
 				if (isInterrupted()) {
 				    throw new Error('Interrupted')
 				}
 			};
-		'''+beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption();\n')
+		'''+beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption'+randomToken+'();\n')
 		
 		println(securedJs)
 		

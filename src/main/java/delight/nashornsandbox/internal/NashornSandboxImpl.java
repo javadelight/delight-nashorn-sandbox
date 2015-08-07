@@ -78,8 +78,10 @@ public class NashornSandboxImpl implements NashornSandbox {
         _builder.newLineIfNotEmpty();
         _builder.append("var isInterrupted = InterruptTest.isInterrupted;");
         _builder.newLine();
-        _builder.append("var intCheckForInterruption = function() {");
-        _builder.newLine();
+        _builder.append("var intCheckForInterruption");
+        _builder.append(randomToken, "");
+        _builder.append(" = function() {");
+        _builder.newLineIfNotEmpty();
         _builder.append("\t");
         _builder.append("if (isInterrupted()) {");
         _builder.newLine();
@@ -91,7 +93,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         _builder.newLine();
         _builder.append("};");
         _builder.newLine();
-        String _replaceAll = beautifiedJs.replaceAll(";\\n", ";intCheckForInterruption();\n");
+        String _replaceAll = beautifiedJs.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
         final String securedJs = (_builder.toString() + _replaceAll);
         InputOutput.<String>println(securedJs);
         this.scriptEngine.eval(securedJs);
