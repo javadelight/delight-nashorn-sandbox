@@ -43,55 +43,54 @@ class NashornSandboxImpl implements NashornSandbox {
 
 		val resVal = new Value<Object>(null)
 		val exceptionVal = new Value<Throwable>(null)
-		
+
 		val outerThread = Thread.currentThread
-		
+
 		val monitorThread = new MonitorThread(maxCPUTimeInMs * 1000)
-		
+
 		exectuor.execute([
 			try {
-			val mainThread = Thread.currentThread
+				val mainThread = Thread.currentThread
 
-			monitorThread.threadToMonitor = Thread.currentThread
+				monitorThread.threadToMonitor = Thread.currentThread
 
-			monitorThread.onInvalidHandler = [
-				mainThread.interrupt
-			]
-			
+				monitorThread.onInvalidHandler = [
+					mainThread.interrupt
+				]
 
-			if (js.contains("intCheckForInterruption")) {
-				throw new IllegalArgumentException('Script contains the illegal string [intCheckForInterruption]')
-			}
+				if (js.contains("intCheckForInterruption")) {
+					throw new IllegalArgumentException('Script contains the illegal string [intCheckForInterruption]')
+				}
 
-			val jsBeautify = scriptEngine.eval('window.js_beautify;') as ScriptObjectMirror
+				val jsBeautify = scriptEngine.eval('window.js_beautify;') as ScriptObjectMirror
 
-			val String beautifiedJs = jsBeautify.call("beautify", js) as String
+				val String beautifiedJs = jsBeautify.call("beautify", js) as String
 
-			val randomToken = Math.abs(new Random().nextInt)
+				val randomToken = Math.abs(new Random().nextInt)
 
-			val securedJs = '''
-				var InterruptTest = Java.type('«InterruptTest.name»');
-				var isInterrupted = InterruptTest.isInterrupted;
-				var intCheckForInterruption«randomToken» = function() {
-					if (isInterrupted()) {
-					    throw new Error('Interrupted')
-					}
-				};
-			''' +
-				beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n').replace(') {',
-					') {intCheckForInterruption' + randomToken + '();\n')
+				val securedJs = '''
+					var InterruptTest = Java.type('«InterruptTest.name»');
+					var isInterrupted = InterruptTest.isInterrupted;
+					var intCheckForInterruption«randomToken» = function() {
+						if (isInterrupted()) {
+						    throw new Error('Interrupted')
+						}
+					};
+				''' +
+					beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n').replace(') {',
+						') {intCheckForInterruption' + randomToken + '();\n')
 
-			monitorThread.start
-			scriptEngine.eval(securedJs)
+				monitorThread.start
+				scriptEngine.eval(securedJs)
 
-			val res = scriptEngine.eval(js)
+				val res = scriptEngine.eval(js)
 
-			monitorThread.stopMonitor
+				monitorThread.stopMonitor
 
-			resVal.set(res)
-			
-			outerThread.notify
-			
+				resVal.set(res)
+
+				outerThread.notify
+
 			} catch (Throwable t) {
 				exceptionVal.set(t)
 				outerThread.notify
@@ -99,11 +98,11 @@ class NashornSandboxImpl implements NashornSandbox {
 		])
 
 		Thread.wait
-		
+
 		if (exceptionVal.get != null) {
 			throw exceptionVal.get
 		}
-		
+
 		resVal.get()
 
 	}
