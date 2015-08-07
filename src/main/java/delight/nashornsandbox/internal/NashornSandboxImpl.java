@@ -128,14 +128,12 @@ public class NashornSandboxImpl implements NashornSandbox {
                   String _replace = _replaceAll.replace(") {", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
                   final String securedJs = (_builder.toString() + _replace);
                   monitorThread.start();
-                  NashornSandboxImpl.this.scriptEngine.eval(securedJs);
                   try {
-                    final Object res = NashornSandboxImpl.this.scriptEngine.eval(js);
+                    final Object res = NashornSandboxImpl.this.scriptEngine.eval(securedJs);
                     resVal.set(res);
                   } catch (final Throwable _t) {
                     if (_t instanceof ScriptException) {
                       final ScriptException e = (ScriptException)_t;
-                      InputOutput.<String>println(("received exception " + e));
                       String _message = e.getMessage();
                       boolean _contains_1 = _message.contains(("Interrupted" + Integer.valueOf(randomToken)));
                       if (_contains_1) {

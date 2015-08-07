@@ -93,13 +93,12 @@ class NashornSandboxImpl implements NashornSandbox {
 							replace(') {', ') {intCheckForInterruption' + randomToken + '();\n')
 
 					monitorThread.start
-					scriptEngine.eval(securedJs)
+					
 
 					try {
-						val res = scriptEngine.eval(js)
+						val res = scriptEngine.eval(securedJs)
 						resVal.set(res)
 					} catch (ScriptException e) {
-						println("received exception "+e)
 						if (e.message.contains("Interrupted" + randomToken)) {
 							monitorThread.notifyOperationInterrupted
 
