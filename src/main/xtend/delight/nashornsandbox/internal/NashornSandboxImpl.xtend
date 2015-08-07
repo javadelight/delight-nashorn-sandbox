@@ -43,6 +43,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 		val resVal = new Value<Object>(null)
 		val exceptionVal = new Value<Throwable>(null)
+		
 		val outerThread = Thread.currentThread
 		
 		exectuor.execute([
@@ -73,8 +74,6 @@ class NashornSandboxImpl implements NashornSandbox {
 			''' +
 				beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n').replace(') {',
 					') {intCheckForInterruption' + randomToken + '();\n')
-
-			println(securedJs)
 
 			monitorThread.start
 			scriptEngine.eval(securedJs)

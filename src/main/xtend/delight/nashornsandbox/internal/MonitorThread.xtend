@@ -8,8 +8,8 @@ class MonitorThread extends Thread {
 	val long maxCPUTime
 	val AtomicBoolean stop
 	val AtomicBoolean operationInterrupted
-	val Thread threadToMonitor
-	val Runnable onInvalid
+	var Thread threadToMonitor
+	var Runnable onInvalid
 	val AtomicBoolean cpuLimitExceeded;
 	
 	override run() {
@@ -40,6 +40,14 @@ class MonitorThread extends Thread {
 		stop.set(true)
 	}
 	
+	def void setThreadToMonitor(Thread t) {
+		this.threadToMonitor = t
+	}
+	
+	def void setOnInvalidHandler(Runnable r) {
+		this.onInvalid = r
+	}
+	
 	def void notifyOperationInterrupted() {
 		this.operationInterrupted.set(true)
 	}
@@ -48,10 +56,10 @@ class MonitorThread extends Thread {
 		this.cpuLimitExceeded.get
 	}
 	
-	new (long maxCPUTimne, Thread threadToMonitor, Runnable onInvalid) {
+	new (long maxCPUTimne) {
 		this.maxCPUTime = maxCPUTimne
-		this.threadToMonitor = threadToMonitor
-		this.onInvalid = onInvalid
+		
+		
 		this.stop = new AtomicBoolean(false)
 		this.operationInterrupted = new AtomicBoolean(false)
 		this.cpuLimitExceeded = new AtomicBoolean(false)

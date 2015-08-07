@@ -14,9 +14,9 @@ public class MonitorThread extends Thread {
   
   private final AtomicBoolean operationInterrupted;
   
-  private final Thread threadToMonitor;
+  private Thread threadToMonitor;
   
-  private final Runnable onInvalid;
+  private Runnable onInvalid;
   
   private final AtomicBoolean cpuLimitExceeded;
   
@@ -54,6 +54,14 @@ public class MonitorThread extends Thread {
     this.stop.set(true);
   }
   
+  public void setThreadToMonitor(final Thread t) {
+    this.threadToMonitor = t;
+  }
+  
+  public void setOnInvalidHandler(final Runnable r) {
+    this.onInvalid = r;
+  }
+  
   public void notifyOperationInterrupted() {
     this.operationInterrupted.set(true);
   }
@@ -62,10 +70,8 @@ public class MonitorThread extends Thread {
     this.cpuLimitExceeded.get();
   }
   
-  public MonitorThread(final long maxCPUTimne, final Thread threadToMonitor, final Runnable onInvalid) {
+  public MonitorThread(final long maxCPUTimne) {
     this.maxCPUTime = maxCPUTimne;
-    this.threadToMonitor = threadToMonitor;
-    this.onInvalid = onInvalid;
     AtomicBoolean _atomicBoolean = new AtomicBoolean(false);
     this.stop = _atomicBoolean;
     AtomicBoolean _atomicBoolean_1 = new AtomicBoolean(false);
