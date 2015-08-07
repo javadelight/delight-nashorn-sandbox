@@ -114,6 +114,7 @@ class NashornSandboxImpl implements NashornSandbox {
 					}
 
 				} catch (Throwable t) {
+					
 					exceptionVal.set(t)
 					monitorThread.stopMonitor
 					synchronized (NashornSandboxImpl.this) {
