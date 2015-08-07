@@ -43,82 +43,88 @@ class NashornSandboxImpl implements NashornSandbox {
 			return scriptEngine.eval(js)
 		}
 
-		val resVal = new Value<Object>(null)
-		val exceptionVal = new Value<Throwable>(null)
+		synchronized (this) {
+			val resVal = new Value<Object>(null)
+			val exceptionVal = new Value<Throwable>(null)
 
-		val outerThread = Thread.currentThread
+			val outerThread = Thread.currentThread
 
-		val monitorThread = new MonitorThread(maxCPUTimeInMs * 1000)
+			val monitorThread = new MonitorThread(maxCPUTimeInMs * 1000)
 
-		if (exectuor == null) {
-			throw new IllegalStateException("When a CPU time limit is set, an executor needs to be provided by calling .setExecutor(...)")
-		}
+			if (exectuor == null) {
+				throw new IllegalStateException(
+					"When a CPU time limit is set, an executor needs to be provided by calling .setExecutor(...)")
+			}
 
-		exectuor.execute([
-			try {
-				val mainThread = Thread.currentThread
+			exectuor.execute([
+				try {
+					val mainThread = Thread.currentThread
 
-				monitorThread.threadToMonitor = Thread.currentThread
+					monitorThread.threadToMonitor = Thread.currentThread
 
-				monitorThread.onInvalidHandler = [
-					mainThread.interrupt
-				]
+					monitorThread.onInvalidHandler = [
+						mainThread.interrupt
+					]
 
-				if (js.contains("intCheckForInterruption")) {
-					throw new IllegalArgumentException('Script contains the illegal string [intCheckForInterruption]')
+					if (js.contains("intCheckForInterruption")) {
+						throw new IllegalArgumentException(
+							'Script contains the illegal string [intCheckForInterruption]')
+					}
+
+					val jsBeautify = scriptEngine.eval('window.js_beautify;') as ScriptObjectMirror
+
+					val String beautifiedJs = jsBeautify.call("beautify", js) as String
+
+					val randomToken = Math.abs(new Random().nextInt)
+
+					val securedJs = '''
+						var InterruptTest = Java.type('«InterruptTest.name»');
+						var isInterrupted = InterruptTest.isInterrupted;
+						var intCheckForInterruption«randomToken» = function() {
+							if (isInterrupted()) {
+							    throw new Error('Interrupted')
+							}
+						};
+					''' +
+						beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n').
+							replace(') {', ') {intCheckForInterruption' + randomToken + '();\n')
+
+					monitorThread.start
+					scriptEngine.eval(securedJs)
+
+					val res = scriptEngine.eval(js)
+
+					monitorThread.stopMonitor
+
+					resVal.set(res)
+
+					outerThread.notify
+
+				} catch (Throwable t) {
+					exceptionVal.set(t)
+					outerThread.notify
 				}
+			])
 
-				val jsBeautify = scriptEngine.eval('window.js_beautify;') as ScriptObjectMirror
+			Thread.wait
 
-				val String beautifiedJs = jsBeautify.call("beautify", js) as String
-
-				val randomToken = Math.abs(new Random().nextInt)
-
-				val securedJs = '''
-					var InterruptTest = Java.type('«InterruptTest.name»');
-					var isInterrupted = InterruptTest.isInterrupted;
-					var intCheckForInterruption«randomToken» = function() {
-						if (isInterrupted()) {
-						    throw new Error('Interrupted')
-						}
-					};
-				''' +
-					beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n').replace(') {',
-						') {intCheckForInterruption' + randomToken + '();\n')
-
-				monitorThread.start
-				scriptEngine.eval(securedJs)
-
-				val res = scriptEngine.eval(js)
-
-				monitorThread.stopMonitor
-
-				resVal.set(res)
-
-				outerThread.notify
-
-			} catch (Throwable t) {
-				exceptionVal.set(t)
-				outerThread.notify
+			if (exceptionVal.get != null) {
+				throw exceptionVal.get
 			}
-		])
 
-		Thread.wait
-
-		if (exceptionVal.get != null) {
-			throw exceptionVal.get
-		}
-
-		if (monitorThread.CPULimitExceeded) {
-			var notGraceful = ""
-			if (!monitorThread.gracefullyInterrputed) {
-				notGraceful = " The operation could not be gracefully interrupted."
+			if (monitorThread.CPULimitExceeded) {
+				var notGraceful = ""
+				if (!monitorThread.gracefullyInterrputed) {
+					notGraceful = " The operation could not be gracefully interrupted."
+				}
+				throw new ScriptCPUAbuseException(
+					"Script used more than the allowed [" + maxCPUTimeInMs + " ms] of CPU time. " + notGraceful,
+					exceptionVal.get())
 			}
-			throw new ScriptCPUAbuseException(
-				"Script used more than the allowed [" + maxCPUTimeInMs + " ms] of CPU time. "+notGraceful, exceptionVal.get())
-		}
 
-		resVal.get()
+			resVal.get()
+
+		}
 
 	}
 
