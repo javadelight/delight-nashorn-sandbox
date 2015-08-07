@@ -2,11 +2,13 @@ package delight.nashornsandbox.internal;
 
 import com.google.common.base.Objects;
 import delight.nashornsandbox.NashornSandbox;
+import delight.nashornsandbox.internal.MonitorThread;
 import delight.nashornsandbox.internal.SandboxClassFilter;
 import java.util.HashSet;
 import java.util.Set;
 import javax.script.ScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 
 @SuppressWarnings("all")
 public class NashornSandboxImpl implements NashornSandbox {
@@ -29,8 +31,30 @@ public class NashornSandboxImpl implements NashornSandbox {
   
   @Override
   public Object eval(final String js) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nType mismatch: cannot convert from void to Object");
+    try {
+      Object _xblockexpression = null;
+      {
+        this.assertScriptEngine();
+        if (((this.maxCPUTimeInMs).intValue() == 0)) {
+          return this.scriptEngine.eval(js);
+        }
+        Thread _currentThread = Thread.currentThread();
+        final Runnable _function = new Runnable() {
+          @Override
+          public void run() {
+            Thread _currentThread = Thread.currentThread();
+            _currentThread.interrupt();
+          }
+        };
+        final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000), _currentThread, _function);
+        final Object res = this.scriptEngine.eval(js);
+        monitorThread.stopMonitor();
+        _xblockexpression = res;
+      }
+      return _xblockexpression;
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
   }
   
   @Override

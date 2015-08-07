@@ -33,10 +33,15 @@ class NashornSandboxImpl implements NashornSandbox {
 			return scriptEngine.eval(js)
 		}
 		
-		val MonitorThread monitorThread = new MonitorThread(maxCPUTimeInMs*1000, Thread.currentThread, [
+		val monitorThread = new MonitorThread(maxCPUTimeInMs*1000, Thread.currentThread, [
 			Thread.currentThread.interrupt
 		])
 		
+		val res = scriptEngine.eval(js)
+		
+		monitorThread.stopMonitor
+		
+		res
 		
 		
 	}

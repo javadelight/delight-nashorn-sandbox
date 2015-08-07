@@ -36,7 +36,7 @@ public class MonitorThread extends Thread {
     }
   }
   
-  public void stop() {
+  public void stopMonitor() {
     this.stop.set(true);
   }
   

@@ -28,7 +28,7 @@ class MonitorThread extends Thread {
 	
 	}
 	
-	def void stop() {
+	def void stopMonitor() {
 		stop.set(true)
 	}
 	
