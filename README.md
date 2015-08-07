@@ -4,5 +4,11 @@ A secure sandbox for executing JavaScript in Java apps using the [Nashorn](https
 
 ## Usage
 
+The sandbox by default blocks access to **all** Java classes.
 
+Classes, which should be used in JavaScript, must be explicitly allowed.
+
+     NashornSandbox sandbox = NashornSandboxes.create();
+     sandbox.allow(File.class);
+     
 
