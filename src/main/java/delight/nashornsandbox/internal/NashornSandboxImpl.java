@@ -57,6 +57,10 @@ public class NashornSandboxImpl implements NashornSandbox {
           }
         };
         final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000), _currentThread, _function);
+        boolean _contains = js.contains("intCheckForInterruption");
+        if (_contains) {
+          throw new IllegalArgumentException("Script contains the illegal string [intCheckForInterruption]");
+        }
         Object _eval = this.scriptEngine.eval("window.js_beautify;");
         final ScriptObjectMirror jsBeautify = ((ScriptObjectMirror) _eval);
         Object _call = jsBeautify.call("beautify", js);
@@ -67,7 +71,23 @@ public class NashornSandboxImpl implements NashornSandbox {
         _builder.append(_name, "");
         _builder.append("\');");
         _builder.newLineIfNotEmpty();
-        final String securedJs = (_builder.toString() + beautifiedJs);
+        _builder.append("var isInterrupted = InterruptTest.isInterrupted;");
+        _builder.newLine();
+        _builder.append("var intCheckForInterruption = function() {");
+        _builder.newLine();
+        _builder.append("\t");
+        _builder.append("if (isInterrupted) {");
+        _builder.newLine();
+        _builder.append("\t    ");
+        _builder.append("throw new Error(\'Interrupted\')");
+        _builder.newLine();
+        _builder.append("\t");
+        _builder.append("}");
+        _builder.newLine();
+        _builder.append("};");
+        _builder.newLine();
+        String _replaceAll = beautifiedJs.replaceAll(";\\n", ";intCheckForInterruption();");
+        final String securedJs = (_builder.toString() + _replaceAll);
         this.scriptEngine.eval(js);
         final Object res = this.scriptEngine.eval(js);
         monitorThread.stopMonitor();

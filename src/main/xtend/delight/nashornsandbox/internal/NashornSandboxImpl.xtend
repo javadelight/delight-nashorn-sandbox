@@ -41,17 +41,26 @@ class NashornSandboxImpl implements NashornSandbox {
 			Thread.currentThread.interrupt
 		])
 		
+		if (js.contains("intCheckForInterruption")) {
+			throw new IllegalArgumentException('Script contains the illegal string [intCheckForInterruption]')
+		}
+		
 		val  jsBeautify = scriptEngine.eval('window.js_beautify;') as ScriptObjectMirror
 
 		val String beautifiedJs = jsBeautify.call("beautify", js) as String 
 		
 		val securedJs = '''
 			var InterruptTest = var Java.type('«InterruptTest.name»');
-		'''+beautifiedJs
+			var isInterrupted = InterruptTest.isInterrupted;
+			var intCheckForInterruption = function() {
+				if (isInterrupted) {
+				    throw new Error('Interrupted')
+				}
+			};
+		'''+beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption();')
 		
 		scriptEngine.eval(js)
 
-		
 		val res = scriptEngine.eval(js)
 		
 		monitorThread.stopMonitor
