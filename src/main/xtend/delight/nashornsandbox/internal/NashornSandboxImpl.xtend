@@ -49,6 +49,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		val monitorThread = new MonitorThread(maxCPUTimeInMs * 1000)
 		
 		exectuor.execute([
+			try {
 			val mainThread = Thread.currentThread
 
 			monitorThread.threadToMonitor = Thread.currentThread
@@ -90,9 +91,18 @@ class NashornSandboxImpl implements NashornSandbox {
 			resVal.set(res)
 			
 			outerThread.notify
+			
+			} catch (Throwable t) {
+				exceptionVal.set(t)
+				outerThread.notify
+			}
 		])
 
 		Thread.wait
+		
+		if (exceptionVal.get != null) {
+			throw exceptionVal.get
+		}
 		
 		resVal.get()
 

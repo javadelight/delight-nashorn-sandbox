@@ -115,13 +115,24 @@ public class NashornSandboxImpl implements NashornSandbox {
               monitorThread.stopMonitor();
               resVal.set(res);
               outerThread.notify();
-            } catch (Throwable _e) {
-              throw Exceptions.sneakyThrow(_e);
+            } catch (final Throwable _t) {
+              if (_t instanceof Throwable) {
+                final Throwable t = (Throwable)_t;
+                exceptionVal.set(t);
+                outerThread.notify();
+              } else {
+                throw Exceptions.sneakyThrow(_t);
+              }
             }
           }
         };
         this.exectuor.execute(_function);
         Thread.class.wait();
+        Throwable _get = exceptionVal.get();
+        boolean _notEquals = (!Objects.equal(_get, null));
+        if (_notEquals) {
+          throw exceptionVal.get();
+        }
         _xblockexpression = resVal.get();
       }
       return _xblockexpression;
