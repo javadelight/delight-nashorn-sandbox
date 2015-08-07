@@ -28,19 +28,16 @@ public class MonitorThread extends Thread {
           final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
           long _id = this.threadToMonitor.getId();
           final long threadCPUTime = bean.getThreadCpuTime(_id);
-          String _plus = (Long.valueOf(threadCPUTime) + " > \n");
-          String _plus_1 = (_plus + Long.valueOf(this.maxCPUTime));
-          InputOutput.<String>println(_plus_1);
           if ((threadCPUTime > this.maxCPUTime)) {
             this.cpuLimitExceeded.set(true);
             this.stop.set(true);
             this.onInvalid.run();
-            Thread.sleep(1000);
+            Thread.sleep(50);
             boolean _get = this.operationInterrupted.get();
             boolean _equals = (_get == false);
             if (_equals) {
-              String _plus_2 = (this + ": Thread hard shutdown!");
-              InputOutput.<String>println(_plus_2);
+              String _plus = (this + ": Thread hard shutdown!");
+              InputOutput.<String>println(_plus);
               this.threadToMonitor.stop();
             }
             return;

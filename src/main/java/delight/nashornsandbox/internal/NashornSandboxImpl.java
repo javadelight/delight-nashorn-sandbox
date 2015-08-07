@@ -18,7 +18,6 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Exceptions;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
 public class NashornSandboxImpl implements NashornSandbox {
@@ -76,14 +75,10 @@ public class NashornSandboxImpl implements NashornSandbox {
                   final Thread mainThread = Thread.currentThread();
                   Thread _currentThread = Thread.currentThread();
                   monitorThread.setThreadToMonitor(_currentThread);
-                  Thread _currentThread_1 = Thread.currentThread();
-                  InputOutput.<Thread>println(_currentThread_1);
                   final Runnable _function = new Runnable() {
                     @Override
                     public void run() {
                       mainThread.interrupt();
-                      boolean _isInterrupted = mainThread.isInterrupted();
-                      InputOutput.<Boolean>println(Boolean.valueOf(_isInterrupted));
                     }
                   };
                   monitorThread.setOnInvalidHandler(_function);

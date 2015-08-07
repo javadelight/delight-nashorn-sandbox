@@ -18,12 +18,12 @@ class MonitorThread extends Thread {
 			val bean = ManagementFactory.getThreadMXBean()
 			
 			val threadCPUTime = bean.getThreadCpuTime(threadToMonitor.id)
-			println(threadCPUTime +" > \n"+maxCPUTime)
+			
 			if (threadCPUTime > maxCPUTime) {
 				cpuLimitExceeded.set(true)
 				stop.set(true)
 				onInvalid.run
-				Thread.sleep(1000)
+				Thread.sleep(50)
 				if (this.operationInterrupted.get() == false) {
 					println(MonitorThread.this+': Thread hard shutdown!')
 					threadToMonitor.stop
