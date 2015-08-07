@@ -44,9 +44,9 @@ class NashornSandboxImpl implements NashornSandbox {
 		
 		val  jsBeautify = scriptEngine.eval('window.js_beautify;') as ScriptObjectMirror
 
-		val Object result = jsBeautify.call("beautify", js) 
+		val String beautifiedJs = jsBeautify.call("beautify", js) as String 
 		
-		println(result)
+		val securedJs = 
 		
 		scriptEngine.eval(js)
 

@@ -11,7 +11,6 @@ import javax.script.ScriptEngine;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.eclipse.xtext.xbase.lib.Exceptions;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
 public class NashornSandboxImpl implements NashornSandbox {
@@ -58,9 +57,9 @@ public class NashornSandboxImpl implements NashornSandbox {
         final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).intValue() * 1000), _currentThread, _function);
         Object _eval = this.scriptEngine.eval("window.js_beautify;");
         final ScriptObjectMirror jsBeautify = ((ScriptObjectMirror) _eval);
-        final Object result = jsBeautify.call("beautify", js);
-        InputOutput.<Object>println(result);
-        this.scriptEngine.eval(js);
+        Object _call = jsBeautify.call("beautify", js);
+        final String beautifiedJs = ((String) _call);
+        final Object securedJs = this.scriptEngine.eval(js);
         final Object res = this.scriptEngine.eval(js);
         monitorThread.stopMonitor();
         _xblockexpression = res;
