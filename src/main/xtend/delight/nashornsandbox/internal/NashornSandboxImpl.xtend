@@ -45,7 +45,9 @@ class NashornSandboxImpl implements NashornSandbox {
 
 		val String beautifiedJs = jsBeautify.call("beautify", js) as String 
 		
-		val securedJs = beautifiedJs.replaceAll()
+		val securedJs = '''
+			var InterruptTest = var Java.type('«InterruptTest.name»');
+		'''+beautifiedJs
 		
 		scriptEngine.eval(js)
 
