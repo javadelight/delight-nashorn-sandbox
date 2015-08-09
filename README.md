@@ -2,6 +2,8 @@
 
 A secure sandbox for executing JavaScript in Java apps using the [Nashorn](https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/) engine.
 
+Also see [Rhino Sandbox](https://github.com/javadelight/delight-rhino-sandbox).
+
 ## Usage
 
 The sandbox by default **blocks access to all** Java classes.
