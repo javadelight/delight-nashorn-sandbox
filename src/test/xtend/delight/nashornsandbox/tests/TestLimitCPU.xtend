@@ -59,5 +59,28 @@ class TestLimitCPU {
 		
 		sandbox.executor.shutdown()
 	}
+	
+	@Test(expected=ScriptCPUAbuseException)
+	def void test_catch() {
+
+		val sandbox = NashornSandboxes.create()
+		try {
+			sandbox.maxCPUTime = 50
+			sandbox.executor = Executors.newSingleThreadExecutor
+			sandbox.eval('''
+				try {
+					var x = 1;
+					while (true) {
+						x=x+1;
+					}
+				} catch (e) {
+					// never call me!
+				}
+			''')
+		} finally {
+			sandbox.executor.shutdown()
+		}
+
+	}
 
 }
