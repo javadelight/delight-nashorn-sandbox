@@ -35,7 +35,7 @@ public class TestScriptInterruptionAndCatch {
       _builder.append("} catch (e) {");
       _builder.newLine();
       _builder.append("\t");
-      _builder.append("// never call me!");
+      _builder.append("// if this is called, test does not succeed.");
       _builder.newLine();
       _builder.append("}");
       _builder.newLine();

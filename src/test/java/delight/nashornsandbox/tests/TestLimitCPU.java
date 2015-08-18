@@ -73,40 +73,4 @@ public class TestLimitCPU {
     ExecutorService _executor = sandbox.getExecutor();
     _executor.shutdown();
   }
-  
-  @Test(expected = ScriptCPUAbuseException.class)
-  public void test_catch() {
-    final NashornSandbox sandbox = NashornSandboxes.create();
-    try {
-      sandbox.setMaxCPUTime(50);
-      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
-      sandbox.setExecutor(_newSingleThreadExecutor);
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.append("try {");
-      _builder.newLine();
-      _builder.append("\t");
-      _builder.append("var x = 1;");
-      _builder.newLine();
-      _builder.append("\t");
-      _builder.append("while (true) {");
-      _builder.newLine();
-      _builder.append("\t\t");
-      _builder.append("x=x+1;");
-      _builder.newLine();
-      _builder.append("\t");
-      _builder.append("}");
-      _builder.newLine();
-      _builder.append("} catch (e) {");
-      _builder.newLine();
-      _builder.append("\t");
-      _builder.append("// never call me!");
-      _builder.newLine();
-      _builder.append("}");
-      _builder.newLine();
-      sandbox.eval(_builder.toString());
-    } finally {
-      ExecutorService _executor = sandbox.getExecutor();
-      _executor.shutdown();
-    }
-  }
 }

@@ -21,7 +21,7 @@ class TestScriptInterruptionAndCatch {
 						x=x+1;
 					}
 				} catch (e) {
-					// never call me!
+					// if this is called, test does not succeed.
 				}
 			''')
 		} finally {
