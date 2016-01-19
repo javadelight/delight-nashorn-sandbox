@@ -90,4 +90,23 @@ public class TestLimitCPU {
       _executor.shutdown();
     }
   }
+  
+  @Test(expected = ScriptCPUAbuseException.class)
+  public void test_while_plus_iteration() {
+    final NashornSandbox sandbox = NashornSandboxes.create();
+    try {
+      sandbox.setMaxCPUTime(50);
+      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+      sandbox.setExecutor(_newSingleThreadExecutor);
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("var x=0;");
+      _builder.newLine();
+      _builder.append("while (true) x++;");
+      _builder.newLine();
+      sandbox.eval(_builder.toString());
+    } finally {
+      ExecutorService _executor = sandbox.getExecutor();
+      _executor.shutdown();
+    }
+  }
 }

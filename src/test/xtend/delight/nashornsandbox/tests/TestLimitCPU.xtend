@@ -76,6 +76,23 @@ class TestLimitCPU {
 		}
 	}
 	
+	@Test(expected=ScriptCPUAbuseException)
+	def void test_while_plus_iteration() {
+		val sandbox = NashornSandboxes.create()
+		try {
+
+			sandbox.maxCPUTime = 50
+			sandbox.executor = Executors.newSingleThreadExecutor
+
+			sandbox.eval('''
+				var x=0;
+				while (true) x++;
+			''')
+		} finally {
+			sandbox.executor.shutdown()
+		}
+	}
+	
 	
 
 }
