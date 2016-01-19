@@ -73,4 +73,21 @@ public class TestLimitCPU {
     ExecutorService _executor = sandbox.getExecutor();
     _executor.shutdown();
   }
+  
+  @Test(expected = ScriptCPUAbuseException.class)
+  public void test_only_while() {
+    final NashornSandbox sandbox = NashornSandboxes.create();
+    try {
+      sandbox.setMaxCPUTime(50);
+      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+      sandbox.setExecutor(_newSingleThreadExecutor);
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("while (true);");
+      _builder.newLine();
+      sandbox.eval(_builder.toString());
+    } finally {
+      ExecutorService _executor = sandbox.getExecutor();
+      _executor.shutdown();
+    }
+  }
 }
