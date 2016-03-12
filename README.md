@@ -1,5 +1,7 @@
 # Nashorn Sandbox
 
+[![Build Status](https://travis-ci.org/javadelight/delight-nashorn-sandbox.svg?branch=master)](https://travis-ci.org/javadelight/delight-nashorn-sandbox)
+
 A secure sandbox for executing JavaScript in Java apps using the [Nashorn](https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/) engine.
 
 Also see [Rhino Sandbox](https://github.com/javadelight/delight-rhino-sandbox).
