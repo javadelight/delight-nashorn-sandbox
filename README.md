@@ -35,6 +35,18 @@ This code will raise a ScriptCPUAbuseException.
 
 ## Maven
 
+    
+    <dependency>
+        <groupId>org.javadelight</groupId>
+        <artifactId>delight-nashorn-sandbox</artifactId>
+        <version>0.0.2</version>
+    </dependency>
+    
+Find out latest version [here](http://modules.appjangle.com/delight-nashorn-sandbox/latest/project-summary.html).
 
+Use [Java Delight Repository](https://github.com/javadelight/delight-main#maven-repository).
+    
 ## Further Documentation
 
+- [JavaDocs](http://modules.appjangle.com/delight-nashorn-sandbox/latest/apidocs/index.html)
+- [All Maven Reports](http://modules.appjangle.com/delight-nashorn-sandbox/latest/project-reports.html)
