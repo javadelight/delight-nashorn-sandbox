@@ -47,7 +47,6 @@ This code will raise a ScriptCPUAbuseException.
 Find out latest version [here](http://modules.appjangle.com/delight-nashorn-sandbox/latest/project-summary.html).
 
 Use [Java Delight Repository](https://github.com/javadelight/delight-main#maven-repository).
-
     
 ## Further Documentation
 
