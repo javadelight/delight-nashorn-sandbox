@@ -6,6 +6,8 @@ A secure sandbox for executing JavaScript in Java apps using the [Nashorn](https
 
 Also see [Rhino Sandbox](https://github.com/javadelight/delight-rhino-sandbox).
 
+Part of the [Java Delight Suite](https://github.com/javadelight/delight-main#java-delight-suite).
+
 ## Usage
 
 The sandbox by default **blocks access to all** Java classes.
@@ -34,7 +36,6 @@ sandbox.eval("while (true) { };");
 This code will raise a ScriptCPUAbuseException.
 
 ## Maven
-
     
     <dependency>
         <groupId>org.javadelight</groupId>
