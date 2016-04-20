@@ -25,7 +25,7 @@ public class NashornSandboxImpl implements NashornSandbox {
   
   private ScriptEngine scriptEngine;
   
-  private Integer maxCPUTimeInMs = Integer.valueOf(0);
+  private Long maxCPUTimeInMs = Long.valueOf(0L);
   
   private ExecutorService exectuor;
   
@@ -52,7 +52,7 @@ public class NashornSandboxImpl implements NashornSandbox {
       Object _xblockexpression = null;
       {
         this.assertScriptEngine();
-        if (((this.maxCPUTimeInMs).intValue() == 0)) {
+        if (((this.maxCPUTimeInMs).longValue() == 0)) {
           return this.scriptEngine.eval(js);
         }
         Object _xsynchronizedexpression = null;
@@ -139,7 +139,6 @@ public class NashornSandboxImpl implements NashornSandbox {
                     }
                   } finally {
                     monitorThread.stopMonitor();
-                    /* monitor; */
                     synchronized (monitor) {
                       monitor.notify();
                     }
@@ -149,7 +148,6 @@ public class NashornSandboxImpl implements NashornSandbox {
                     final Throwable t = (Throwable)_t_1;
                     exceptionVal.set(t);
                     monitorThread.stopMonitor();
-                    /* monitor; */
                     synchronized (monitor) {
                       monitor.notify();
                     }
@@ -160,7 +158,6 @@ public class NashornSandboxImpl implements NashornSandbox {
               }
             };
             this.exectuor.execute(_function);
-            /* monitor; */
             synchronized (monitor) {
               monitor.wait();
             }
@@ -194,10 +191,10 @@ public class NashornSandboxImpl implements NashornSandbox {
   }
   
   @Override
-  public NashornSandbox setMaxCPUTime(final int limit) {
+  public NashornSandbox setMaxCPUTime(final long limit) {
     NashornSandboxImpl _xblockexpression = null;
     {
-      this.maxCPUTimeInMs = Integer.valueOf(limit);
+      this.maxCPUTimeInMs = Long.valueOf(limit);
       _xblockexpression = this;
     }
     return _xblockexpression;

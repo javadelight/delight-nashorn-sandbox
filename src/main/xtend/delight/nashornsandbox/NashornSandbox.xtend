@@ -13,7 +13,7 @@ interface NashornSandbox {
 	/**
 	 * Sets the maximum CPU time in milliseconds allowed for script execution.
 	 */
-	def NashornSandbox setMaxCPUTime(int limit)
+	def NashornSandbox setMaxCPUTime(long limit)
 
 	/**
 	 * Specifies the executor service which is used to run scripts when a CPU time limit is specified.

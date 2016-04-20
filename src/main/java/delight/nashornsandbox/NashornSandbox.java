@@ -13,7 +13,7 @@ public interface NashornSandbox {
   /**
    * Sets the maximum CPU time in milliseconds allowed for script execution.
    */
-  public abstract NashornSandbox setMaxCPUTime(final int limit);
+  public abstract NashornSandbox setMaxCPUTime(final long limit);
   
   /**
    * Specifies the executor service which is used to run scripts when a CPU time limit is specified.

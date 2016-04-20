@@ -18,7 +18,7 @@ class NashornSandboxImpl implements NashornSandbox {
 	val Set<String> allowedClasses
 
 	var ScriptEngine scriptEngine
-	var Integer maxCPUTimeInMs = 0
+	var Long maxCPUTimeInMs = 0L
 	var ExecutorService exectuor
 
 	def void assertScriptEngine() {
@@ -149,7 +149,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 	}
 
-	override NashornSandbox setMaxCPUTime(int limit) {
+	override NashornSandbox setMaxCPUTime(long limit) {
 		this.maxCPUTimeInMs = limit
 		this
 	}
