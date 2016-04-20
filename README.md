@@ -1,6 +1,6 @@
 # Nashorn Sandbox
 
-[![Build Status](https://travis-ci.org/javadelight/delight-nashorn-sandbox.svg?branch=master)](https://travis-ci.org/javadelight/delight-nashorn-sandbox)
+[![Build Status](https://travis-ci.org/javadelight/delight-nashorn-sandbox.svg?branch=master)](https://travis-ci.org/javadelight/delight-nashorn-sandbox) <-- Sorry for the build error. I didn't manage yet to configure travis-ci to use correct libraries for Nashorn yet. Any ideas welcome!
 
 A secure sandbox for executing JavaScript in Java apps using the [Nashorn](https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/) engine.
 
