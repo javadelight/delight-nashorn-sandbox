@@ -22,6 +22,16 @@ sandbox.allow(File.class);
 sandbox.eval("var File = Java.type('java.io.File'); File;")
 ```
 
+Or you can inject your java object as a JS global variable
+
+```java
+NashornSandboxes sandbox = NashornSandboxes.create();
+
+sandbox.inject("fromJava", new Object());
+
+sandbox.eval("fromJava.getClass();");
+```
+
 The sandbox also allows limiting the CPU time of scripts. This allows terminating scripts which contain infinite loops and other problematic code.
 
 ```java
@@ -41,7 +51,7 @@ This code will raise a ScriptCPUAbuseException.
     <dependency>
         <groupId>org.javadelight</groupId>
         <artifactId>delight-nashorn-sandbox</artifactId>
-        <version>0.0.2</version>
+        <version>0.0.3</version>
     </dependency>
     
 Find out latest version [here](http://modules.appjangle.com/delight-nashorn-sandbox/latest/project-summary.html).
