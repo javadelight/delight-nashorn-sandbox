@@ -8,7 +8,9 @@ import delight.nashornsandbox.internal.BeautifyJs;
 import delight.nashornsandbox.internal.InterruptTest;
 import delight.nashornsandbox.internal.MonitorThread;
 import delight.nashornsandbox.internal.SandboxClassFilter;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -22,6 +24,8 @@ import org.eclipse.xtext.xbase.lib.Exceptions;
 @SuppressWarnings("all")
 public class NashornSandboxImpl implements NashornSandbox {
   private final Set<String> allowedClasses;
+  
+  private final Map<String, Object> globalVariables;
   
   private ScriptEngine scriptEngine;
   
@@ -41,6 +45,12 @@ public class NashornSandboxImpl implements NashornSandbox {
       this.scriptEngine = _scriptEngine;
       this.scriptEngine.eval("var window = {};");
       this.scriptEngine.eval(BeautifyJs.CODE);
+      Set<Map.Entry<String, Object>> _entrySet = this.globalVariables.entrySet();
+      for (final Map.Entry<String, Object> entry : _entrySet) {
+        String _key = entry.getKey();
+        Object _value = entry.getValue();
+        this.scriptEngine.put(_key, _value);
+      }
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
@@ -213,6 +223,18 @@ public class NashornSandboxImpl implements NashornSandbox {
   }
   
   @Override
+  public NashornSandbox inject(final String variableName, final Object object) {
+    NashornSandboxImpl _xblockexpression = null;
+    {
+      this.globalVariables.put(variableName, object);
+      Class<?> _class = object.getClass();
+      this.allow(_class);
+      _xblockexpression = this;
+    }
+    return _xblockexpression;
+  }
+  
+  @Override
   public NashornSandbox setExecutor(final ExecutorService executor) {
     NashornSandboxImpl _xblockexpression = null;
     {
@@ -230,6 +252,8 @@ public class NashornSandboxImpl implements NashornSandbox {
   public NashornSandboxImpl() {
     HashSet<String> _hashSet = new HashSet<String>();
     this.allowedClasses = _hashSet;
+    HashMap<String, Object> _hashMap = new HashMap<String, Object>();
+    this.globalVariables = _hashMap;
     this.allow(InterruptTest.class);
   }
 }

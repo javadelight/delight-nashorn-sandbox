@@ -11,6 +11,11 @@ public interface NashornSandbox {
   public abstract NashornSandbox allow(final Class<?> clazz);
   
   /**
+   * Will add a global variable available to all scripts executed with this sandbox.
+   */
+  public abstract NashornSandbox inject(final String variableName, final Object object);
+  
+  /**
    * Sets the maximum CPU time in milliseconds allowed for script execution.
    */
   public abstract NashornSandbox setMaxCPUTime(final long limit);

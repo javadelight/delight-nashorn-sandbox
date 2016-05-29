@@ -3,20 +3,22 @@ package delight.nashornsandbox.internal
 import delight.async.Value
 import delight.nashornsandbox.NashornSandbox
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException
+import java.util.HashMap
 import java.util.HashSet
+import java.util.Map
 import java.util.Random
 import java.util.Set
-import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 import javax.script.ScriptEngine
+import javax.script.ScriptException
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 import jdk.nashorn.api.scripting.ScriptObjectMirror
-import javax.script.ScriptException
 
 class NashornSandboxImpl implements NashornSandbox {
 
 	val Set<String> allowedClasses
-
+	val Map<String, Object> globalVariables
+	
 	var ScriptEngine scriptEngine
 	var Long maxCPUTimeInMs = 0L
 	var ExecutorService exectuor
@@ -35,6 +37,9 @@ class NashornSandboxImpl implements NashornSandbox {
 
 		scriptEngine.eval('var window = {};')
 		scriptEngine.eval(BeautifyJs.CODE)
+		for (entry : globalVariables.entrySet) {
+			scriptEngine.put(entry.key, entry.value)
+		}
 	}
 
 	override Object eval(String js) {
@@ -159,6 +164,12 @@ class NashornSandboxImpl implements NashornSandbox {
 		scriptEngine = null
 		this
 	}
+	
+	override NashornSandbox inject(String variableName, Object object) {
+		this.globalVariables.put(variableName, object)
+		allow(object.class)
+		this
+	}
 
 	override NashornSandbox setExecutor(ExecutorService executor) {
 		this.exectuor = executor
@@ -171,6 +182,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 	new() {
 		this.allowedClasses = new HashSet()
+		this.globalVariables = new HashMap<String, Object>
 		allow(InterruptTest)
 	}
 

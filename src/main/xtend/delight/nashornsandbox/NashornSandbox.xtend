@@ -9,6 +9,11 @@ interface NashornSandbox {
 	 * <p>WARNING: Adding a new class, AFTER a script has been evaluated, will destroy the engine and recreate it. The script context will thus be lost.
 	 */
 	def NashornSandbox allow(Class<?> clazz)
+	
+	/**
+	 * Will add a global variable available to all scripts executed with this sandbox.
+	 */
+	def NashornSandbox inject(String variableName, Object object)
 
 	/**
 	 * Sets the maximum CPU time in milliseconds allowed for script execution.
