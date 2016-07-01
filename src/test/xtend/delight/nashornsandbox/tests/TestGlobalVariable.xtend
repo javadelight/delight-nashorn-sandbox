@@ -4,6 +4,7 @@ import delight.nashornsandbox.NashornSandboxes
 import org.junit.Test
 
 class TestGlobalVariable {
+	
 	@Test
 	def void test_java_variable() {
 		
