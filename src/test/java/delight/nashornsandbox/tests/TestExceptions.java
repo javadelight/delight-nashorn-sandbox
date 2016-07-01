@@ -1,0 +1,32 @@
+package delight.nashornsandbox.tests;
+
+import delight.nashornsandbox.NashornSandbox;
+import delight.nashornsandbox.NashornSandboxes;
+import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.junit.Assert;
+import org.junit.Test;
+
+@SuppressWarnings("all")
+public class TestExceptions {
+  @Test(expected = Exception.class)
+  public void test() {
+    final NashornSandbox sandbox = NashornSandboxes.create();
+    sandbox.eval("blah_blah_blah();");
+  }
+  
+  @Test
+  public void test_with_catch() {
+    try {
+      final NashornSandbox sandbox = NashornSandboxes.create();
+      sandbox.eval("blah_blah_blah();");
+    } catch (final Throwable _t) {
+      if (_t instanceof Throwable) {
+        final Throwable t = (Throwable)_t;
+        return;
+      } else {
+        throw Exceptions.sneakyThrow(_t);
+      }
+    }
+    Assert.fail("Exception not thrown!");
+  }
+}
