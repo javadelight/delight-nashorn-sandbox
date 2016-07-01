@@ -216,7 +216,10 @@ public class NashornSandboxImpl implements NashornSandbox {
     {
       String _name = clazz.getName();
       this.allowedClasses.add(_name);
-      this.scriptEngine = null;
+      boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
+      if (_notEquals) {
+        throw new IllegalStateException("eval() was already called. Please specify all classes to be allowed before calling eval()");
+      }
       _xblockexpression = this;
     }
     return _xblockexpression;

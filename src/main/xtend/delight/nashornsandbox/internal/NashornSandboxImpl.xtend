@@ -161,7 +161,10 @@ class NashornSandboxImpl implements NashornSandbox {
 
 	override NashornSandbox allow(Class<?> clazz) {
 		allowedClasses.add(clazz.name)
-		scriptEngine = null
+		
+		if (scriptEngine != null) {
+			throw new IllegalStateException("eval() was already called. Please specify all classes to be allowed before calling eval()")
+		}
 		this
 	}
 	
