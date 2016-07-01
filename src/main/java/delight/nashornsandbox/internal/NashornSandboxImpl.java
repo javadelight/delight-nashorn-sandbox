@@ -254,7 +254,7 @@ public class NashornSandboxImpl implements NashornSandbox {
       boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
       if (_notEquals) {
         throw new IllegalStateException(
-          "eval() was already called. Please specify all classes to be allowed before calling eval()");
+          "eval() was already called. Please specify all classes to be allowed/injected before calling eval()");
       }
       _xblockexpression = this;
     }

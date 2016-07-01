@@ -201,7 +201,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 		if (scriptEngine != null) {
 			throw new IllegalStateException(
-				"eval() was already called. Please specify all classes to be allowed before calling eval()")
+				"eval() was already called. Please specify all classes to be allowed/injected before calling eval()")
 		}
 		this
 	}
