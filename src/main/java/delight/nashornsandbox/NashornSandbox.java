@@ -27,5 +27,13 @@ public interface NashornSandbox {
   
   public abstract ExecutorService getExecutor();
   
+  /**
+   * Evaluates the string.
+   */
   public abstract Object eval(final String js);
+  
+  /**
+   * Obtains the value of the specified JavaScript variable.
+   */
+  public abstract Object get(final String variableName);
 }

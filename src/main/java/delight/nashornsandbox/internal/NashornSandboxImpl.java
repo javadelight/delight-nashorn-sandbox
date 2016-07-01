@@ -51,6 +51,34 @@ public class NashornSandboxImpl implements NashornSandbox {
         Object _value = entry.getValue();
         this.scriptEngine.put(_key, _value);
       }
+      this.scriptEngine.eval(((((((((((((((((((((((((((("\n" + 
+        "quit = function() {};\n") + 
+        "exit = function() {};\n") + 
+        "\n") + 
+        "print = function() {};\n") + 
+        "echo = function() {};\n") + 
+        "\n") + 
+        "readFully = function() {};\n") + 
+        "readLine = function() {};\n") + 
+        "\n") + 
+        "load = function() {};\n") + 
+        "loadWithNewGlobal = function() {};\n") + 
+        "\n") + 
+        "Java = null;\n") + 
+        "org = null;\n") + 
+        "java = null;\n") + 
+        "com = null;\n") + 
+        "sun = null;\n") + 
+        "net = null;\n") + 
+        "\n") + 
+        "$ARG = null;\n") + 
+        "$ENV = null;\n") + 
+        "$EXEC = null;\n") + 
+        "$OPTIONS = null;\n") + 
+        "$OUT = null;\n") + 
+        "$ERR = null;\n") + 
+        "$EXIT = null;\n") + 
+        ""));
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
@@ -143,6 +171,13 @@ public class NashornSandboxImpl implements NashornSandbox {
                       boolean _contains_1 = _message.contains(("Interrupted" + Integer.valueOf(randomToken)));
                       if (_contains_1) {
                         monitorThread.notifyOperationInterrupted();
+                      } else {
+                        exceptionVal.set(e);
+                        monitorThread.stopMonitor();
+                        synchronized (monitor) {
+                          monitor.notify();
+                        }
+                        return;
                       }
                     } else {
                       throw Exceptions.sneakyThrow(_t);
@@ -218,7 +253,8 @@ public class NashornSandboxImpl implements NashornSandbox {
       this.allowedClasses.add(_name);
       boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
       if (_notEquals) {
-        throw new IllegalStateException("eval() was already called. Please specify all classes to be allowed before calling eval()");
+        throw new IllegalStateException(
+          "eval() was already called. Please specify all classes to be allowed before calling eval()");
       }
       _xblockexpression = this;
     }
@@ -250,6 +286,16 @@ public class NashornSandboxImpl implements NashornSandbox {
   @Override
   public ExecutorService getExecutor() {
     return this.exectuor;
+  }
+  
+  @Override
+  public Object get(final String variableName) {
+    Object _xblockexpression = null;
+    {
+      this.assertScriptEngine();
+      _xblockexpression = this.scriptEngine.get(variableName);
+    }
+    return _xblockexpression;
   }
   
   public NashornSandboxImpl() {

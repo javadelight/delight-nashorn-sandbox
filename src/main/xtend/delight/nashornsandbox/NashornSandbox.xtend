@@ -27,7 +27,15 @@ interface NashornSandbox {
 	
 	def ExecutorService getExecutor()
 	
+	/**
+	 * Evaluates the string.
+	 */
 	def Object eval(String js)
+	
+	/**
+	 * Obtains the value of the specified JavaScript variable.
+	 */
+	def Object get(String variableName)
 
 	
 }
