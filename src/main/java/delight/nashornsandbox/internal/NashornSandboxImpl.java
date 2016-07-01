@@ -273,6 +273,10 @@ public class NashornSandboxImpl implements NashornSandbox {
         Class<?> _class_1 = object.getClass();
         this.allow(_class_1);
       }
+      boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
+      if (_notEquals) {
+        this.scriptEngine.put(variableName, object);
+      }
       _xblockexpression = this;
     }
     return _xblockexpression;

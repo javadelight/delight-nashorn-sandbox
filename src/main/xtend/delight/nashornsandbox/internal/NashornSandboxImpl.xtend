@@ -211,6 +211,9 @@ class NashornSandboxImpl implements NashornSandbox {
 		if (!allowedClasses.contains(object.class.name)) {
 			allow(object.class)
 		}
+		if (scriptEngine != null) {
+			scriptEngine.put(variableName, object)
+		}
 		this
 	}
 
