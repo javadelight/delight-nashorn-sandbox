@@ -208,7 +208,9 @@ class NashornSandboxImpl implements NashornSandbox {
 
 	override NashornSandbox inject(String variableName, Object object) {
 		this.globalVariables.put(variableName, object)
-		allow(object.class)
+		if (!allowedClasses.contains(object.class.name)) {
+			allow(object.class)
+		}
 		this
 	}
 

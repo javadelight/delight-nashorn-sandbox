@@ -267,7 +267,13 @@ public class NashornSandboxImpl implements NashornSandbox {
     {
       this.globalVariables.put(variableName, object);
       Class<?> _class = object.getClass();
-      this.allow(_class);
+      String _name = _class.getName();
+      boolean _contains = this.allowedClasses.contains(_name);
+      boolean _not = (!_contains);
+      if (_not) {
+        Class<?> _class_1 = object.getClass();
+        this.allow(_class_1);
+      }
       _xblockexpression = this;
     }
     return _xblockexpression;
