@@ -54,7 +54,7 @@ class NashornSandboxImpl implements NashornSandbox {
                 "load = function() {};\n" +
                 "loadWithNewGlobal = function() {};\n" +
                 "\n" +
-                "Java = null;\n" +
+                //"Java = null;\n" +
                 "org = null;\n" +
                 "java = null;\n" +
                 "com = null;\n" +

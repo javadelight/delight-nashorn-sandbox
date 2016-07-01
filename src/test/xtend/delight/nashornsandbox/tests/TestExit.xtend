@@ -11,7 +11,7 @@ class TestExit {
 
 		sandbox.eval("exit();");
 		
-	    println("hello")
+	    //println("hello")
 	}
 	
 }

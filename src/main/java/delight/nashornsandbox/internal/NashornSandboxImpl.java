@@ -51,7 +51,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         Object _value = entry.getValue();
         this.scriptEngine.put(_key, _value);
       }
-      this.scriptEngine.eval(((((((((((((((((((((((((((("\n" + 
+      this.scriptEngine.eval((((((((((((((((((((((((((("\n" + 
         "quit = function() {};\n") + 
         "exit = function() {};\n") + 
         "\n") + 
@@ -64,7 +64,6 @@ public class NashornSandboxImpl implements NashornSandbox {
         "load = function() {};\n") + 
         "loadWithNewGlobal = function() {};\n") + 
         "\n") + 
-        "Java = null;\n") + 
         "org = null;\n") + 
         "java = null;\n") + 
         "com = null;\n") + 
