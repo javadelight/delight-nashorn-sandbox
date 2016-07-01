@@ -6,7 +6,7 @@ Also see [Rhino Sandbox](https://github.com/javadelight/delight-rhino-sandbox).
 
 Part of the [Java Delight Suite](https://github.com/javadelight/delight-main#java-delight-suite).
 
-[![Build Status](https://travis-ci.org/javadelight/delight-nashorn-sandbox.svg?branch=master)](https://travis-ci.org/javadelight/delight-nashorn-sandbox) <-- I can't get travis-ci to load tools.jar correctly. Any ideas welcome! (Otherwise library should work)
+[![Build Status](https://travis-ci.org/javadelight/delight-nashorn-sandbox.svg?branch=master)](https://travis-ci.org/javadelight/delight-nashorn-sandbox)
 
 ## Usage
 
@@ -20,6 +20,16 @@ NashornSandbox sandbox = NashornSandboxes.create();
 sandbox.allow(File.class);
      
 sandbox.eval("var File = Java.type('java.io.File'); File;")
+```
+
+Or you can inject your java object as a JS global variable
+
+```java
+NashornSandboxes sandbox = NashornSandboxes.create();
+
+sandbox.inject("fromJava", new Object());
+
+sandbox.eval("fromJava.getClass();");
 ```
 
 The sandbox also allows limiting the CPU time of scripts. This allows terminating scripts which contain infinite loops and other problematic code.
@@ -41,7 +51,7 @@ This code will raise a ScriptCPUAbuseException.
     <dependency>
         <groupId>org.javadelight</groupId>
         <artifactId>delight-nashorn-sandbox</artifactId>
-        <version>0.0.2</version>
+        <version>0.0.3</version>
     </dependency>
     
 Find out latest version [here](http://modules.appjangle.com/delight-nashorn-sandbox/latest/project-summary.html).
