@@ -55,11 +55,11 @@ class NashornSandboxImpl implements NashornSandbox {
                 "loadWithNewGlobal = function() {};\n" +
                 "\n" +
                 //"Java = null;\n" +
-                "org = null;\n" +
-                "java = null;\n" +
-                "com = null;\n" +
-                "sun = null;\n" +
-                "net = null;\n" +
+             //   "org = null;\n" +
+             //   "java = null;\n" +
+             //   "com = null;\n" +
+             //   "sun = null;\n" +
+             //   "net = null;\n" +
                 "\n" +
                 "$ARG = null;\n" +
                 "$ENV = null;\n" +
