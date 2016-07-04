@@ -67,7 +67,7 @@
 				</configuration>
 			</plugin>
 			
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
@@ -82,15 +82,12 @@
 								<descriptor>src/assemble/distribution.xml</descriptor>
 							</descriptors>
 
-							<!--<archive>
-								<manifest>
-									<mainClass></mainClass>
-								</manifest>
-						</archive> -->
+						
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+			-->
 
 
 			<!-- FOR BUNDLE MANAGEMENT -->

@@ -58,7 +58,7 @@ Find out latest version [here](http://modules.appjangle.com/delight-nashorn-sand
 
 Use [Java Delight Repository](https://github.com/javadelight/delight-main#maven-repository).
 
-If you are looking for a JAR with all dependencies, download the -distribution.jar file from the latest version from [here](http://maven.appjangle.com/appjangle/releases/org/javadelight/delight-nashorn-sandbox/).
+If you are looking for a JAR with all dependencies, you can download it from [here](https://github.com/javadelight/delight-nashorn-sandbox/releases).
     
 ## Further Documentation
 
