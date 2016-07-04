@@ -51,12 +51,14 @@ This code will raise a ScriptCPUAbuseException.
     <dependency>
         <groupId>org.javadelight</groupId>
         <artifactId>delight-nashorn-sandbox</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
     </dependency>
     
 Find out latest version [here](http://modules.appjangle.com/delight-nashorn-sandbox/latest/project-summary.html).
 
 Use [Java Delight Repository](https://github.com/javadelight/delight-main#maven-repository).
+
+If you are looking for a JAR with all 
     
 ## Further Documentation
 
