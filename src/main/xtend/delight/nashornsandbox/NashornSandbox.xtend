@@ -9,7 +9,22 @@ interface NashornSandbox {
 	 * <p>WARNING: Adding a new class, AFTER a script has been evaluated, will destroy the engine and recreate it. The script context will thus be lost.
 	 */
 	def NashornSandbox allow(Class<?> clazz)
-	
+
+	/**
+	 * <p>Remove a class from the list of allowed classes.
+	 */
+	def void disallow(Class<?> clazz)
+
+	/**
+	 * <p>Check if a class is in the list of allowed classes.
+	 */
+	def boolean isAllowed(Class<?> clazz)
+
+	/**
+	 * <p>Remove all classes from the list of allowed classes.
+	 */
+	def void disallowAllClasses()
+
 	/**
 	 * Will add a global variable available to all scripts executed with this sandbox.
 	 */
@@ -37,5 +52,28 @@ interface NashornSandbox {
 	 */
 	def Object get(String variableName)
 
-	
+	/**
+	 * Allow Nashorn print and echo functions.
+	 */
+	def void allowPrintFunctions(boolean v)
+
+	/**
+	 * Allow Nashorn readLine and readFully functions.
+	 */
+	def void allowReadFunctions(boolean v)
+
+	/**
+	 * Allow Nashorn load and loadWithNewGlobal functions.
+	 */
+	def void allowLoadFunctions(boolean v)
+
+	/**
+	 * Allow Nashorn quit and exit functions.
+	 */
+	def void allowExitFunctions(boolean v)
+
+	/**
+	 * Allow Nashorn globals object $ARG, $ENV, $EXEC, $OPTIONS, $OUT, $ERR and $EXIT.
+	 */
+	def void allowGlobalsObjects(boolean v)
 }

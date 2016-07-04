@@ -11,6 +11,21 @@ public interface NashornSandbox {
   public abstract NashornSandbox allow(final Class<?> clazz);
   
   /**
+   * <p>Remove a class from the list of allowed classes.
+   */
+  public abstract void disallow(final Class<?> clazz);
+  
+  /**
+   * <p>Check if a class is in the list of allowed classes.
+   */
+  public abstract boolean isAllowed(final Class<?> clazz);
+  
+  /**
+   * <p>Remove all classes from the list of allowed classes.
+   */
+  public abstract void disallowAllClasses();
+  
+  /**
    * Will add a global variable available to all scripts executed with this sandbox.
    */
   public abstract NashornSandbox inject(final String variableName, final Object object);
@@ -36,4 +51,29 @@ public interface NashornSandbox {
    * Obtains the value of the specified JavaScript variable.
    */
   public abstract Object get(final String variableName);
+  
+  /**
+   * Allow Nashorn print and echo functions.
+   */
+  public abstract void allowPrintFunctions(final boolean v);
+  
+  /**
+   * Allow Nashorn readLine and readFully functions.
+   */
+  public abstract void allowReadFunctions(final boolean v);
+  
+  /**
+   * Allow Nashorn load and loadWithNewGlobal functions.
+   */
+  public abstract void allowLoadFunctions(final boolean v);
+  
+  /**
+   * Allow Nashorn quit and exit functions.
+   */
+  public abstract void allowExitFunctions(final boolean v);
+  
+  /**
+   * Allow Nashorn globals object $ARG, $ENV, $EXEC, $OPTIONS, $OUT, $ERR and $EXIT.
+   */
+  public abstract void allowGlobalsObjects(final boolean v);
 }

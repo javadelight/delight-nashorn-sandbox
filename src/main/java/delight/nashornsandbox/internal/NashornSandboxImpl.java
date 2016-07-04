@@ -9,7 +9,6 @@ import delight.nashornsandbox.internal.InterruptTest;
 import delight.nashornsandbox.internal.MonitorThread;
 import delight.nashornsandbox.internal.SandboxClassFilter;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -23,7 +22,7 @@ import org.eclipse.xtext.xbase.lib.Exceptions;
 
 @SuppressWarnings("all")
 public class NashornSandboxImpl implements NashornSandbox {
-  private final Set<String> allowedClasses;
+  private SandboxClassFilter sandboxClassFilter;
   
   private final Map<String, Object> globalVariables;
   
@@ -33,6 +32,16 @@ public class NashornSandboxImpl implements NashornSandbox {
   
   private ExecutorService exectuor;
   
+  private boolean allowPrintFunctions = false;
+  
+  private boolean allowReadFunctions = false;
+  
+  private boolean allowLoadFunctions = false;
+  
+  private boolean allowExitFunctions = false;
+  
+  private boolean allowGlobalsObjects = false;
+  
   public void assertScriptEngine() {
     try {
       boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
@@ -40,8 +49,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return;
       }
       final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
-      SandboxClassFilter _sandboxClassFilter = new SandboxClassFilter(this.allowedClasses);
-      ScriptEngine _scriptEngine = factory.getScriptEngine(_sandboxClassFilter);
+      ScriptEngine _scriptEngine = factory.getScriptEngine(this.sandboxClassFilter);
       this.scriptEngine = _scriptEngine;
       this.scriptEngine.eval("var window = {};");
       this.scriptEngine.eval(BeautifyJs.CODE);
@@ -51,28 +59,67 @@ public class NashornSandboxImpl implements NashornSandbox {
         Object _value = entry.getValue();
         this.scriptEngine.put(_key, _value);
       }
-      this.scriptEngine.eval(((((((((((((((((((((("\n" + 
-        "quit = function() {};\n") + 
-        "exit = function() {};\n") + 
-        "\n") + 
-        "print = function() {};\n") + 
-        "echo = function() {};\n") + 
-        "\n") + 
-        "readFully = function() {};\n") + 
-        "readLine = function() {};\n") + 
-        "\n") + 
-        "load = function() {};\n") + 
-        "loadWithNewGlobal = function() {};\n") + 
-        "\n") + 
-        "\n") + 
-        "$ARG = null;\n") + 
-        "$ENV = null;\n") + 
-        "$EXEC = null;\n") + 
-        "$OPTIONS = null;\n") + 
-        "$OUT = null;\n") + 
-        "$ERR = null;\n") + 
-        "$EXIT = null;\n") + 
-        ""));
+      String _xifexpression = null;
+      if ((!this.allowPrintFunctions)) {
+        _xifexpression = (("" + 
+          "quit = function() {};\n") + 
+          "exit = function() {};\n");
+      } else {
+        _xifexpression = "";
+      }
+      String _plus = ("\n" + _xifexpression);
+      String _plus_1 = (_plus + 
+        "\n");
+      String _xifexpression_1 = null;
+      if ((!this.allowPrintFunctions)) {
+        _xifexpression_1 = (("" + 
+          "print = function() {};\n") + 
+          "echo = function() {};\n");
+      } else {
+        _xifexpression_1 = "";
+      }
+      String _plus_2 = (_plus_1 + _xifexpression_1);
+      String _plus_3 = (_plus_2 + 
+        "\n");
+      String _xifexpression_2 = null;
+      if ((!this.allowReadFunctions)) {
+        _xifexpression_2 = (("" + 
+          "readFully = function() {};\n") + 
+          "readLine = function() {};\n");
+      } else {
+        _xifexpression_2 = "";
+      }
+      String _plus_4 = (_plus_3 + _xifexpression_2);
+      String _plus_5 = (_plus_4 + 
+        "\n");
+      String _xifexpression_3 = null;
+      if ((!this.allowLoadFunctions)) {
+        _xifexpression_3 = (("" + 
+          "load = function() {};\n") + 
+          "loadWithNewGlobal = function() {};\n");
+      } else {
+        _xifexpression_3 = "";
+      }
+      String _plus_6 = (_plus_5 + _xifexpression_3);
+      String _plus_7 = (_plus_6 + 
+        "\n");
+      String _xifexpression_4 = null;
+      if ((!this.allowGlobalsObjects)) {
+        _xifexpression_4 = ((((((("" + 
+          "$ARG = null;\n") + 
+          "$ENV = null;\n") + 
+          "$EXEC = null;\n") + 
+          "$OPTIONS = null;\n") + 
+          "$OUT = null;\n") + 
+          "$ERR = null;\n") + 
+          "$EXIT = null;\n");
+      } else {
+        _xifexpression_4 = "";
+      }
+      String _plus_8 = (_plus_7 + _xifexpression_4);
+      String _plus_9 = (_plus_8 + 
+        "\n");
+      this.scriptEngine.eval(_plus_9);
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
@@ -100,99 +147,93 @@ public class NashornSandboxImpl implements NashornSandbox {
                 "When a CPU time limit is set, an executor needs to be provided by calling .setExecutor(...)");
             }
             final Object monitor = new Object();
-            final Runnable _function = new Runnable() {
-              @Override
-              public void run() {
+            final Runnable _function = () -> {
+              try {
+                boolean _contains = js.contains("intCheckForInterruption");
+                if (_contains) {
+                  throw new IllegalArgumentException(
+                    "Script contains the illegal string [intCheckForInterruption]");
+                }
+                Object _eval = this.scriptEngine.eval("window.js_beautify;");
+                final ScriptObjectMirror jsBeautify = ((ScriptObjectMirror) _eval);
+                Object _call = jsBeautify.call("beautify", js);
+                final String beautifiedJs = ((String) _call);
+                Random _random = new Random();
+                int _nextInt = _random.nextInt();
+                final int randomToken = Math.abs(_nextInt);
+                StringConcatenation _builder = new StringConcatenation();
+                _builder.append("var InterruptTest = Java.type(\'");
+                String _name = InterruptTest.class.getName();
+                _builder.append(_name, "");
+                _builder.append("\');");
+                _builder.newLineIfNotEmpty();
+                _builder.append("var isInterrupted = InterruptTest.isInterrupted;");
+                _builder.newLine();
+                _builder.append("var intCheckForInterruption");
+                _builder.append(randomToken, "");
+                _builder.append(" = function() {");
+                _builder.newLineIfNotEmpty();
+                _builder.append("\t");
+                _builder.append("if (isInterrupted()) {");
+                _builder.newLine();
+                _builder.append("\t    ");
+                _builder.append("throw new Error(\'Interrupted");
+                _builder.append(randomToken, "\t    ");
+                _builder.append("\')");
+                _builder.newLineIfNotEmpty();
+                _builder.append("\t");
+                _builder.append("}");
+                _builder.newLine();
+                _builder.append("};");
+                _builder.newLine();
+                String _replaceAll = beautifiedJs.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
+                String _replace = _replaceAll.replace(") {", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
+                final String securedJs = (_builder.toString() + _replace);
+                final Thread mainThread = Thread.currentThread();
+                Thread _currentThread = Thread.currentThread();
+                monitorThread.setThreadToMonitor(_currentThread);
+                final Runnable _function_1 = () -> {
+                  mainThread.interrupt();
+                };
+                monitorThread.setOnInvalidHandler(_function_1);
+                monitorThread.start();
                 try {
-                  boolean _contains = js.contains("intCheckForInterruption");
-                  if (_contains) {
-                    throw new IllegalArgumentException(
-                      "Script contains the illegal string [intCheckForInterruption]");
-                  }
-                  Object _eval = NashornSandboxImpl.this.scriptEngine.eval("window.js_beautify;");
-                  final ScriptObjectMirror jsBeautify = ((ScriptObjectMirror) _eval);
-                  Object _call = jsBeautify.call("beautify", js);
-                  final String beautifiedJs = ((String) _call);
-                  Random _random = new Random();
-                  int _nextInt = _random.nextInt();
-                  final int randomToken = Math.abs(_nextInt);
-                  StringConcatenation _builder = new StringConcatenation();
-                  _builder.append("var InterruptTest = Java.type(\'");
-                  String _name = InterruptTest.class.getName();
-                  _builder.append(_name, "");
-                  _builder.append("\');");
-                  _builder.newLineIfNotEmpty();
-                  _builder.append("var isInterrupted = InterruptTest.isInterrupted;");
-                  _builder.newLine();
-                  _builder.append("var intCheckForInterruption");
-                  _builder.append(randomToken, "");
-                  _builder.append(" = function() {");
-                  _builder.newLineIfNotEmpty();
-                  _builder.append("\t");
-                  _builder.append("if (isInterrupted()) {");
-                  _builder.newLine();
-                  _builder.append("\t    ");
-                  _builder.append("throw new Error(\'Interrupted");
-                  _builder.append(randomToken, "\t    ");
-                  _builder.append("\')");
-                  _builder.newLineIfNotEmpty();
-                  _builder.append("\t");
-                  _builder.append("}");
-                  _builder.newLine();
-                  _builder.append("};");
-                  _builder.newLine();
-                  String _replaceAll = beautifiedJs.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-                  String _replace = _replaceAll.replace(") {", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-                  final String securedJs = (_builder.toString() + _replace);
-                  final Thread mainThread = Thread.currentThread();
-                  Thread _currentThread = Thread.currentThread();
-                  monitorThread.setThreadToMonitor(_currentThread);
-                  final Runnable _function = new Runnable() {
-                    @Override
-                    public void run() {
-                      mainThread.interrupt();
-                    }
-                  };
-                  monitorThread.setOnInvalidHandler(_function);
-                  monitorThread.start();
-                  try {
-                    final Object res = NashornSandboxImpl.this.scriptEngine.eval(securedJs);
-                    resVal.set(res);
-                  } catch (final Throwable _t) {
-                    if (_t instanceof ScriptException) {
-                      final ScriptException e = (ScriptException)_t;
-                      String _message = e.getMessage();
-                      boolean _contains_1 = _message.contains(("Interrupted" + Integer.valueOf(randomToken)));
-                      if (_contains_1) {
-                        monitorThread.notifyOperationInterrupted();
-                      } else {
-                        exceptionVal.set(e);
-                        monitorThread.stopMonitor();
-                        synchronized (monitor) {
-                          monitor.notify();
-                        }
-                        return;
-                      }
+                  final Object res = this.scriptEngine.eval(securedJs);
+                  resVal.set(res);
+                } catch (final Throwable _t) {
+                  if (_t instanceof ScriptException) {
+                    final ScriptException e = (ScriptException)_t;
+                    String _message = e.getMessage();
+                    boolean _contains_1 = _message.contains(("Interrupted" + Integer.valueOf(randomToken)));
+                    if (_contains_1) {
+                      monitorThread.notifyOperationInterrupted();
                     } else {
-                      throw Exceptions.sneakyThrow(_t);
-                    }
-                  } finally {
-                    monitorThread.stopMonitor();
-                    synchronized (monitor) {
-                      monitor.notify();
-                    }
-                  }
-                } catch (final Throwable _t_1) {
-                  if (_t_1 instanceof Throwable) {
-                    final Throwable t = (Throwable)_t_1;
-                    exceptionVal.set(t);
-                    monitorThread.stopMonitor();
-                    synchronized (monitor) {
-                      monitor.notify();
+                      exceptionVal.set(e);
+                      monitorThread.stopMonitor();
+                      synchronized (monitor) {
+                        monitor.notify();
+                      }
+                      return;
                     }
                   } else {
-                    throw Exceptions.sneakyThrow(_t_1);
+                    throw Exceptions.sneakyThrow(_t);
                   }
+                } finally {
+                  monitorThread.stopMonitor();
+                  synchronized (monitor) {
+                    monitor.notify();
+                  }
+                }
+              } catch (final Throwable _t_1) {
+                if (_t_1 instanceof Throwable) {
+                  final Throwable t = (Throwable)_t_1;
+                  exceptionVal.set(t);
+                  monitorThread.stopMonitor();
+                  synchronized (monitor) {
+                    monitor.notify();
+                  }
+                } else {
+                  throw Exceptions.sneakyThrow(_t_1);
                 }
               }
             };
@@ -244,15 +285,27 @@ public class NashornSandboxImpl implements NashornSandbox {
     NashornSandboxImpl _xblockexpression = null;
     {
       String _name = clazz.getName();
-      this.allowedClasses.add(_name);
-      boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
-      if (_notEquals) {
-        throw new IllegalStateException(
-          "eval() was already called. Please specify all classes to be allowed/injected before calling eval()");
-      }
+      this.sandboxClassFilter.add(_name);
       _xblockexpression = this;
     }
     return _xblockexpression;
+  }
+  
+  @Override
+  public void disallow(final Class<?> clazz) {
+    String _name = clazz.getName();
+    this.sandboxClassFilter.remove(_name);
+  }
+  
+  @Override
+  public boolean isAllowed(final Class<?> clazz) {
+    String _name = clazz.getName();
+    return this.sandboxClassFilter.contains(_name);
+  }
+  
+  @Override
+  public void disallowAllClasses() {
+    this.sandboxClassFilter.clear();
   }
   
   @Override
@@ -262,7 +315,7 @@ public class NashornSandboxImpl implements NashornSandbox {
       this.globalVariables.put(variableName, object);
       Class<?> _class = object.getClass();
       String _name = _class.getName();
-      boolean _contains = this.allowedClasses.contains(_name);
+      boolean _contains = this.sandboxClassFilter.contains(_name);
       boolean _not = (!_contains);
       if (_not) {
         Class<?> _class_1 = object.getClass();
@@ -302,9 +355,34 @@ public class NashornSandboxImpl implements NashornSandbox {
     return _xblockexpression;
   }
   
+  @Override
+  public void allowPrintFunctions(final boolean v) {
+    this.allowPrintFunctions = v;
+  }
+  
+  @Override
+  public void allowReadFunctions(final boolean v) {
+    this.allowReadFunctions = v;
+  }
+  
+  @Override
+  public void allowLoadFunctions(final boolean v) {
+    this.allowLoadFunctions = v;
+  }
+  
+  @Override
+  public void allowExitFunctions(final boolean v) {
+    this.allowExitFunctions = v;
+  }
+  
+  @Override
+  public void allowGlobalsObjects(final boolean v) {
+    this.allowGlobalsObjects = v;
+  }
+  
   public NashornSandboxImpl() {
-    HashSet<String> _hashSet = new HashSet<String>();
-    this.allowedClasses = _hashSet;
+    SandboxClassFilter _sandboxClassFilter = new SandboxClassFilter();
+    this.sandboxClassFilter = _sandboxClassFilter;
     HashMap<String, Object> _hashMap = new HashMap<String, Object>();
     this.globalVariables = _hashMap;
     this.allow(InterruptTest.class);
