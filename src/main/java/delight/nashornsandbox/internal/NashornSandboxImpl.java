@@ -147,93 +147,99 @@ public class NashornSandboxImpl implements NashornSandbox {
                 "When a CPU time limit is set, an executor needs to be provided by calling .setExecutor(...)");
             }
             final Object monitor = new Object();
-            final Runnable _function = () -> {
-              try {
-                boolean _contains = js.contains("intCheckForInterruption");
-                if (_contains) {
-                  throw new IllegalArgumentException(
-                    "Script contains the illegal string [intCheckForInterruption]");
-                }
-                Object _eval = this.scriptEngine.eval("window.js_beautify;");
-                final ScriptObjectMirror jsBeautify = ((ScriptObjectMirror) _eval);
-                Object _call = jsBeautify.call("beautify", js);
-                final String beautifiedJs = ((String) _call);
-                Random _random = new Random();
-                int _nextInt = _random.nextInt();
-                final int randomToken = Math.abs(_nextInt);
-                StringConcatenation _builder = new StringConcatenation();
-                _builder.append("var InterruptTest = Java.type(\'");
-                String _name = InterruptTest.class.getName();
-                _builder.append(_name, "");
-                _builder.append("\');");
-                _builder.newLineIfNotEmpty();
-                _builder.append("var isInterrupted = InterruptTest.isInterrupted;");
-                _builder.newLine();
-                _builder.append("var intCheckForInterruption");
-                _builder.append(randomToken, "");
-                _builder.append(" = function() {");
-                _builder.newLineIfNotEmpty();
-                _builder.append("\t");
-                _builder.append("if (isInterrupted()) {");
-                _builder.newLine();
-                _builder.append("\t    ");
-                _builder.append("throw new Error(\'Interrupted");
-                _builder.append(randomToken, "\t    ");
-                _builder.append("\')");
-                _builder.newLineIfNotEmpty();
-                _builder.append("\t");
-                _builder.append("}");
-                _builder.newLine();
-                _builder.append("};");
-                _builder.newLine();
-                String _replaceAll = beautifiedJs.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-                String _replace = _replaceAll.replace(") {", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-                final String securedJs = (_builder.toString() + _replace);
-                final Thread mainThread = Thread.currentThread();
-                Thread _currentThread = Thread.currentThread();
-                monitorThread.setThreadToMonitor(_currentThread);
-                final Runnable _function_1 = () -> {
-                  mainThread.interrupt();
-                };
-                monitorThread.setOnInvalidHandler(_function_1);
-                monitorThread.start();
+            final Runnable _function = new Runnable() {
+              @Override
+              public void run() {
                 try {
-                  final Object res = this.scriptEngine.eval(securedJs);
-                  resVal.set(res);
-                } catch (final Throwable _t) {
-                  if (_t instanceof ScriptException) {
-                    final ScriptException e = (ScriptException)_t;
-                    String _message = e.getMessage();
-                    boolean _contains_1 = _message.contains(("Interrupted" + Integer.valueOf(randomToken)));
-                    if (_contains_1) {
-                      monitorThread.notifyOperationInterrupted();
-                    } else {
-                      exceptionVal.set(e);
-                      monitorThread.stopMonitor();
-                      synchronized (monitor) {
-                        monitor.notify();
+                  boolean _contains = js.contains("intCheckForInterruption");
+                  if (_contains) {
+                    throw new IllegalArgumentException(
+                      "Script contains the illegal string [intCheckForInterruption]");
+                  }
+                  Object _eval = NashornSandboxImpl.this.scriptEngine.eval("window.js_beautify;");
+                  final ScriptObjectMirror jsBeautify = ((ScriptObjectMirror) _eval);
+                  Object _call = jsBeautify.call("beautify", js);
+                  final String beautifiedJs = ((String) _call);
+                  Random _random = new Random();
+                  int _nextInt = _random.nextInt();
+                  final int randomToken = Math.abs(_nextInt);
+                  StringConcatenation _builder = new StringConcatenation();
+                  _builder.append("var InterruptTest = Java.type(\'");
+                  String _name = InterruptTest.class.getName();
+                  _builder.append(_name, "");
+                  _builder.append("\');");
+                  _builder.newLineIfNotEmpty();
+                  _builder.append("var isInterrupted = InterruptTest.isInterrupted;");
+                  _builder.newLine();
+                  _builder.append("var intCheckForInterruption");
+                  _builder.append(randomToken, "");
+                  _builder.append(" = function() {");
+                  _builder.newLineIfNotEmpty();
+                  _builder.append("\t");
+                  _builder.append("if (isInterrupted()) {");
+                  _builder.newLine();
+                  _builder.append("\t    ");
+                  _builder.append("throw new Error(\'Interrupted");
+                  _builder.append(randomToken, "\t    ");
+                  _builder.append("\')");
+                  _builder.newLineIfNotEmpty();
+                  _builder.append("\t");
+                  _builder.append("}");
+                  _builder.newLine();
+                  _builder.append("};");
+                  _builder.newLine();
+                  String _replaceAll = beautifiedJs.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
+                  String _replace = _replaceAll.replace(") {", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
+                  final String securedJs = (_builder.toString() + _replace);
+                  final Thread mainThread = Thread.currentThread();
+                  Thread _currentThread = Thread.currentThread();
+                  monitorThread.setThreadToMonitor(_currentThread);
+                  final Runnable _function = new Runnable() {
+                    @Override
+                    public void run() {
+                      mainThread.interrupt();
+                    }
+                  };
+                  monitorThread.setOnInvalidHandler(_function);
+                  monitorThread.start();
+                  try {
+                    final Object res = NashornSandboxImpl.this.scriptEngine.eval(securedJs);
+                    resVal.set(res);
+                  } catch (final Throwable _t) {
+                    if (_t instanceof ScriptException) {
+                      final ScriptException e = (ScriptException)_t;
+                      String _message = e.getMessage();
+                      boolean _contains_1 = _message.contains(("Interrupted" + Integer.valueOf(randomToken)));
+                      if (_contains_1) {
+                        monitorThread.notifyOperationInterrupted();
+                      } else {
+                        exceptionVal.set(e);
+                        monitorThread.stopMonitor();
+                        synchronized (monitor) {
+                          monitor.notify();
+                        }
+                        return;
                       }
-                      return;
+                    } else {
+                      throw Exceptions.sneakyThrow(_t);
+                    }
+                  } finally {
+                    monitorThread.stopMonitor();
+                    synchronized (monitor) {
+                      monitor.notify();
+                    }
+                  }
+                } catch (final Throwable _t_1) {
+                  if (_t_1 instanceof Throwable) {
+                    final Throwable t = (Throwable)_t_1;
+                    exceptionVal.set(t);
+                    monitorThread.stopMonitor();
+                    synchronized (monitor) {
+                      monitor.notify();
                     }
                   } else {
-                    throw Exceptions.sneakyThrow(_t);
+                    throw Exceptions.sneakyThrow(_t_1);
                   }
-                } finally {
-                  monitorThread.stopMonitor();
-                  synchronized (monitor) {
-                    monitor.notify();
-                  }
-                }
-              } catch (final Throwable _t_1) {
-                if (_t_1 instanceof Throwable) {
-                  final Throwable t = (Throwable)_t_1;
-                  exceptionVal.set(t);
-                  monitorThread.stopMonitor();
-                  synchronized (monitor) {
-                    monitor.notify();
-                  }
-                } else {
-                  throw Exceptions.sneakyThrow(_t_1);
                 }
               }
             };
