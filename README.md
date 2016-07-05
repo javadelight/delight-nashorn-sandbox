@@ -51,7 +51,7 @@ This code will raise a ScriptCPUAbuseException.
     <dependency>
         <groupId>org.javadelight</groupId>
         <artifactId>delight-nashorn-sandbox</artifactId>
-        <version>0.0.4</version>
+        <version>0.0.5</version>
     </dependency>
     
 Find out latest version [here](http://modules.appjangle.com/delight-nashorn-sandbox/latest/project-summary.html).
