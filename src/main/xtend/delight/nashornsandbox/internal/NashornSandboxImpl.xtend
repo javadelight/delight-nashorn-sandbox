@@ -16,12 +16,18 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror
 
 class NashornSandboxImpl implements NashornSandbox {
 
-	val Set<String> allowedClasses
+	var SandboxClassFilter sandboxClassFilter
 	val Map<String, Object> globalVariables
 
 	var ScriptEngine scriptEngine
 	var Long maxCPUTimeInMs = 0L
 	var ExecutorService exectuor
+
+	var allowPrintFunctions = false
+	var allowReadFunctions = false
+	var allowLoadFunctions = false
+	var allowExitFunctions = false
+	var allowGlobalsObjects = false
 
 	def void assertScriptEngine() {
 		if (scriptEngine != null) {
@@ -33,7 +39,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		 */
 		val NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
 
-		scriptEngine = factory.getScriptEngine(new SandboxClassFilter(allowedClasses));
+		scriptEngine = factory.getScriptEngine(sandboxClassFilter);
 
 		scriptEngine.eval('var window = {};')
 		scriptEngine.eval(BeautifyJs.CODE)
@@ -42,33 +48,36 @@ class NashornSandboxImpl implements NashornSandbox {
 		}
 		
 		scriptEngine.eval("\n" +
-                "quit = function() {};\n" +
-                "exit = function() {};\n" +
-                "\n" +
-                "print = function() {};\n" +
-                "echo = function() {};\n" +
-                "\n" +
-                "readFully = function() {};\n" +
-                "readLine = function() {};\n" +
-                "\n" +
-                "load = function() {};\n" +
-                "loadWithNewGlobal = function() {};\n" +
-                "\n" +
-                //"Java = null;\n" +
-             //   "org = null;\n" +
-             //   "java = null;\n" +
-             //   "com = null;\n" +
-             //   "sun = null;\n" +
-             //   "net = null;\n" +
-                "\n" +
-                "$ARG = null;\n" +
-                "$ENV = null;\n" +
-                "$EXEC = null;\n" +
-                "$OPTIONS = null;\n" +
-                "$OUT = null;\n" +
-                "$ERR = null;\n" +
-                "$EXIT = null;\n" +
-                "")
+				(if (!this.allowPrintFunctions) "" +
+						"quit = function() {};\n" +
+						"exit = function() {};\n"
+				else "") +
+				"\n" +
+				(if (!this.allowPrintFunctions) "" +
+						"print = function() {};\n" +
+						"echo = function() {};\n"
+				else "") +
+				"\n" +
+				(if (!this.allowReadFunctions) "" +
+						"readFully = function() {};\n" +
+						"readLine = function() {};\n"
+				else "") +
+				"\n" +
+				(if (!this.allowLoadFunctions) "" +
+						"load = function() {};\n" +
+						"loadWithNewGlobal = function() {};\n"
+				else "") +
+				"\n" +
+				(if (!this.allowGlobalsObjects) "" +
+						"$ARG = null;\n" +
+						"$ENV = null;\n" +
+						"$EXEC = null;\n" +
+						"$OPTIONS = null;\n" +
+						"$OUT = null;\n" +
+						"$ERR = null;\n" +
+						"$EXIT = null;\n"
+				else "") +
+                "\n")
 		
 	}
 
@@ -197,18 +206,25 @@ class NashornSandboxImpl implements NashornSandbox {
 	}
 
 	override NashornSandbox allow(Class<?> clazz) {
-		allowedClasses.add(clazz.name)
-
-		if (scriptEngine != null) {
-			throw new IllegalStateException(
-				"eval() was already called. Please specify all classes to be allowed/injected before calling eval()")
-		}
+		sandboxClassFilter.add(clazz.name)
 		this
+	}
+
+	override disallow(Class<?> clazz) {
+		sandboxClassFilter.remove(clazz.name)
+	}
+
+	override isAllowed(Class<?> clazz) {
+		sandboxClassFilter.contains(clazz.name)
+	}
+
+	override disallowAllClasses() {
+		sandboxClassFilter.clear()
 	}
 
 	override NashornSandbox inject(String variableName, Object object) {
 		this.globalVariables.put(variableName, object)
-		if (!allowedClasses.contains(object.class.name)) {
+		if (!sandboxClassFilter.contains(object.class.name)) {
 			allow(object.class)
 		}
 		if (scriptEngine != null) {
@@ -230,9 +246,29 @@ class NashornSandboxImpl implements NashornSandbox {
 		assertScriptEngine
 		scriptEngine.get(variableName)
 	}
+
+	override allowPrintFunctions(boolean v) {
+		this.allowPrintFunctions = v
+	}
+
+	override allowReadFunctions(boolean v) {
+		this.allowReadFunctions = v
+	}
+
+	override allowLoadFunctions(boolean v) {
+		this.allowLoadFunctions = v
+	}
+
+	override allowExitFunctions(boolean v) {
+		this.allowExitFunctions = v
+	}
+
+	override allowGlobalsObjects(boolean v) {
+		this.allowGlobalsObjects = v
+	}
 	
 	new() {
-		this.allowedClasses = new HashSet()
+		this.sandboxClassFilter = new SandboxClassFilter()
 		this.globalVariables = new HashMap<String, Object>
 		allow(InterruptTest)
 	}
