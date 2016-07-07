@@ -59,6 +59,10 @@ Find out latest version [here](http://modules.appjangle.com/delight-nashorn-sand
 Use [Java Delight Repository](https://github.com/javadelight/delight-main#maven-repository).
 
 If you are looking for a JAR with all dependencies, you can download it from [here](https://github.com/javadelight/delight-nashorn-sandbox/releases).
+
+## Contributors
+
+[Eduardo Velasques](https://github.com/eduveks): API extensions to block/allow Rhino system functions; Capability to block/allow variables after Sandbox has been created. 
     
 ## Further Documentation
 
