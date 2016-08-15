@@ -231,26 +231,10 @@
 
 
 
-
-
 					</reportPlugins>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>net.ju-n.maven.plugins</groupId>
-				<artifactId>checksum-maven-plugin</artifactId>
-				<version>1.3</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>artifacts</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<!-- put your configurations here -->
-				</configuration>
-			</plugin>
+			
 
 		</plugins>
 
