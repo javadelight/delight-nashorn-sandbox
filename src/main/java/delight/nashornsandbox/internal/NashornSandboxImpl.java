@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
@@ -61,68 +63,74 @@ public class NashornSandboxImpl implements NashornSandbox {
       }
       String _xifexpression = null;
       if ((!this.allowPrintFunctions)) {
-        _xifexpression = (("" + 
-          "quit = function() {};\n") + 
-          "exit = function() {};\n");
+        _xifexpression = (("" + "quit = function() {};\n") + "exit = function() {};\n");
       } else {
         _xifexpression = "";
       }
       String _plus = ("\n" + _xifexpression);
-      String _plus_1 = (_plus + 
-        "\n");
+      String _plus_1 = (_plus + "\n");
       String _xifexpression_1 = null;
       if ((!this.allowPrintFunctions)) {
-        _xifexpression_1 = (("" + 
-          "print = function() {};\n") + 
-          "echo = function() {};\n");
+        _xifexpression_1 = (("" + "print = function() {};\n") + "echo = function() {};\n");
       } else {
         _xifexpression_1 = "";
       }
       String _plus_2 = (_plus_1 + _xifexpression_1);
-      String _plus_3 = (_plus_2 + 
-        "\n");
+      String _plus_3 = (_plus_2 + "\n");
       String _xifexpression_2 = null;
       if ((!this.allowReadFunctions)) {
-        _xifexpression_2 = (("" + 
-          "readFully = function() {};\n") + 
-          "readLine = function() {};\n");
+        _xifexpression_2 = (("" + "readFully = function() {};\n") + "readLine = function() {};\n");
       } else {
         _xifexpression_2 = "";
       }
       String _plus_4 = (_plus_3 + _xifexpression_2);
-      String _plus_5 = (_plus_4 + 
-        "\n");
+      String _plus_5 = (_plus_4 + "\n");
       String _xifexpression_3 = null;
       if ((!this.allowLoadFunctions)) {
-        _xifexpression_3 = (("" + 
-          "load = function() {};\n") + 
-          "loadWithNewGlobal = function() {};\n");
+        _xifexpression_3 = (("" + "load = function() {};\n") + "loadWithNewGlobal = function() {};\n");
       } else {
         _xifexpression_3 = "";
       }
       String _plus_6 = (_plus_5 + _xifexpression_3);
-      String _plus_7 = (_plus_6 + 
-        "\n");
+      String _plus_7 = (_plus_6 + "\n");
       String _xifexpression_4 = null;
       if ((!this.allowGlobalsObjects)) {
-        _xifexpression_4 = ((((((("" + 
-          "$ARG = null;\n") + 
-          "$ENV = null;\n") + 
-          "$EXEC = null;\n") + 
-          "$OPTIONS = null;\n") + 
-          "$OUT = null;\n") + 
-          "$ERR = null;\n") + 
-          "$EXIT = null;\n");
+        _xifexpression_4 = ((((((("" + "$ARG = null;\n") + "$ENV = null;\n") + "$EXEC = null;\n") + "$OPTIONS = null;\n") + 
+          "$OUT = null;\n") + "$ERR = null;\n") + "$EXIT = null;\n");
       } else {
         _xifexpression_4 = "";
       }
       String _plus_8 = (_plus_7 + _xifexpression_4);
-      String _plus_9 = (_plus_8 + 
-        "\n");
+      String _plus_9 = (_plus_8 + "\n");
       this.scriptEngine.eval(_plus_9);
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
+  }
+  
+  private static String replaceGroup(final String str, final String regex, final String replacementForGroup2) {
+    final Pattern pattern = Pattern.compile(regex);
+    final Matcher matcher = pattern.matcher(str);
+    final StringBuffer sb = new StringBuffer();
+    while (matcher.find()) {
+      matcher.appendReplacement(sb, ("$1" + replacementForGroup2));
+    }
+    matcher.appendTail(sb);
+    return sb.toString();
+  }
+  
+  private static String injectInterruptionCalls(final String str, final int randomToken) {
+    String _xblockexpression = null;
+    {
+      String res = str.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
+      String _replaceGroup = NashornSandboxImpl.replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
+      res = _replaceGroup;
+      String _replaceGroup_1 = NashornSandboxImpl.replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
+      res = _replaceGroup_1;
+      String _replaceAll = res.replaceAll("\\} while \\(", (("\nintCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n\\} while \\("));
+      _xblockexpression = res = _replaceAll;
+    }
+    return _xblockexpression;
   }
   
   @Override
@@ -188,9 +196,8 @@ public class NashornSandboxImpl implements NashornSandbox {
                   _builder.newLine();
                   _builder.append("};");
                   _builder.newLine();
-                  String _replaceAll = beautifiedJs.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-                  String _replace = _replaceAll.replace(") {", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-                  final String securedJs = (_builder.toString() + _replace);
+                  String _injectInterruptionCalls = NashornSandboxImpl.injectInterruptionCalls(beautifiedJs, randomToken);
+                  final String securedJs = (_builder.toString() + _injectInterruptionCalls);
                   final Thread mainThread = Thread.currentThread();
                   Thread _currentThread = Thread.currentThread();
                   monitorThread.setThreadToMonitor(_currentThread);

@@ -4,11 +4,11 @@ import delight.async.Value
 import delight.nashornsandbox.NashornSandbox
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException
 import java.util.HashMap
-import java.util.HashSet
 import java.util.Map
 import java.util.Random
-import java.util.Set
 import java.util.concurrent.ExecutorService
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 import javax.script.ScriptEngine
 import javax.script.ScriptException
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
@@ -46,39 +46,45 @@ class NashornSandboxImpl implements NashornSandbox {
 		for (entry : globalVariables.entrySet) {
 			scriptEngine.put(entry.key, entry.value)
 		}
-		
-		scriptEngine.eval("\n" +
-				(if (!this.allowPrintFunctions) "" +
-						"quit = function() {};\n" +
-						"exit = function() {};\n"
-				else "") +
-				"\n" +
-				(if (!this.allowPrintFunctions) "" +
-						"print = function() {};\n" +
-						"echo = function() {};\n"
-				else "") +
-				"\n" +
-				(if (!this.allowReadFunctions) "" +
-						"readFully = function() {};\n" +
-						"readLine = function() {};\n"
-				else "") +
-				"\n" +
-				(if (!this.allowLoadFunctions) "" +
-						"load = function() {};\n" +
-						"loadWithNewGlobal = function() {};\n"
-				else "") +
-				"\n" +
-				(if (!this.allowGlobalsObjects) "" +
-						"$ARG = null;\n" +
-						"$ENV = null;\n" +
-						"$EXEC = null;\n" +
-						"$OPTIONS = null;\n" +
-						"$OUT = null;\n" +
-						"$ERR = null;\n" +
-						"$EXIT = null;\n"
-				else "") +
-                "\n")
-		
+
+		scriptEngine.eval(
+			"\n" + (if (!this.allowPrintFunctions)
+				"" + "quit = function() {};\n" + "exit = function() {};\n"
+			else
+				"") + "\n" + (if (!this.allowPrintFunctions)
+				"" + "print = function() {};\n" + "echo = function() {};\n"
+			else
+				"") + "\n" + (if (!this.allowReadFunctions)
+				"" + "readFully = function() {};\n" + "readLine = function() {};\n"
+			else
+				"") + "\n" + (if (!this.allowLoadFunctions)
+				"" + "load = function() {};\n" + "loadWithNewGlobal = function() {};\n"
+			else
+				"") + "\n" +
+				(if (!this.allowGlobalsObjects)
+					"" + "$ARG = null;\n" + "$ENV = null;\n" + "$EXEC = null;\n" + "$OPTIONS = null;\n" +
+						"$OUT = null;\n" + "$ERR = null;\n" + "$EXIT = null;\n"
+				else
+					"") + "\n")
+
+	}
+
+	private def static String replaceGroup(String str, String regex, String replacementForGroup2) {
+		val Pattern pattern = Pattern.compile(regex);
+		val Matcher matcher = pattern.matcher(str);
+		val StringBuffer sb = new StringBuffer();
+		while (matcher.find()) { 
+			matcher.appendReplacement(sb, "$1" + replacementForGroup2);
+		}
+		matcher.appendTail(sb);
+		return sb.toString()
+	}
+
+	private def static String injectInterruptionCalls(String str, int randomToken) {
+		var res = str.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n')
+		res = replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();\n')
+		res = replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();\n')
+		res = res.replaceAll("\\} while \\(", "\nintCheckForInterruption" + randomToken + "();\n\\} while \\(")
 	}
 
 	override Object eval(String js) {
@@ -123,10 +129,10 @@ class NashornSandboxImpl implements NashornSandbox {
 							    throw new Error('Interrupted«randomToken»')
 							}
 						};
-					''' +
-						beautifiedJs.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n').
-							replace(') {', ') {intCheckForInterruption' + randomToken + '();\n')
-
+					''' + injectInterruptionCalls(beautifiedJs, randomToken)
+					
+					
+					
 					val mainThread = Thread.currentThread
 
 					monitorThread.threadToMonitor = Thread.currentThread
@@ -241,7 +247,7 @@ class NashornSandboxImpl implements NashornSandbox {
 	override ExecutorService getExecutor() {
 		this.exectuor
 	}
-	
+
 	override get(String variableName) {
 		assertScriptEngine
 		scriptEngine.get(variableName)
@@ -266,13 +272,11 @@ class NashornSandboxImpl implements NashornSandbox {
 	override allowGlobalsObjects(boolean v) {
 		this.allowGlobalsObjects = v
 	}
-	
+
 	new() {
 		this.sandboxClassFilter = new SandboxClassFilter()
 		this.globalVariables = new HashMap<String, Object>
 		allow(InterruptTest)
 	}
-	
-	
 
 }

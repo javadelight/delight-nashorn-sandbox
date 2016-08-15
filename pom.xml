@@ -70,10 +70,10 @@
 				</configuration>
 			</plugin>
 
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-assembly-plugin</artifactId> 
+			<!--  <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-assembly-plugin</artifactId> 
 				<version>2.4</version> <executions> <execution> <goals> <goal>attached</goal> 
 				</goals> <phase>package</phase> <configuration> <descriptors> <descriptor>src/assemble/distribution.xml</descriptor> 
-				</descriptors> </configuration> </execution> </executions> </plugin> -->
+				</descriptors> </configuration> </execution> </executions> </plugin> --> 
 
 
 
