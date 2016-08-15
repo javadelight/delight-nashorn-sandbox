@@ -234,7 +234,6 @@
 					</reportPlugins>
 				</configuration>
 			</plugin>
-
 		</plugins>
 
 		<!-- RESOURCES -->
