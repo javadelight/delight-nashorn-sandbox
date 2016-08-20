@@ -48,7 +48,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		}
 
 		scriptEngine.eval(
-			"\n" + (if (!this.allowPrintFunctions)
+			"\n" + (if (!this.allowExitFunctions)
 				"" + "quit = function() {};\n" + "exit = function() {};\n"
 			else
 				"") + "\n" + (if (!this.allowPrintFunctions)

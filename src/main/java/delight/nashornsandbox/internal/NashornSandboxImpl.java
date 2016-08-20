@@ -62,7 +62,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         this.scriptEngine.put(_key, _value);
       }
       String _xifexpression = null;
-      if ((!this.allowPrintFunctions)) {
+      if ((!this.allowExitFunctions)) {
         _xifexpression = (("" + "quit = function() {};\n") + "exit = function() {};\n");
       } else {
         _xifexpression = "";
