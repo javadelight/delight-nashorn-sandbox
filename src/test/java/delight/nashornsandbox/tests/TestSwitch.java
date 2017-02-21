@@ -2,7 +2,6 @@ package delight.nashornsandbox.tests;
 
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.NashornSandboxes;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.Test;
@@ -15,8 +14,7 @@ public class TestSwitch {
     try {
       sandbox.allowPrintFunctions(true);
       sandbox.setMaxCPUTime(50);
-      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
-      sandbox.setExecutor(_newSingleThreadExecutor);
+      sandbox.setExecutor(Executors.newSingleThreadExecutor());
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("var expr = \"one\";");
       _builder.newLine();
@@ -52,8 +50,7 @@ public class TestSwitch {
       _builder.newLine();
       sandbox.eval(_builder.toString());
     } finally {
-      ExecutorService _executor = sandbox.getExecutor();
-      _executor.shutdown();
+      sandbox.getExecutor().shutdown();
     }
   }
 }

@@ -51,15 +51,12 @@ public class NashornSandboxImpl implements NashornSandbox {
         return;
       }
       final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
-      ScriptEngine _scriptEngine = factory.getScriptEngine(this.sandboxClassFilter);
-      this.scriptEngine = _scriptEngine;
+      this.scriptEngine = factory.getScriptEngine(this.sandboxClassFilter);
       this.scriptEngine.eval("var window = {};");
       this.scriptEngine.eval(BeautifyJs.CODE);
       Set<Map.Entry<String, Object>> _entrySet = this.globalVariables.entrySet();
       for (final Map.Entry<String, Object> entry : _entrySet) {
-        String _key = entry.getKey();
-        Object _value = entry.getValue();
-        this.scriptEngine.put(_key, _value);
+        this.scriptEngine.put(entry.getKey(), entry.getValue());
       }
       String _xifexpression = null;
       if ((!this.allowExitFunctions)) {
@@ -123,12 +120,9 @@ public class NashornSandboxImpl implements NashornSandbox {
     String _xblockexpression = null;
     {
       String res = str.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-      String _replaceGroup = NashornSandboxImpl.replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-      res = _replaceGroup;
-      String _replaceGroup_1 = NashornSandboxImpl.replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-      res = _replaceGroup_1;
-      String _replaceAll = res.replaceAll("\\} while \\(", (("\nintCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n\\} while \\("));
-      _xblockexpression = res = _replaceAll;
+      res = NashornSandboxImpl.replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
+      res = NashornSandboxImpl.replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
+      _xblockexpression = res = res.replaceAll("\\} while \\(", (("\nintCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n\\} while \\("));
     }
     return _xblockexpression;
   }
@@ -168,19 +162,17 @@ public class NashornSandboxImpl implements NashornSandbox {
                   final ScriptObjectMirror jsBeautify = ((ScriptObjectMirror) _eval);
                   Object _call = jsBeautify.call("beautify", js);
                   final String beautifiedJs = ((String) _call);
-                  Random _random = new Random();
-                  int _nextInt = _random.nextInt();
-                  final int randomToken = Math.abs(_nextInt);
+                  final int randomToken = Math.abs(new Random().nextInt());
                   StringConcatenation _builder = new StringConcatenation();
                   _builder.append("var InterruptTest = Java.type(\'");
                   String _name = InterruptTest.class.getName();
-                  _builder.append(_name, "");
+                  _builder.append(_name);
                   _builder.append("\');");
                   _builder.newLineIfNotEmpty();
                   _builder.append("var isInterrupted = InterruptTest.isInterrupted;");
                   _builder.newLine();
                   _builder.append("var intCheckForInterruption");
-                  _builder.append(randomToken, "");
+                  _builder.append(randomToken);
                   _builder.append(" = function() {");
                   _builder.newLineIfNotEmpty();
                   _builder.append("\t");
@@ -199,8 +191,7 @@ public class NashornSandboxImpl implements NashornSandbox {
                   String _injectInterruptionCalls = NashornSandboxImpl.injectInterruptionCalls(beautifiedJs, randomToken);
                   final String securedJs = (_builder.toString() + _injectInterruptionCalls);
                   final Thread mainThread = Thread.currentThread();
-                  Thread _currentThread = Thread.currentThread();
-                  monitorThread.setThreadToMonitor(_currentThread);
+                  monitorThread.setThreadToMonitor(Thread.currentThread());
                   final Runnable _function = new Runnable() {
                     @Override
                     public void run() {
@@ -215,8 +206,7 @@ public class NashornSandboxImpl implements NashornSandbox {
                   } catch (final Throwable _t) {
                     if (_t instanceof ScriptException) {
                       final ScriptException e = (ScriptException)_t;
-                      String _message = e.getMessage();
-                      boolean _contains_1 = _message.contains(("Interrupted" + Integer.valueOf(randomToken)));
+                      boolean _contains_1 = e.getMessage().contains(("Interrupted" + Integer.valueOf(randomToken)));
                       if (_contains_1) {
                         monitorThread.notifyOperationInterrupted();
                       } else {
@@ -297,8 +287,7 @@ public class NashornSandboxImpl implements NashornSandbox {
   public NashornSandbox allow(final Class<?> clazz) {
     NashornSandboxImpl _xblockexpression = null;
     {
-      String _name = clazz.getName();
-      this.sandboxClassFilter.add(_name);
+      this.sandboxClassFilter.add(clazz.getName());
       _xblockexpression = this;
     }
     return _xblockexpression;
@@ -306,14 +295,12 @@ public class NashornSandboxImpl implements NashornSandbox {
   
   @Override
   public void disallow(final Class<?> clazz) {
-    String _name = clazz.getName();
-    this.sandboxClassFilter.remove(_name);
+    this.sandboxClassFilter.remove(clazz.getName());
   }
   
   @Override
   public boolean isAllowed(final Class<?> clazz) {
-    String _name = clazz.getName();
-    return this.sandboxClassFilter.contains(_name);
+    return this.sandboxClassFilter.contains(clazz.getName());
   }
   
   @Override
@@ -326,13 +313,10 @@ public class NashornSandboxImpl implements NashornSandbox {
     NashornSandboxImpl _xblockexpression = null;
     {
       this.globalVariables.put(variableName, object);
-      Class<?> _class = object.getClass();
-      String _name = _class.getName();
-      boolean _contains = this.sandboxClassFilter.contains(_name);
+      boolean _contains = this.sandboxClassFilter.contains(object.getClass().getName());
       boolean _not = (!_contains);
       if (_not) {
-        Class<?> _class_1 = object.getClass();
-        this.allow(_class_1);
+        this.allow(object.getClass());
       }
       boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
       if (_notEquals) {

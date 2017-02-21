@@ -2,7 +2,6 @@ package delight.nashornsandbox.tests;
 
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.NashornSandboxes;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.junit.Assert;
@@ -37,8 +36,7 @@ public class TestExceptions {
     try {
       final NashornSandbox sandbox = NashornSandboxes.create();
       sandbox.setMaxCPUTime(100);
-      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
-      sandbox.setExecutor(_newSingleThreadExecutor);
+      sandbox.setExecutor(Executors.newSingleThreadExecutor());
       sandbox.eval("blah_blah_blah();");
     } catch (final Throwable _t) {
       if (_t instanceof Throwable) {
