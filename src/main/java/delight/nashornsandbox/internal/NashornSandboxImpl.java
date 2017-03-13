@@ -1,7 +1,6 @@
 package delight.nashornsandbox.internal;
 
 import com.google.common.base.Objects;
-
 import delight.async.Value;
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
@@ -9,8 +8,6 @@ import delight.nashornsandbox.internal.BeautifyJs;
 import delight.nashornsandbox.internal.InterruptTest;
 import delight.nashornsandbox.internal.MonitorThread;
 import delight.nashornsandbox.internal.SandboxClassFilter;
-
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -18,13 +15,10 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
-
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 
@@ -346,11 +340,6 @@ public class NashornSandboxImpl implements NashornSandbox {
   @Override
   public ExecutorService getExecutor() {
     return this.exectuor;
-  }
-  
-  @Override
-  public void setWriter(Writer writer) {
-  	scriptEngine.getContext().setWriter(writer);
   }
   
   @Override

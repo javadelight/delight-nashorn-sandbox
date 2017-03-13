@@ -1,6 +1,5 @@
 package delight.nashornsandbox;
 
-import java.io.Writer;
 import java.util.concurrent.ExecutorService;
 
 @SuppressWarnings("all")
@@ -52,11 +51,6 @@ public interface NashornSandbox {
    * Obtains the value of the specified JavaScript variable.
    */
   public abstract Object get(final String variableName);
-  
-  /**
-   * Sets the writer of the scriptengine
-   */
-  public abstract void setWriter(final Writer writer);
   
   /**
    * Allow Nashorn print and echo functions.
