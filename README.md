@@ -48,17 +48,24 @@ This code will raise a ScriptCPUAbuseException.
 
 ## Maven
     
-    <dependency>
-        <groupId>org.javadelight</groupId>
-        <artifactId>delight-nashorn-sandbox</artifactId>
-        <version>0.0.6</version>
-    </dependency>
-    
-Find out latest version [here](http://modules.appjangle.com/delight-nashorn-sandbox/latest/project-summary.html).
+## Dependency
 
-Use [Java Delight Repository](https://github.com/javadelight/delight-main#maven-repository).
+Just add the following dependency to your projects.
 
-If you are looking for a JAR with all dependencies, you can download it from [here](https://github.com/javadelight/delight-nashorn-sandbox/releases).
+```
+<dependency>
+    <groupId>org.javadelight</groupId>
+    <artifactId>delight-nashorn-sandbox</artifactId>
+    <version>[insert latest version]</version>
+</dependency>
+```
+
+This artifact is available on [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cdelight-nashorn-sandbox) and 
+[BinTray](https://bintray.com/javadelight/javadelight/delight-nashorn-sandbox).
+
+[![Maven Central](https://img.shields.io/maven-central/v/org.javadelight/delight-nashorn-sandbox.svg)](https://search.maven.org/#search%7Cga%7C1%7Cdelight-nashorn-sandbox)
+
+If you are looking for a JAR with all dependencies, you can also download it from [here](https://github.com/javadelight/delight-nashorn-sandbox/releases).
 
 ## Contributors
 
