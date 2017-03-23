@@ -47,8 +47,6 @@ This code will raise a ScriptCPUAbuseException.
 
 
 ## Maven
-    
-## Dependency
 
 Just add the following dependency to your projects.
 
