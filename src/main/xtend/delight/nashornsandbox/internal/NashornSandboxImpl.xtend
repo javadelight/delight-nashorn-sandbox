@@ -30,7 +30,7 @@ class NashornSandboxImpl implements NashornSandbox {
 	var allowGlobalsObjects = false
 
 	def void assertScriptEngine() {
-		if (scriptEngine != null) {
+		if (scriptEngine !== null) {
 			return
 		}
 
@@ -100,7 +100,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 			val monitorThread = new MonitorThread(maxCPUTimeInMs * 1000000)
 
-			if (exectuor == null) {
+			if (exectuor === null) {
 				throw new IllegalStateException(
 					"When a CPU time limit is set, an executor needs to be provided by calling .setExecutor(...)")
 			}

@@ -46,8 +46,7 @@ public class NashornSandboxImpl implements NashornSandbox {
   
   public void assertScriptEngine() {
     try {
-      boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
-      if (_notEquals) {
+      if ((this.scriptEngine != null)) {
         return;
       }
       final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
@@ -143,8 +142,7 @@ public class NashornSandboxImpl implements NashornSandbox {
             final Value<Object> resVal = new Value<Object>(null);
             final Value<Throwable> exceptionVal = new Value<Throwable>(null);
             final MonitorThread monitorThread = new MonitorThread(((this.maxCPUTimeInMs).longValue() * 1000000));
-            boolean _equals = Objects.equal(this.exectuor, null);
-            if (_equals) {
+            if ((this.exectuor == null)) {
               throw new IllegalStateException(
                 "When a CPU time limit is set, an executor needs to be provided by calling .setExecutor(...)");
             }
