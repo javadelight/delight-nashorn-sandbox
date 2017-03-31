@@ -2,7 +2,7 @@
 	+ GWT + in workspace dependencies 27.11.2010 --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<groupId>org.javadelight</groupId>
 	<artifactId>delight-nashorn-sandbox</artifactId>
-	<version>0.0.9</version>
+	<version>0.0.10</version>
 	<description>A safe sandbox to execute JavaScript code from Nashorn.</description>
 	<url>https://github.com/javadelight/delight-nashorn-sandbox</url>
 
@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>org.eclipse.xtend</groupId>
 			<artifactId>org.eclipse.xtend.lib</artifactId>
-			<version>2.11.0</version>
+			<version>2.10.0</version>
 			<exclusions>
 				<exclusion>  
 					<groupId>com.google.guava</groupId>
@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.javadelight</groupId>
 			<artifactId>delight-async</artifactId>
-			<version>0.1.1</version>
+			<version>0.1.2</version>
 			<exclusions>
 				<exclusion>  
 					<groupId>com.google.guava</groupId>
