@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.javadelight</groupId>
 			<artifactId>delight-async</artifactId>
-			<version>0.1.2</version>
+			<version>0.1.4</version>
 			<exclusions>
 				<exclusion>  
 					<groupId>com.google.guava</groupId>
