@@ -48,6 +48,11 @@ public interface NashornSandbox {
   public abstract Object eval(final String js);
   
   /**
+   * Enables debug output from the Sandbox.
+   */
+  public abstract void setDebug(final boolean value);
+  
+  /**
    * Obtains the value of the specified JavaScript variable.
    */
   public abstract Object get(final String variableName);

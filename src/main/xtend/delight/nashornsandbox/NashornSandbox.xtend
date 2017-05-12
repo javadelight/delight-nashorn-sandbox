@@ -48,6 +48,11 @@ interface NashornSandbox {
 	def Object eval(String js)
 	
 	/**
+	 * Enables debug output from the Sandbox.
+	 */
+	def void setDebug(boolean value)
+	
+	/**
 	 * Obtains the value of the specified JavaScript variable.
 	 */
 	def Object get(String variableName)

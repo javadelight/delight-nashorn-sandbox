@@ -20,6 +20,7 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
 public class NashornSandboxImpl implements NashornSandbox {
@@ -42,6 +43,8 @@ public class NashornSandboxImpl implements NashornSandbox {
   protected boolean allowExitFunctions = false;
   
   protected boolean allowGlobalsObjects = false;
+  
+  protected volatile boolean debug = false;
   
   public void assertScriptEngine() {
     try {
@@ -118,8 +121,8 @@ public class NashornSandboxImpl implements NashornSandbox {
     String _xblockexpression = null;
     {
       String res = str.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-      res = NashornSandboxImpl.replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-      res = NashornSandboxImpl.replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
+      res = NashornSandboxImpl.replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();"));
+      res = NashornSandboxImpl.replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();"));
       res = res.replaceAll("\\} while \\(", (("\nintCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n\\} while \\("));
       _xblockexpression = res = res.replaceAll(((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "\\(\\);\\s+else"), ";\nelse");
     }
@@ -186,8 +189,10 @@ public class NashornSandboxImpl implements NashornSandbox {
                   _builder.newLine();
                   _builder.append("};");
                   _builder.newLine();
+                  String preamble = _builder.toString();
+                  preamble = preamble.replace("\n", "");
                   String _injectInterruptionCalls = NashornSandboxImpl.injectInterruptionCalls(beautifiedJs, randomToken);
-                  final String securedJs = (_builder.toString() + _injectInterruptionCalls);
+                  final String securedJs = (preamble + _injectInterruptionCalls);
                   final Thread mainThread = Thread.currentThread();
                   monitorThread.setThreadToMonitor(Thread.currentThread());
                   final Runnable _function = new Runnable() {
@@ -199,6 +204,11 @@ public class NashornSandboxImpl implements NashornSandbox {
                   monitorThread.setOnInvalidHandler(_function);
                   monitorThread.start();
                   try {
+                    if (NashornSandboxImpl.this.debug) {
+                      InputOutput.<String>println("--- Running JS ---");
+                      InputOutput.<String>println(securedJs);
+                      InputOutput.<String>println("--- JS END ---");
+                    }
                     final Object res = NashornSandboxImpl.this.scriptEngine.eval(securedJs);
                     resVal.set(res);
                   } catch (final Throwable _t) {
@@ -372,6 +382,11 @@ public class NashornSandboxImpl implements NashornSandbox {
   @Override
   public void allowGlobalsObjects(final boolean v) {
     this.allowGlobalsObjects = v;
+  }
+  
+  @Override
+  public void setDebug(final boolean value) {
+    this.debug = value;
   }
   
   public NashornSandboxImpl() {

@@ -28,6 +28,8 @@ class NashornSandboxImpl implements NashornSandbox {
 	protected var allowLoadFunctions = false
 	protected var allowExitFunctions = false
 	protected var allowGlobalsObjects = false
+	
+	protected var volatile debug = false
 
 	def void assertScriptEngine() {
 		if (scriptEngine !== null) {
@@ -82,8 +84,8 @@ class NashornSandboxImpl implements NashornSandbox {
 
 	protected def static String injectInterruptionCalls(String str, int randomToken) {
 		var res = str.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n')
-		res = replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();\n')
-		res = replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();\n')
+		res = replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();')
+		res = replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();')
 		res = res.replaceAll("\\} while \\(", "\nintCheckForInterruption" + randomToken + "();\n\\} while \\(")
 		res = res.replaceAll(';intCheckForInterruption' + randomToken + '\\(\\);\\s+else', ';\nelse')
 	}
@@ -122,7 +124,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 					val randomToken = Math.abs(new Random().nextInt)
 
-					val securedJs = '''
+					var preamble = '''
 						var InterruptTest = Java.type('«InterruptTest.name»');
 						var isInterrupted = InterruptTest.isInterrupted;
 						var intCheckForInterruption«randomToken» = function() {
@@ -130,9 +132,11 @@ class NashornSandboxImpl implements NashornSandbox {
 							    throw new Error('Interrupted«randomToken»')
 							}
 						};
-					''' + injectInterruptionCalls(beautifiedJs, randomToken)
-					
-					
+					'''
+					preamble = preamble.replace("\n", "")
+
+					val securedJs = preamble + injectInterruptionCalls(beautifiedJs, randomToken)
+
 					
 					val mainThread = Thread.currentThread
 
@@ -147,6 +151,11 @@ class NashornSandboxImpl implements NashornSandbox {
 					monitorThread.start
 
 					try {
+						if (debug) {
+							println("--- Running JS ---")
+							println(securedJs)
+							println("--- JS END ---")
+						}
 						val res = scriptEngine.eval(securedJs)
 						resVal.set(res)
 					} catch (ScriptException e) {
@@ -272,6 +281,10 @@ class NashornSandboxImpl implements NashornSandbox {
 
 	override allowGlobalsObjects(boolean v) {
 		this.allowGlobalsObjects = v
+	}
+
+	override setDebug(boolean value) {
+		this.debug = value
 	}
 
 	new() {
