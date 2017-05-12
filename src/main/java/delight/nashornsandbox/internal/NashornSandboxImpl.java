@@ -1,6 +1,5 @@
 package delight.nashornsandbox.internal;
 
-import com.google.common.base.Objects;
 import delight.async.Value;
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
@@ -121,7 +120,8 @@ public class NashornSandboxImpl implements NashornSandbox {
       String res = str.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
       res = NashornSandboxImpl.replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
       res = NashornSandboxImpl.replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
-      _xblockexpression = res = res.replaceAll("\\} while \\(", (("\nintCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n\\} while \\("));
+      res = res.replaceAll("\\} while \\(", (("\nintCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n\\} while \\("));
+      _xblockexpression = res = res.replaceAll(((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "\\(\\);\\s+else"), ";\nelse");
     }
     return _xblockexpression;
   }
@@ -255,8 +255,8 @@ public class NashornSandboxImpl implements NashornSandbox {
                 ((("Script used more than the allowed [" + this.maxCPUTimeInMs) + " ms] of CPU time. ") + notGraceful), _get);
             }
             Throwable _get_1 = exceptionVal.get();
-            boolean _notEquals = (!Objects.equal(_get_1, null));
-            if (_notEquals) {
+            boolean _tripleNotEquals = (_get_1 != null);
+            if (_tripleNotEquals) {
               throw exceptionVal.get();
             }
             _xblockexpression_1 = resVal.get();
@@ -316,8 +316,7 @@ public class NashornSandboxImpl implements NashornSandbox {
       if (_not) {
         this.allow(object.getClass());
       }
-      boolean _notEquals = (!Objects.equal(this.scriptEngine, null));
-      if (_notEquals) {
+      if ((this.scriptEngine != null)) {
         this.scriptEngine.put(variableName, object);
       }
       _xblockexpression = this;

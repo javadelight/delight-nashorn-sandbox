@@ -85,6 +85,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		res = replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();\n')
 		res = replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();\n')
 		res = res.replaceAll("\\} while \\(", "\nintCheckForInterruption" + randomToken + "();\n\\} while \\(")
+		res = res.replaceAll(';intCheckForInterruption' + randomToken + '\\(\\);\\s+else', ';\nelse')
 	}
 
 	override Object eval(String js) {
@@ -196,7 +197,7 @@ class NashornSandboxImpl implements NashornSandbox {
 					exceptionVal.get())
 			}
 
-			if (exceptionVal.get != null) {
+			if (exceptionVal.get !== null) {
 				throw exceptionVal.get
 			}
 
@@ -233,7 +234,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		if (!sandboxClassFilter.contains(object.class.name)) {
 			allow(object.class)
 		}
-		if (scriptEngine != null) {
+		if (scriptEngine !== null) {
 			scriptEngine.put(variableName, object)
 		}
 		this
