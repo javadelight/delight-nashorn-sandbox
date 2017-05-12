@@ -23,25 +23,25 @@ import org.eclipse.xtext.xbase.lib.Exceptions;
 
 @SuppressWarnings("all")
 public class NashornSandboxImpl implements NashornSandbox {
-  private SandboxClassFilter sandboxClassFilter;
+  protected SandboxClassFilter sandboxClassFilter;
   
-  private final Map<String, Object> globalVariables;
+  protected final Map<String, Object> globalVariables;
   
-  private ScriptEngine scriptEngine;
+  protected ScriptEngine scriptEngine;
   
-  private Long maxCPUTimeInMs = Long.valueOf(0L);
+  protected Long maxCPUTimeInMs = Long.valueOf(0L);
   
-  private ExecutorService exectuor;
+  protected ExecutorService exectuor;
   
-  private boolean allowPrintFunctions = false;
+  protected boolean allowPrintFunctions = false;
   
-  private boolean allowReadFunctions = false;
+  protected boolean allowReadFunctions = false;
   
-  private boolean allowLoadFunctions = false;
+  protected boolean allowLoadFunctions = false;
   
-  private boolean allowExitFunctions = false;
+  protected boolean allowExitFunctions = false;
   
-  private boolean allowGlobalsObjects = false;
+  protected boolean allowGlobalsObjects = false;
   
   public void assertScriptEngine() {
     try {
@@ -103,7 +103,7 @@ public class NashornSandboxImpl implements NashornSandbox {
     }
   }
   
-  private static String replaceGroup(final String str, final String regex, final String replacementForGroup2) {
+  protected static String replaceGroup(final String str, final String regex, final String replacementForGroup2) {
     final Pattern pattern = Pattern.compile(regex);
     final Matcher matcher = pattern.matcher(str);
     final StringBuffer sb = new StringBuffer();
@@ -114,7 +114,7 @@ public class NashornSandboxImpl implements NashornSandbox {
     return sb.toString();
   }
   
-  private static String injectInterruptionCalls(final String str, final int randomToken) {
+  protected static String injectInterruptionCalls(final String str, final int randomToken) {
     String _xblockexpression = null;
     {
       String res = str.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));

@@ -16,18 +16,18 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror
 
 class NashornSandboxImpl implements NashornSandbox {
 
-	var SandboxClassFilter sandboxClassFilter
-	val Map<String, Object> globalVariables
+	protected var SandboxClassFilter sandboxClassFilter
+	protected val Map<String, Object> globalVariables
 
-	var ScriptEngine scriptEngine
-	var Long maxCPUTimeInMs = 0L
-	var ExecutorService exectuor
+	protected var ScriptEngine scriptEngine
+	protected var Long maxCPUTimeInMs = 0L
+	protected var ExecutorService exectuor
 
-	var allowPrintFunctions = false
-	var allowReadFunctions = false
-	var allowLoadFunctions = false
-	var allowExitFunctions = false
-	var allowGlobalsObjects = false
+	protected var allowPrintFunctions = false
+	protected var allowReadFunctions = false
+	protected var allowLoadFunctions = false
+	protected var allowExitFunctions = false
+	protected var allowGlobalsObjects = false
 
 	def void assertScriptEngine() {
 		if (scriptEngine !== null) {
@@ -69,7 +69,7 @@ class NashornSandboxImpl implements NashornSandbox {
 
 	}
 
-	private def static String replaceGroup(String str, String regex, String replacementForGroup2) {
+	protected def static String replaceGroup(String str, String regex, String replacementForGroup2) {
 		val Pattern pattern = Pattern.compile(regex);
 		val Matcher matcher = pattern.matcher(str);
 		val StringBuffer sb = new StringBuffer();
@@ -80,7 +80,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		return sb.toString()
 	}
 
-	private def static String injectInterruptionCalls(String str, int randomToken) {
+	protected def static String injectInterruptionCalls(String str, int randomToken) {
 		var res = str.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n')
 		res = replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();\n')
 		res = replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();\n')
