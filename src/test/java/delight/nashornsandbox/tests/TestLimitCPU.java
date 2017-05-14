@@ -3,6 +3,7 @@ package delight.nashornsandbox.tests;
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.NashornSandboxes;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.Test;
@@ -14,7 +15,8 @@ public class TestLimitCPU {
     final NashornSandbox sandbox = NashornSandboxes.create();
     try {
       sandbox.setMaxCPUTime(50);
-      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+      sandbox.setExecutor(_newSingleThreadExecutor);
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("var x = 1;");
       _builder.newLine();
@@ -27,7 +29,8 @@ public class TestLimitCPU {
       _builder.newLine();
       sandbox.eval(_builder.toString());
     } finally {
-      sandbox.getExecutor().shutdown();
+      ExecutorService _executor = sandbox.getExecutor();
+      _executor.shutdown();
     }
   }
   
@@ -36,7 +39,8 @@ public class TestLimitCPU {
     final NashornSandbox sandbox = NashornSandboxes.create();
     try {
       sandbox.setMaxCPUTime(50);
-      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+      sandbox.setExecutor(_newSingleThreadExecutor);
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("var x = 1;");
       _builder.newLine();
@@ -44,7 +48,8 @@ public class TestLimitCPU {
       _builder.newLine();
       sandbox.eval(_builder.toString());
     } finally {
-      sandbox.getExecutor().shutdown();
+      ExecutorService _executor = sandbox.getExecutor();
+      _executor.shutdown();
     }
   }
   
@@ -52,7 +57,8 @@ public class TestLimitCPU {
   public void test_nice_script() {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.setMaxCPUTime(50);
-    sandbox.setExecutor(Executors.newSingleThreadExecutor());
+    ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+    sandbox.setExecutor(_newSingleThreadExecutor);
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("var x = 1;");
     _builder.newLine();
@@ -64,7 +70,8 @@ public class TestLimitCPU {
     _builder.append("}");
     _builder.newLine();
     sandbox.eval(_builder.toString());
-    sandbox.getExecutor().shutdown();
+    ExecutorService _executor = sandbox.getExecutor();
+    _executor.shutdown();
   }
   
   @Test(expected = ScriptCPUAbuseException.class)
@@ -72,13 +79,15 @@ public class TestLimitCPU {
     final NashornSandbox sandbox = NashornSandboxes.create();
     try {
       sandbox.setMaxCPUTime(50);
-      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+      sandbox.setExecutor(_newSingleThreadExecutor);
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("while (true);");
       _builder.newLine();
       sandbox.eval(_builder.toString());
     } finally {
-      sandbox.getExecutor().shutdown();
+      ExecutorService _executor = sandbox.getExecutor();
+      _executor.shutdown();
     }
   }
   
@@ -87,7 +96,8 @@ public class TestLimitCPU {
     final NashornSandbox sandbox = NashornSandboxes.create();
     try {
       sandbox.setMaxCPUTime(50);
-      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+      sandbox.setExecutor(_newSingleThreadExecutor);
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("var x=0;");
       _builder.newLine();
@@ -95,7 +105,8 @@ public class TestLimitCPU {
       _builder.newLine();
       sandbox.eval(_builder.toString());
     } finally {
-      sandbox.getExecutor().shutdown();
+      ExecutorService _executor = sandbox.getExecutor();
+      _executor.shutdown();
     }
   }
   
@@ -104,7 +115,8 @@ public class TestLimitCPU {
     final NashornSandbox sandbox = NashornSandboxes.create();
     try {
       sandbox.setMaxCPUTime(50);
-      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+      sandbox.setExecutor(_newSingleThreadExecutor);
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("do {");
       _builder.newLine();
@@ -114,7 +126,8 @@ public class TestLimitCPU {
       _builder.newLine();
       sandbox.eval(_builder.toString());
     } finally {
-      sandbox.getExecutor().shutdown();
+      ExecutorService _executor = sandbox.getExecutor();
+      _executor.shutdown();
     }
   }
 }

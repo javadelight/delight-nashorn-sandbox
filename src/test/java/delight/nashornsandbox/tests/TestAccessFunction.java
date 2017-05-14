@@ -13,8 +13,10 @@ public class TestAccessFunction {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.eval("function callMe() { return 42; };");
     Object _get = sandbox.get("callMe");
-    Assert.assertEquals(Integer.valueOf(42), ((ScriptObjectMirror) _get).call(this));
+    Object _call = ((ScriptObjectMirror) _get).call(this);
+    Assert.assertEquals(Integer.valueOf(42), _call);
     Object _eval = sandbox.eval("callMe");
-    Assert.assertEquals(Integer.valueOf(42), ((ScriptObjectMirror) _eval).call(this));
+    Object _call_1 = ((ScriptObjectMirror) _eval).call(this);
+    Assert.assertEquals(Integer.valueOf(42), _call_1);
   }
 }

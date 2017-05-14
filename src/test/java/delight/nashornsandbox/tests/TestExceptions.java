@@ -2,6 +2,7 @@ package delight.nashornsandbox.tests;
 
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.NashornSandboxes;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Exceptions;
@@ -37,7 +38,8 @@ public class TestExceptions {
     try {
       final NashornSandbox sandbox = NashornSandboxes.create();
       sandbox.setMaxCPUTime(100);
-      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+      sandbox.setExecutor(_newSingleThreadExecutor);
       sandbox.eval("blah_blah_blah();");
     } catch (final Throwable _t) {
       if (_t instanceof Throwable) {
@@ -54,9 +56,11 @@ public class TestExceptions {
   public void test_with_line_number() {
     NashornSandbox sandbox = null;
     try {
-      sandbox = NashornSandboxes.create();
+      NashornSandbox _create = NashornSandboxes.create();
+      sandbox = _create;
       sandbox.setMaxCPUTime(5000);
-      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+      sandbox.setExecutor(_newSingleThreadExecutor);
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("var in_the_first_line_all_good;");
       _builder.newLine();
@@ -72,8 +76,11 @@ public class TestExceptions {
     } catch (final Throwable _t) {
       if (_t instanceof Throwable) {
         final Throwable t = (Throwable)_t;
-        sandbox.getExecutor().shutdown();
-        Assert.assertTrue(t.getMessage().contains("4"));
+        ExecutorService _executor = sandbox.getExecutor();
+        _executor.shutdown();
+        String _message = t.getMessage();
+        boolean _contains = _message.contains("4");
+        Assert.assertTrue(_contains);
         return;
       } else {
         throw Exceptions.sneakyThrow(_t);

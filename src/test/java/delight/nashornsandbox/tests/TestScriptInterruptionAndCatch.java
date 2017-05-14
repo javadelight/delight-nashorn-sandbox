@@ -3,6 +3,7 @@ package delight.nashornsandbox.tests;
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.NashornSandboxes;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.Test;
@@ -14,7 +15,8 @@ public class TestScriptInterruptionAndCatch {
     final NashornSandbox sandbox = NashornSandboxes.create();
     try {
       sandbox.setMaxCPUTime(50);
-      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      ExecutorService _newSingleThreadExecutor = Executors.newSingleThreadExecutor();
+      sandbox.setExecutor(_newSingleThreadExecutor);
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("try {");
       _builder.newLine();
@@ -39,7 +41,8 @@ public class TestScriptInterruptionAndCatch {
       _builder.newLine();
       sandbox.eval(_builder.toString());
     } finally {
-      sandbox.getExecutor().shutdown();
+      ExecutorService _executor = sandbox.getExecutor();
+      _executor.shutdown();
     }
   }
 }

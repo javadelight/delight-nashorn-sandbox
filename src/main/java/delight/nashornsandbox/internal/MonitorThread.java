@@ -24,10 +24,12 @@ public class MonitorThread extends Thread {
   public void run() {
     try {
       final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
-      final long startCPUTime = bean.getThreadCpuTime(this.threadToMonitor.getId());
+      long _id = this.threadToMonitor.getId();
+      final long startCPUTime = bean.getThreadCpuTime(_id);
       while ((!this.stop.get())) {
         {
-          final long threadCPUTime = bean.getThreadCpuTime(this.threadToMonitor.getId());
+          long _id_1 = this.threadToMonitor.getId();
+          final long threadCPUTime = bean.getThreadCpuTime(_id_1);
           final long runtime = (threadCPUTime - startCPUTime);
           if ((runtime > this.maxCPUTime)) {
             this.cpuLimitExceeded.set(true);
