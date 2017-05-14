@@ -83,11 +83,11 @@ class NashornSandboxImpl implements NashornSandbox {
 	}
 
 	protected def static String injectInterruptionCalls(String str, int randomToken) {
-		var res = str.replaceAll(';\\n', ';intCheckForInterruption' + randomToken + '();\n')
+		var res = str.replaceAll(';\\n(?![\\s]*else[\\s]+)', ';intCheckForInterruption' + randomToken + '();\n')
 		res = replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();')
 		res = replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();')
 		res = res.replaceAll("\\} while \\(", "\nintCheckForInterruption" + randomToken + "();\n\\} while \\(")
-		res = res.replaceAll(';intCheckForInterruption' + randomToken + '\\(\\);\\s+else', ';\nelse')
+		
 	}
 
 	override Object eval(String js) {

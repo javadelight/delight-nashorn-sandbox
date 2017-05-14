@@ -123,15 +123,13 @@ public class NashornSandboxImpl implements NashornSandbox {
   protected static String injectInterruptionCalls(final String str, final int randomToken) {
     String _xblockexpression = null;
     {
-      String res = str.replaceAll(";\\n", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
+      String res = str.replaceAll(";\\n(?![\\s]*else[\\s]+)", ((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n"));
       String _replaceGroup = NashornSandboxImpl.replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();"));
       res = _replaceGroup;
       String _replaceGroup_1 = NashornSandboxImpl.replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ((") {intCheckForInterruption" + Integer.valueOf(randomToken)) + "();"));
       res = _replaceGroup_1;
       String _replaceAll = res.replaceAll("\\} while \\(", (("\nintCheckForInterruption" + Integer.valueOf(randomToken)) + "();\n\\} while \\("));
-      res = _replaceAll;
-      String _replaceAll_1 = res.replaceAll(((";intCheckForInterruption" + Integer.valueOf(randomToken)) + "\\(\\);\\s+else"), ";\nelse");
-      _xblockexpression = res = _replaceAll_1;
+      _xblockexpression = res = _replaceAll;
     }
     return _xblockexpression;
   }
