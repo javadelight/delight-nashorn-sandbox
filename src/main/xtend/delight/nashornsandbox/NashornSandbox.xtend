@@ -1,5 +1,6 @@
 package delight.nashornsandbox
 
+import java.io.Writer
 import java.util.concurrent.ExecutorService
 
 interface NashornSandbox {
@@ -34,6 +35,8 @@ interface NashornSandbox {
 	 * Sets the maximum CPU time in milliseconds allowed for script execution.
 	 */
 	def NashornSandbox setMaxCPUTime(long limit)
+	
+	def void setWriter(Writer writer)
 
 	/**
 	 * Specifies the executor service which is used to run scripts when a CPU time limit is specified.
