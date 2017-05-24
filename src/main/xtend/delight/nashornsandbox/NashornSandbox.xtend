@@ -37,6 +37,7 @@ interface NashornSandbox {
 	def NashornSandbox setMaxCPUTime(long limit)
 	
 	def void setWriter(Writer writer)
+	
 
 	/**
 	 * Specifies the executor service which is used to run scripts when a CPU time limit is specified.

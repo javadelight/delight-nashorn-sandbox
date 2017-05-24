@@ -13,6 +13,7 @@ import javax.script.ScriptEngine
 import javax.script.ScriptException
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 import jdk.nashorn.api.scripting.ScriptObjectMirror
+import java.io.Writer
 
 class NashornSandboxImpl implements NashornSandbox {
 
@@ -291,6 +292,10 @@ class NashornSandboxImpl implements NashornSandbox {
 		this.sandboxClassFilter = new SandboxClassFilter()
 		this.globalVariables = new HashMap<String, Object>
 		allow(InterruptTest)
+	}
+	
+	override setWriter(Writer writer) {
+		scriptEngine.getContext().setWriter(writer)
 	}
 
 }

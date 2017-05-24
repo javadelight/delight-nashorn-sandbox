@@ -7,6 +7,7 @@ import delight.nashornsandbox.internal.BeautifyJs;
 import delight.nashornsandbox.internal.InterruptTest;
 import delight.nashornsandbox.internal.MonitorThread;
 import delight.nashornsandbox.internal.SandboxClassFilter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -14,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
@@ -411,5 +413,11 @@ public class NashornSandboxImpl implements NashornSandbox {
     HashMap<String, Object> _hashMap = new HashMap<String, Object>();
     this.globalVariables = _hashMap;
     this.allow(InterruptTest.class);
+  }
+  
+  @Override
+  public void setWriter(final Writer writer) {
+    ScriptContext _context = this.scriptEngine.getContext();
+    _context.setWriter(writer);
   }
 }
