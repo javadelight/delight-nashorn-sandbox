@@ -143,6 +143,11 @@ public class NashornSandboxImpl implements NashornSandbox {
       {
         this.assertScriptEngine();
         if (((this.maxCPUTimeInMs).longValue() == 0)) {
+          if (this.debug) {
+            InputOutput.<String>println("--- Running JS ---");
+            InputOutput.<String>println(js);
+            InputOutput.<String>println("--- JS END ---");
+          }
           return this.scriptEngine.eval(js);
         }
         Object _xsynchronizedexpression = null;
@@ -417,6 +422,7 @@ public class NashornSandboxImpl implements NashornSandbox {
   
   @Override
   public void setWriter(final Writer writer) {
+    this.assertScriptEngine();
     ScriptContext _context = this.scriptEngine.getContext();
     _context.setWriter(writer);
   }

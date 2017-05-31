@@ -29,7 +29,7 @@ class NashornSandboxImpl implements NashornSandbox {
 	protected var allowLoadFunctions = false
 	protected var allowExitFunctions = false
 	protected var allowGlobalsObjects = false
-	
+
 	protected var volatile debug = false
 
 	def void assertScriptEngine() {
@@ -76,7 +76,7 @@ class NashornSandboxImpl implements NashornSandbox {
 		val Pattern pattern = Pattern.compile(regex);
 		val Matcher matcher = pattern.matcher(str);
 		val StringBuffer sb = new StringBuffer();
-		while (matcher.find()) { 
+		while (matcher.find()) {
 			matcher.appendReplacement(sb, "$1" + replacementForGroup2);
 		}
 		matcher.appendTail(sb);
@@ -88,13 +88,19 @@ class NashornSandboxImpl implements NashornSandbox {
 		res = replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();')
 		res = replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", ') {intCheckForInterruption' + randomToken + '();')
 		res = res.replaceAll("\\} while \\(", "\nintCheckForInterruption" + randomToken + "();\n\\} while \\(")
-		
+
 	}
 
 	override Object eval(String js) {
 		assertScriptEngine
 
 		if (maxCPUTimeInMs == 0) {
+			if (debug) {
+				println("--- Running JS ---")
+				println(js)
+				println("--- JS END ---")
+			}
+
 			return scriptEngine.eval(js)
 		}
 
@@ -138,7 +144,6 @@ class NashornSandboxImpl implements NashornSandbox {
 
 					val securedJs = preamble + injectInterruptionCalls(beautifiedJs, randomToken)
 
-					
 					val mainThread = Thread.currentThread
 
 					monitorThread.threadToMonitor = Thread.currentThread
@@ -293,8 +298,10 @@ class NashornSandboxImpl implements NashornSandbox {
 		this.globalVariables = new HashMap<String, Object>
 		allow(InterruptTest)
 	}
-	
+
 	override setWriter(Writer writer) {
+		assertScriptEngine
+
 		scriptEngine.getContext().setWriter(writer)
 	}
 
