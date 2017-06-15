@@ -1,8 +1,10 @@
 package delight.nashornsandbox.tests
 
 import delight.nashornsandbox.NashornSandboxes
+import org.junit.Ignore
 import org.junit.Test
 
+@Ignore
 class TestLimitMemory {
 	
 	@Test
