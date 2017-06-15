@@ -1,3 +1,16 @@
 /TestGlobalVariable.java
 /TestAllowAndDisallowClasses.java
 /TestManyEvalsAndInjections.java
+/TestAccessFunction.java
+/TestAllowAccess.java
+/TestExceptions.java
+/TestExit.java
+/TestIfElse.java
+/TestInaccessible.java
+/TestKeepVariables.java
+/TestLimitCPU.java
+/TestLimitMemory.java
+/TestScriptInterruptionAndCatch.java
+/TestSetWriter.java
+/TestSimpleEval.java
+/TestSwitch.java

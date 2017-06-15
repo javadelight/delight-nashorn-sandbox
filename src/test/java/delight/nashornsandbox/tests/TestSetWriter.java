@@ -15,7 +15,6 @@ public class TestSetWriter {
     final StringWriter writer = new StringWriter();
     sandbox.setWriter(writer);
     sandbox.eval("print(\"Hi there!\");");
-    String _string = writer.toString();
-    Assert.assertEquals("Hi there!\n", _string);
+    Assert.assertEquals("Hi there!\n", writer.toString());
   }
 }

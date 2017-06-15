@@ -18,9 +18,8 @@ class MonitorThread extends Thread {
 		val startCPUTime = bean.getThreadCpuTime(threadToMonitor.id)
 		while (!stop.get) {
 			
-			
 			val threadCPUTime = bean.getThreadCpuTime(threadToMonitor.id)
-			
+
 			val runtime = threadCPUTime -startCPUTime
 			
 			if ((runtime) > maxCPUTime) {
