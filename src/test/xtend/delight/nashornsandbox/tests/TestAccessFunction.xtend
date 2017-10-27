@@ -13,7 +13,6 @@ class TestAccessFunction {
 		
 	    sandbox.eval('function callMe() { return 42; };')
 		
-		
 		Assert.assertEquals(42, (sandbox.get("callMe") as ScriptObjectMirror).call(this))
 		
 		Assert.assertEquals(42, (sandbox.eval("callMe") as ScriptObjectMirror).call(this))
