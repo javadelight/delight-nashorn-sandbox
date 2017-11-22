@@ -55,6 +55,8 @@ public class NashornSandboxImpl implements NashornSandbox {
   
   private JsSanitizer sanitizer;
   
+  private boolean engineAsserted;
+  
   /**The size of the LRU cache of prepared statemensts.*/
   private int maxPreparedStatements;
   
@@ -64,7 +66,6 @@ public class NashornSandboxImpl implements NashornSandbox {
     final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
     this.scriptEngine = factory.getScriptEngine(this.sandboxClassFilter);
     this.allow(InterruptTest.class);
-    this.assertScriptEngine();
   }
 
   private void assertScriptEngine() {
@@ -95,6 +96,10 @@ public class NashornSandboxImpl implements NashornSandbox {
   
   @Override
   public Object eval(final String js) throws ScriptCPUAbuseException, ScriptException {
+    if (!engineAsserted) {
+      engineAsserted = true;
+      assertScriptEngine();
+    }
     try {
       if (this.maxCPUTime == 0) {
         if (LOG.isDebugEnabled()) {

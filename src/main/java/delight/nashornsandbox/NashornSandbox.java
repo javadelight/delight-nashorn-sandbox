@@ -92,26 +92,41 @@ public interface NashornSandbox {
   
   /**
    * Allow Nashorn print and echo functions.
+   * <p>
+   *   Only before first {@link #eval(String)} call cause efect.
+   * </p>
    */
   void allowPrintFunctions(final boolean v);
   
   /**
    * Allow Nashorn readLine and readFully functions.
+   * <p>
+   *   Only before first {@link #eval(String)} call cause efect.
+   * </p>
    */
   void allowReadFunctions(final boolean v);
   
   /**
    * Allow Nashorn load and loadWithNewGlobal functions.
+   * <p>
+   *   Only before first {@link #eval(String)} call cause efect.
+   * </p>
    */
   void allowLoadFunctions(final boolean v);
   
   /**
    * Allow Nashorn quit and exit functions.
+   * <p>
+   *   Only before first {@link #eval(String)} call cause efect.
+   * </p>
    */
   void allowExitFunctions(final boolean v);
   
   /**
    * Allow Nashorn globals object $ARG, $ENV, $EXEC, $OPTIONS, $OUT, $ERR and $EXIT.
+   * <p>
+   *   Only before first {@link #eval(String)} call cause efect.
+   * </p>
    */
   void allowGlobalsObjects(final boolean v);
 
