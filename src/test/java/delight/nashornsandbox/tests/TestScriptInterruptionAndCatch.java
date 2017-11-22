@@ -1,21 +1,25 @@
 package delight.nashornsandbox.tests;
 
+import java.util.concurrent.Executors;
+
+import javax.script.ScriptException;
+
+import org.eclipse.xtend2.lib.StringConcatenation;
+import org.junit.Test;
+
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.NashornSandboxes;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
-import java.util.concurrent.Executors;
-import org.eclipse.xtend2.lib.StringConcatenation;
-import org.junit.Test;
 
 @SuppressWarnings("all")
 public class TestScriptInterruptionAndCatch {
   @Test(expected = ScriptCPUAbuseException.class)
-  public void test_catch() {
+  public void test_catch() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
     try {
       sandbox.setMaxCPUTime(50);
       sandbox.setExecutor(Executors.newSingleThreadExecutor());
-      StringConcatenation _builder = new StringConcatenation();
+      final StringConcatenation _builder = new StringConcatenation();
       _builder.append("try {");
       _builder.newLine();
       _builder.append("\t");

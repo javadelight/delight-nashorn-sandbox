@@ -1,15 +1,20 @@
 package delight.nashornsandbox.tests;
 
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
 import java.util.concurrent.Executors;
+
+import javax.script.ScriptException;
+
 import org.junit.Assert;
 import org.junit.Test;
+
+import delight.nashornsandbox.NashornSandbox;
+import delight.nashornsandbox.NashornSandboxes;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
 @SuppressWarnings("all")
 public class TestManyEvalsAndInjections {
   @Test
-  public void test() {
+  public void test() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.inject("num", Integer.valueOf(10));
     sandbox.eval("res = num + 1;");

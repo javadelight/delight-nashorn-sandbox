@@ -21,7 +21,6 @@
 	<!-- Dependent Modules -->
 	<dependencies>
 
-
 		 <dependency>
 			<groupId>com.sun</groupId>
 			<artifactId>tools</artifactId>
@@ -29,7 +28,6 @@
 			<scope>system</scope>
 			<systemPath>${java.home}/../lib/tools.jar</systemPath>
 		</dependency> 
-		
 
 		<dependency>
 			<groupId>org.eclipse.xtend</groupId>
@@ -50,6 +48,12 @@
 			<scope>test</scope>
 		</dependency>
 
+        <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+          <version>1.2.11</version>
+        </dependency>
+
 		<dependency>
 			<groupId>org.javadelight</groupId>
 			<artifactId>delight-async</artifactId>
@@ -63,7 +67,6 @@
 		</dependency>
 
 	</dependencies>
-
 
 	<!-- XXXXXXXXXXXXXX Maven declarations XXXXXXXXXXXXXXXXXX -->
 
@@ -162,7 +165,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -272,8 +274,6 @@
 							<version>2.4</version>
 						</plugin>
 
-
-
 					</reportPlugins>
 				</configuration>
 			</plugin>
@@ -287,7 +287,9 @@
 				<directory>src/main/java</directory>
 				<includes>
 					<include>**/*.java</include>
+					<include>**/*.js</include>
 					<include>**/*.gwt.xml</include>
+					<include>**/log4j.properties</include>
 				</includes>
 			</resource>
 
@@ -309,7 +311,6 @@
 
 		</resources>
 
-
 	</build>
 
 	<distributionManagement>
@@ -319,7 +320,6 @@
 			<url>https://api.bintray.com/maven/javadelight/javadelight/delight-nashorn-sandbox/;publish=1</url>
 		</repository>
 	</distributionManagement>
-
 
 
 	<developers>
@@ -359,7 +359,5 @@
 			<url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
 		</license>
 	</licenses>
-
-
 
 </project>

@@ -1,20 +1,25 @@
 package delight.nashornsandbox.tests;
 
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
 import java.util.concurrent.Executors;
+
+import javax.script.ScriptException;
+
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.Assert;
 import org.junit.Test;
 
+import delight.nashornsandbox.NashornSandbox;
+import delight.nashornsandbox.NashornSandboxes;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+
 @SuppressWarnings("all")
 public class TestIfElse {
   @Test
-  public void testIfElse() {
+  public void testIfElse() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.setMaxCPUTime(500);
     sandbox.setExecutor(Executors.newSingleThreadExecutor());
-    StringConcatenation _builder = new StringConcatenation();
+    final StringConcatenation _builder = new StringConcatenation();
     _builder.append("if (true)");
     _builder.newLine();
     _builder.append("var x=1;");
@@ -25,7 +30,7 @@ public class TestIfElse {
     _builder.newLine();
     sandbox.eval(_builder.toString());
     Assert.assertEquals(Integer.valueOf(1), sandbox.eval("x"));
-    StringConcatenation _builder_1 = new StringConcatenation();
+    final StringConcatenation _builder_1 = new StringConcatenation();
     _builder_1.append("for (var i=0;i<10;i++) {");
     _builder_1.newLine();
     _builder_1.append("    ");

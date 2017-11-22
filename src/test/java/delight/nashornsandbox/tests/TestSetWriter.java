@@ -1,15 +1,20 @@
 package delight.nashornsandbox.tests;
 
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
 import java.io.StringWriter;
+
+import javax.script.ScriptException;
+
 import org.junit.Assert;
 import org.junit.Test;
+
+import delight.nashornsandbox.NashornSandbox;
+import delight.nashornsandbox.NashornSandboxes;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
 @SuppressWarnings("all")
 public class TestSetWriter {
   @Test
-  public void test() {
+  public void test() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.allowPrintFunctions(true);
     final StringWriter writer = new StringWriter();

@@ -3,85 +3,131 @@ package delight.nashornsandbox;
 import java.io.Writer;
 import java.util.concurrent.ExecutorService;
 
-@SuppressWarnings("all")
+import javax.script.ScriptException;
+
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+
+/**
+ * The Nashorn sandbox interface.
+ *
+ * <p>Created on 2015-08-06</p>
+ * 
+ * @author <a href="mailto:mxro@nowhere.com">mxro</a> 
+ * @author <a href="mailto:dev@youness.org">Youness SAHOUANE</a> 
+ * @author <a href="mailto:eduveks@gmail.com">Eduardo Velasques</a> 
+ * @author <a href="mailto:philip.borgstrom@gmail.com">philipborg</a> 
+ * @author <a href="mailto:marcin.golebski@verbis.pl">Marcin Golebski</a>
+ * @version $Id$
+ */
 public interface NashornSandbox {
+    
   /**
-   * <p>Add a new class to the list of allowed classes.
-   * <p>WARNING: Adding a new class, AFTER a script has been evaluated, will destroy the engine and recreate it. The script context will thus be lost.
+   * Add a new class to the list of allowed classes.
    */
-  public abstract NashornSandbox allow(final Class<?> clazz);
+  void allow(final Class<?> clazz);
   
   /**
-   * <p>Remove a class from the list of allowed classes.
+   * Remove a class from the list of allowed classes.
    */
-  public abstract void disallow(final Class<?> clazz);
+  void disallow(final Class<?> clazz);
   
   /**
-   * <p>Check if a class is in the list of allowed classes.
+   * Check if a class is in the list of allowed classes.
    */
-  public abstract boolean isAllowed(final Class<?> clazz);
+  boolean isAllowed(final Class<?> clazz);
   
   /**
-   * <p>Remove all classes from the list of allowed classes.
+   * Remove all classes from the list of allowed classes.
    */
-  public abstract void disallowAllClasses();
+  void disallowAllClasses();
   
   /**
    * Will add a global variable available to all scripts executed with this sandbox.
+   * 
+   * @param variableName the name of the variable
+   * @param object the value, can be <code>null</code>
    */
-  public abstract NashornSandbox inject(final String variableName, final Object object);
+  void inject(final String variableName, final Object object);
   
   /**
    * Sets the maximum CPU time in milliseconds allowed for script execution.
+   * <p>
+   *   Note, {@link ExecutorService} should be also set when time set is greater
+   *   than 0.
+   * </p>
+   *
+   * @param limit time limit in miliseconds
+   * @see #setExecutor(ExecutorService)
    */
-  public abstract NashornSandbox setMaxCPUTime(final long limit);
+  void setMaxCPUTime(final long limit);
   
-  public abstract void setWriter(final Writer writer);
+  void setWriter(final Writer writer);
   
   /**
-   * Specifies the executor service which is used to run scripts when a CPU time limit is specified.
+   * Specifies the executor service which is used to run scripts when a CPU time 
+   * limit is specified.
+   * 
+   * @param executor the executor service
+   * @see #setMaxCPUTime(long)
    */
-  public abstract NashornSandbox setExecutor(final ExecutorService executor);
+  void setExecutor(final ExecutorService executor);
   
-  public abstract ExecutorService getExecutor();
+  ExecutorService getExecutor();
   
   /**
-   * Evaluates the string.
+   * Evaluates the JavaScript string.
+   * 
+   * @param js the JavaScript script to be evaluated
+   * @throws ScriptCPUAbuseException when execution time exided (when greater
+   *      than 0 is set
+   * @throws ScriptException when script syntax error occures
+   * @see #setMaxCPUTime(long)
    */
-  public abstract Object eval(final String js);
-  
-  /**
-   * Enables debug output from the Sandbox.
-   */
-  public abstract void setDebug(final boolean value);
+  Object eval(final String js) throws ScriptCPUAbuseException, ScriptException;
   
   /**
    * Obtains the value of the specified JavaScript variable.
    */
-  public abstract Object get(final String variableName);
+  Object get(final String variableName);
   
   /**
    * Allow Nashorn print and echo functions.
    */
-  public abstract void allowPrintFunctions(final boolean v);
+  void allowPrintFunctions(final boolean v);
   
   /**
    * Allow Nashorn readLine and readFully functions.
    */
-  public abstract void allowReadFunctions(final boolean v);
+  void allowReadFunctions(final boolean v);
   
   /**
    * Allow Nashorn load and loadWithNewGlobal functions.
    */
-  public abstract void allowLoadFunctions(final boolean v);
+  void allowLoadFunctions(final boolean v);
   
   /**
    * Allow Nashorn quit and exit functions.
    */
-  public abstract void allowExitFunctions(final boolean v);
+  void allowExitFunctions(final boolean v);
   
   /**
    * Allow Nashorn globals object $ARG, $ENV, $EXEC, $OPTIONS, $OUT, $ERR and $EXIT.
    */
-  public abstract void allowGlobalsObjects(final boolean v);
+  void allowGlobalsObjects(final boolean v);
+
+  /**
+   * The size of prepared statments LRU cache. Default 0 (disabled).
+   * <p>
+   *   Each statments when {@link #setMaxCPUTime(long)} is set is prepared to
+   *   quit itself when time exided. To execute only once this procedure per
+   *   statment set this value.
+   * </p>
+   * <p>
+   *   When {@link #setMaxCPUTime(long)} is set 0, this value is ignored.
+   * </p>
+   * 
+   * @param max the maximum number of statments in the LRU cache
+   */
+  void setMaxPerparedStatements(int max);
+  
 }

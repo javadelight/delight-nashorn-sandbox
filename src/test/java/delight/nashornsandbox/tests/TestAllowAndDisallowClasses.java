@@ -1,23 +1,29 @@
 package delight.nashornsandbox.tests;
 
-import com.google.common.base.Objects;
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
 import java.io.File;
+
+import javax.script.ScriptException;
+
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.common.base.Objects;
+
+import delight.nashornsandbox.NashornSandbox;
+import delight.nashornsandbox.NashornSandboxes;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+
 @SuppressWarnings("all")
 public class TestAllowAndDisallowClasses {
   @Test
-  public void test_file() {
+  public void test_file() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
     final String testClassScript = "var File = Java.type(\"java.io.File\"); File;";
     sandbox.allow(File.class);
     sandbox.eval(testClassScript);
-    boolean _isAllowed = sandbox.isAllowed(File.class);
-    boolean _not = (!_isAllowed);
+    final boolean _isAllowed = sandbox.isAllowed(File.class);
+    final boolean _not = (!_isAllowed);
     if (_not) {
       Assert.fail("Expected class File is allowed.");
     }
