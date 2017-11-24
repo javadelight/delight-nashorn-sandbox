@@ -4,7 +4,6 @@ import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
 
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.Test;
 
 import delight.nashornsandbox.NashornSandbox;
@@ -19,28 +18,20 @@ public class TestScriptInterruptionAndCatch {
     try {
       sandbox.setMaxCPUTime(50);
       sandbox.setExecutor(Executors.newSingleThreadExecutor());
-      final StringConcatenation _builder = new StringConcatenation();
-      _builder.append("try {");
-      _builder.newLine();
+      final StringBuilder _builder = new StringBuilder();
+      _builder.append("try {\n");
       _builder.append("\t");
-      _builder.append("var x = 1;");
-      _builder.newLine();
+      _builder.append("var x = 1;\n");
       _builder.append("\t");
-      _builder.append("while (true) {");
-      _builder.newLine();
+      _builder.append("while (true) {\n");
       _builder.append("\t\t");
-      _builder.append("x=x+1;");
-      _builder.newLine();
+      _builder.append("x=x+1;\n");
       _builder.append("\t");
-      _builder.append("}");
-      _builder.newLine();
-      _builder.append("} catch (e) {");
-      _builder.newLine();
+      _builder.append("}\n");
+      _builder.append("} catch (e) {\n");
       _builder.append("\t");
-      _builder.append("// if this is called, test does not succeed.");
-      _builder.newLine();
-      _builder.append("}");
-      _builder.newLine();
+      _builder.append("// if this is called, test does not succeed.\n");
+      _builder.append("}\n");
       sandbox.eval(_builder.toString());
     } finally {
       sandbox.getExecutor().shutdown();

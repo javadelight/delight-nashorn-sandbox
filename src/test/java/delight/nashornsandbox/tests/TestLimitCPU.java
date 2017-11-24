@@ -4,7 +4,6 @@ import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
 
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.Test;
 
 import delight.nashornsandbox.NashornSandbox;
@@ -19,16 +18,12 @@ public class TestLimitCPU {
     try {
       sandbox.setMaxCPUTime(50);
       sandbox.setExecutor(Executors.newSingleThreadExecutor());
-      final StringConcatenation _builder = new StringConcatenation();
-      _builder.append("var x = 1;");
-      _builder.newLine();
-      _builder.append("while (true) {");
-      _builder.newLine();
+      final StringBuilder _builder = new StringBuilder();
+      _builder.append("var x = 1;\n");
+      _builder.append("while (true) {\n");
       _builder.append("\t");
-      _builder.append("x=x+1;");
-      _builder.newLine();
-      _builder.append("}");
-      _builder.newLine();
+      _builder.append("x=x+1;\n");
+      _builder.append("}\n");
       sandbox.eval(_builder.toString());
     } finally {
       sandbox.getExecutor().shutdown();
@@ -41,11 +36,9 @@ public class TestLimitCPU {
     try {
       sandbox.setMaxCPUTime(50);
       sandbox.setExecutor(Executors.newSingleThreadExecutor());
-      final StringConcatenation _builder = new StringConcatenation();
-      _builder.append("var x = 1;");
-      _builder.newLine();
-      _builder.append("while (true) { }");
-      _builder.newLine();
+      final StringBuilder _builder = new StringBuilder();
+      _builder.append("var x = 1;\n");
+      _builder.append("while (true) { }\n");
       sandbox.eval(_builder.toString());
     } finally {
       sandbox.getExecutor().shutdown();
@@ -57,16 +50,12 @@ public class TestLimitCPU {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.setMaxCPUTime(500);
     sandbox.setExecutor(Executors.newSingleThreadExecutor());
-    final StringConcatenation _builder = new StringConcatenation();
-    _builder.append("var x = 1;");
-    _builder.newLine();
-    _builder.append("for (var i=0;i<=1000;i++) {");
-    _builder.newLine();
+    final StringBuilder _builder = new StringBuilder();
+    _builder.append("var x = 1;\n");
+    _builder.append("for (var i=0;i<=1000;i++) {\n");
     _builder.append("\t");
-    _builder.append("x = x + i");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
+    _builder.append("x = x + i\n");
+    _builder.append("}\n");
     sandbox.eval(_builder.toString());
     sandbox.getExecutor().shutdown();
   }
@@ -77,9 +66,8 @@ public class TestLimitCPU {
     try {
       sandbox.setMaxCPUTime(50);
       sandbox.setExecutor(Executors.newSingleThreadExecutor());
-      final StringConcatenation _builder = new StringConcatenation();
-      _builder.append("while (true);");
-      _builder.newLine();
+      final StringBuilder _builder = new StringBuilder();
+      _builder.append("while (true);\n");
       sandbox.eval(_builder.toString());
     } finally {
       sandbox.getExecutor().shutdown();
@@ -92,11 +80,9 @@ public class TestLimitCPU {
     try {
       sandbox.setMaxCPUTime(50);
       sandbox.setExecutor(Executors.newSingleThreadExecutor());
-      final StringConcatenation _builder = new StringConcatenation();
-      _builder.append("var x=0;");
-      _builder.newLine();
-      _builder.append("while (true) x++;");
-      _builder.newLine();
+      final StringBuilder _builder = new StringBuilder();
+      _builder.append("var x=0;\n");
+      _builder.append("while (true) x++;\n");
       sandbox.eval(_builder.toString());
     } finally {
       sandbox.getExecutor().shutdown();
@@ -109,13 +95,10 @@ public class TestLimitCPU {
     try {
       sandbox.setMaxCPUTime(50);
       sandbox.setExecutor(Executors.newSingleThreadExecutor());
-      final StringConcatenation _builder = new StringConcatenation();
-      _builder.append("do {");
-      _builder.newLine();
-      _builder.append("\t");
-      _builder.newLine();
-      _builder.append("} while (true);");
-      _builder.newLine();
+      final StringBuilder _builder = new StringBuilder();
+      _builder.append("do {\n");
+      _builder.append("\t\n");
+      _builder.append("} while (true);\n");
       sandbox.eval(_builder.toString());
     } finally {
       sandbox.getExecutor().shutdown();

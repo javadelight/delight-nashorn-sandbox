@@ -30,18 +30,6 @@
 		</dependency> 
 
 		<dependency>
-			<groupId>org.eclipse.xtend</groupId>
-			<artifactId>org.eclipse.xtend.lib.gwt</artifactId>
-			<version>2.13.0</version>
-			<exclusions>
-				<exclusion>  
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava-gwt</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.7</version>
@@ -54,17 +42,6 @@
           <version>1.2.11</version>
         </dependency>
 
-		<dependency>
-			<groupId>org.javadelight</groupId>
-			<artifactId>delight-async</artifactId>
-			<version>0.1.4</version>
-			<exclusions>
-				<exclusion>  
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava-gwt</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 	</dependencies>
 
