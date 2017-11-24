@@ -1,9 +1,8 @@
-package delight.nashornsandbox.tests;
-
-import java.io.File;
+package delight.nashornsandbox;
 
 import javax.script.ScriptException;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import delight.nashornsandbox.NashornSandbox;
@@ -11,11 +10,11 @@ import delight.nashornsandbox.NashornSandboxes;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
 @SuppressWarnings("all")
-public class TestAllowAccess {
+public class TestSimpleEval {
   @Test
-  public void test_file() throws ScriptCPUAbuseException, ScriptException {
+  public void test() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
-    sandbox.allow(File.class);
-    sandbox.eval("var File = Java.type(\"java.io.File\"); File;");
+    final Object res = sandbox.eval("var x = 1 + 1; x;");
+    Assert.assertEquals(Integer.valueOf(2), res);
   }
 }

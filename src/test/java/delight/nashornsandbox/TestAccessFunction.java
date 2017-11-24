@@ -1,4 +1,4 @@
-package delight.nashornsandbox.tests;
+package delight.nashornsandbox;
 
 import javax.script.ScriptException;
 

@@ -1,4 +1,4 @@
-package delight.nashornsandbox.tests;
+package delight.nashornsandbox;
 
 import java.io.File;
 import java.util.Objects;
