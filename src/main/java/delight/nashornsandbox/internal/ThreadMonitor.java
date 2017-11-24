@@ -6,8 +6,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.eclipse.xtext.xbase.lib.Exceptions;
-
 /**
  * JS executor thread monitor. It is designed to be run in main thread (the
  * JS script is executed in other thread).
@@ -18,32 +16,66 @@ import org.eclipse.xtext.xbase.lib.Exceptions;
  * @author <a href="mailto:marcin.golebski@verbis.pl">Marcin Golebski</a>
  * @version $Id$
  */
+@SuppressWarnings("restriction")
 public class ThreadMonitor {
   private static final int MILI_TO_NANO = 1000000;
 
   private final long maxCPUTime;
   
+  private final long maxMemory;
+  
   private final AtomicBoolean stop;
   
-  private final AtomicBoolean evalAborted;
+  /**Check if interrupted script has finished.*/ 
+  private final AtomicBoolean scriptFinished;
   
+  /**Check if script should be killed to stop it when abusive.*/
+  private final AtomicBoolean scriptKilled;
+
   private final AtomicBoolean cpuLimitExceeded;
+  
+  private final AtomicBoolean memoryLimitExceeded;
   
   private final Object monitor;
   
   private Thread threadToMonitor;
   
-  ThreadMonitor(final long maxCPUTimne) {
-    this.maxCPUTime = maxCPUTimne * 1000000;
-    this.stop = new AtomicBoolean(false);
-    this.evalAborted = new AtomicBoolean(false);
-    this.cpuLimitExceeded = new AtomicBoolean(false);
-    this.monitor = new Object();
+  private final ThreadMXBean threadBean;
+  
+  private final com.sun.management.ThreadMXBean memoryCouter;
+  
+  ThreadMonitor(final long maxCPUTime, final long maxMemory) {
+    this.maxMemory = maxMemory;
+    this.maxCPUTime = maxCPUTime * 1000000;
+    stop = new AtomicBoolean(false);
+    scriptFinished = new AtomicBoolean(false);
+    scriptKilled = new AtomicBoolean(false);
+    cpuLimitExceeded = new AtomicBoolean(false);
+    memoryLimitExceeded = new AtomicBoolean(false);
+    monitor = new Object();
+    threadBean = ManagementFactory.getThreadMXBean();
+    // ensure this feature is enabled
+    threadBean.setThreadCpuTimeEnabled(true);
+    if(threadBean instanceof com.sun.management.ThreadMXBean)
+    {
+        memoryCouter = (com.sun.management.ThreadMXBean) threadBean;
+        // ensure this feature is enabled
+        memoryCouter.setThreadAllocatedMemoryEnabled(true);
+    }
+    else
+    {
+        if(maxMemory > 0)
+        {
+            throw new UnsupportedOperationException("JVM does not support thread memory counting");
+        }
+        memoryCouter = null;
+    }
   }
   
   private void reset() {
     stop.set(false);
-    evalAborted.set(false);
+    scriptFinished.set(false);
+    scriptKilled.set(false);
     cpuLimitExceeded.set(false);
     threadToMonitor = null;
   }
@@ -59,53 +91,102 @@ public class ThreadMonitor {
           throw new IllegalStateException("Executor thread not set after " + 
                   maxCPUTime/MILI_TO_NANO + " ms");
       }
-      final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
-      final long startCPUTime = bean.getThreadCpuTime(threadToMonitor.getId());
+      final long startCPUTime = getCPUTime();
+      final long startMemory = getCurrentMemory();
       while (!stop.get()) {
-          final long threadCPUTime = bean.getThreadCpuTime(threadToMonitor.getId());
-          final long runtime = threadCPUTime-startCPUTime;
-          if (runtime > maxCPUTime) {
-            cpuLimitExceeded.set(true);
-            stop.set(true);
-            
+          final long runtime = getCPUTime()-startCPUTime;
+          final long memory = getCurrentMemory()-startMemory;
+          if (isCpuTimeExided(runtime) || isMemoryExided(memory)) {
+            cpuLimitExceeded.set(isCpuTimeExided(runtime));
+            memoryLimitExceeded.set(isMemoryExided(memory));
             threadToMonitor.interrupt();
-            Thread.sleep(50);
-            if (!evalAborted.get()) {
-              LOG.warn(this.getClass().getSimpleName() + ": Thread hard shutdown!");
+            synchronized (monitor) {
+              monitor.wait(50);
+            }
+            if (stop.get()) {
+              return;
+            }
+            if (!scriptFinished.get()) {
+              LOG.fatal(this.getClass().getSimpleName() + ": Thread hard shutdown!");
               threadToMonitor.stop();
+              scriptKilled.set(true);
             }
             return;
           }
           synchronized (monitor) {
-            monitor.wait(Math.max((maxCPUTime-runtime)/MILI_TO_NANO,5));
+            monitor.wait(getCheckInterval(runtime));
           }
       }
     } catch (final Exception e) {
-      throw Exceptions.sneakyThrow(e);
+      throw new RuntimeException(e);
     }
+  }
+
+  private long getCheckInterval(final long runtime) {
+    if (maxCPUTime==0) {
+      return 10;
+    }
+    if (maxMemory == 0) {
+      return Math.max((maxCPUTime-runtime)/MILI_TO_NANO,5);
+    }
+    return Math.min((maxCPUTime-runtime)/MILI_TO_NANO,10);
+  }
+
+  private boolean isCpuTimeExided(final long runtime) {
+    if(maxCPUTime == 0) {
+      return false;
+    }
+    return runtime>maxCPUTime;
+  }
+
+  private boolean isMemoryExided(final long memory) {
+    if(maxMemory == 0) {
+      return false;
+    }
+    return memory > maxMemory;
+  }
+
+  /**
+   * Obtain current evaluation thread memoy usage.
+   * 
+   * @return current memory usage
+   */
+  private long getCurrentMemory() {
+    if(maxMemory == 0 || memoryCouter != null) {
+      return memoryCouter.getThreadAllocatedBytes(threadToMonitor.getId());
+    }
+    return 0L;
+  }
+
+  private long getCPUTime() {
+    return threadBean.getThreadCpuTime(threadToMonitor.getId());
   }
   
   public void stopMonitor() {
-    this.stop.set(true);
+    stop.set(true);
     notifyMonitorThread();
   }
   
   public void setThreadToMonitor(final Thread t) {
     reset();
-    this.threadToMonitor = t;
+    threadToMonitor = t;
     notifyMonitorThread();
   }
   
-  public void evalAborted() {
-    this.evalAborted.set(true);
+  public void scriptFinished() {
+    scriptFinished.set(false);
   }
   
   public boolean isCPULimitExceeded() {
-    return this.cpuLimitExceeded.get();
+    return cpuLimitExceeded.get();
   }
   
-  public boolean isEvalAborted() {
-    return this.evalAborted.get();
+  public boolean isMemoryLimitExceeded() {
+    return memoryLimitExceeded.get();
+  }
+  
+  public boolean isScriptKilled() {
+    return scriptKilled.get();
   }
   
   private void notifyMonitorThread() {

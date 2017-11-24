@@ -10,7 +10,9 @@ package delight.nashornsandbox.internal;
  */
 @SuppressWarnings("all")
 public class InterruptTest {
-  public static boolean isInterrupted() {
-    return Thread.currentThread().isInterrupted();
+  public static void test() throws InterruptedException {
+    if(Thread.interrupted()) {
+        throw new InterruptedException();
+    }
   }
 }

@@ -8,9 +8,11 @@ package delight.nashornsandbox.exceptions;
  * @author <a href="mailto:mxro@nowhere.com>mxro</a>
  * @version $Id$
  */
-public class ScriptCPUAbuseException extends RuntimeException {
+public class ScriptCPUAbuseException extends ScriptAbuseException {
   private static final long serialVersionUID = 1L;
-  public ScriptCPUAbuseException(final String string, final Throwable throwable) {
-    super(string, throwable);
+  
+  public ScriptCPUAbuseException(final String string, final boolean scriptKilled, final Throwable throwable) {
+    super(string, scriptKilled, throwable);
   }
+  
 }

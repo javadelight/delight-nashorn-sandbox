@@ -24,17 +24,17 @@ public interface NashornSandbox {
   /**
    * Add a new class to the list of allowed classes.
    */
-  void allow(final Class<?> clazz);
+  void allow(Class<?> clazz);
   
   /**
    * Remove a class from the list of allowed classes.
    */
-  void disallow(final Class<?> clazz);
+  void disallow(Class<?> clazz);
   
   /**
    * Check if a class is in the list of allowed classes.
    */
-  boolean isAllowed(final Class<?> clazz);
+  boolean isAllowed(Class<?> clazz);
   
   /**
    * Remove all classes from the list of allowed classes.
@@ -47,21 +47,46 @@ public interface NashornSandbox {
    * @param variableName the name of the variable
    * @param object the value, can be <code>null</code>
    */
-  void inject(final String variableName, final Object object);
+  void inject(String variableName, Object object);
   
   /**
    * Sets the maximum CPU time in milliseconds allowed for script execution.
    * <p>
-   *   Note, {@link ExecutorService} should be also set when time set is greater
+   *   Note, {@link ExecutorService} should be also set when time is set greater
    *   than 0.
    * </p>
    *
    * @param limit time limit in miliseconds
    * @see #setExecutor(ExecutorService)
    */
-  void setMaxCPUTime(final long limit);
+  void setMaxCPUTime(long limit);
   
-  void setWriter(final Writer writer);
+  /**
+   * Sets the maximum memory in Bytes which JS executor thread can allocate.
+   * <p>
+   *   Note, thread memory usage is only approximation.
+   * </p>
+   * <p>
+   *   Note, {@link ExecutorService} should be also set when memory limit is set
+   *   greater than 0. Nashorn takes some memory at start, be denerous and give
+   *   at least 30kB.
+   * </p>
+   * <p>
+   *   Current implementation of this limit works only on Sun/Oracle JVM.
+   * </p>
+   * 
+   * @param limit limit in bytes
+   * @see com.sun.management.ThreadMXBean#getThreadAllocatedBytes(long)
+   */
+  void setMaxMemory(long limit);
+  
+  /**
+   * Sets the writer, whem want to have output from writer funcion called in
+   * JS script
+   * 
+   * @param writer the writer, eg. {@ling StringWriter}
+   */
+  void setWriter(Writer writer);
   
   /**
    * Specifies the executor service which is used to run scripts when a CPU time 
@@ -70,8 +95,13 @@ public interface NashornSandbox {
    * @param executor the executor service
    * @see #setMaxCPUTime(long)
    */
-  void setExecutor(final ExecutorService executor);
+  void setExecutor(ExecutorService executor);
   
+  /**
+   * Gets the current executor service.
+   *  
+   * @return current executor service
+   */
   ExecutorService getExecutor();
   
   /**
@@ -83,12 +113,12 @@ public interface NashornSandbox {
    * @throws ScriptException when script syntax error occures
    * @see #setMaxCPUTime(long)
    */
-  Object eval(final String js) throws ScriptCPUAbuseException, ScriptException;
+  Object eval(String js) throws ScriptCPUAbuseException, ScriptException;
   
   /**
    * Obtains the value of the specified JavaScript variable.
    */
-  Object get(final String variableName);
+  Object get(String variableName);
   
   /**
    * Allow Nashorn print and echo functions.
@@ -96,7 +126,7 @@ public interface NashornSandbox {
    *   Only before first {@link #eval(String)} call cause efect.
    * </p>
    */
-  void allowPrintFunctions(final boolean v);
+  void allowPrintFunctions(boolean v);
   
   /**
    * Allow Nashorn readLine and readFully functions.
@@ -104,7 +134,7 @@ public interface NashornSandbox {
    *   Only before first {@link #eval(String)} call cause efect.
    * </p>
    */
-  void allowReadFunctions(final boolean v);
+  void allowReadFunctions(boolean v);
   
   /**
    * Allow Nashorn load and loadWithNewGlobal functions.
@@ -112,7 +142,7 @@ public interface NashornSandbox {
    *   Only before first {@link #eval(String)} call cause efect.
    * </p>
    */
-  void allowLoadFunctions(final boolean v);
+  void allowLoadFunctions(boolean v);
   
   /**
    * Allow Nashorn quit and exit functions.
@@ -120,7 +150,7 @@ public interface NashornSandbox {
    *   Only before first {@link #eval(String)} call cause efect.
    * </p>
    */
-  void allowExitFunctions(final boolean v);
+  void allowExitFunctions(boolean v);
   
   /**
    * Allow Nashorn globals object $ARG, $ENV, $EXEC, $OPTIONS, $OUT, $ERR and $EXIT.
@@ -128,8 +158,54 @@ public interface NashornSandbox {
    *   Only before first {@link #eval(String)} call cause efect.
    * </p>
    */
-  void allowGlobalsObjects(final boolean v);
+  void allowGlobalsObjects(boolean v);
 
+  /**
+   * Force, to check if all blocks are enclosed with curly braces "{}".
+   * <p>
+   *   Explantion: all loops (for, do-while, while, and if-else, and functions
+   *   should use braces, becouse poison_pill() function will be insertet afet
+   *   each open brace "{", to ensure interruption checking. Otherwise simple
+   *   code like:
+   *   <pre>
+   *     while(true) while(true) {
+   *       // do nothing
+   *     }
+   *   </pre>
+   *   or even:
+   *   <pre>
+   *     while(true)
+   *   </pre>
+   *   cause unbreakable loop, which force this sandbox to use {@link Thread#stop()}
+   *   which make JVM unstable.
+   * </p>
+   * <p>
+   *   Properly writen code (even in bad intention) like:
+   *   <pre>
+   *     while(true) { while(true) {
+   *       // do nothing
+   *     }}
+   *   </pre>
+   *   will be changed into:
+   *   <pre>
+   *     while(true) {poison_pill(); 
+   *       while(true) {poison_pill();
+   *         // do nothing
+   *       }
+   *     }
+   *   </pre>
+   *   which finish nicelly when interrupted.
+   * <p>
+   *   For legacy code, this check can be turn off, but with no garantie, the
+   *   JS thread will gracefully finish when interrupted.
+   * </p>
+   * 
+   * @param v <code>true</code> when sandbox shoud check if all required braces 
+   *      are placed into JS code, <code>false</code> when no check should be 
+   *      performed
+   */
+  void allowNoBraces(boolean v);
+  
   /**
    * The size of prepared statments LRU cache. Default 0 (disabled).
    * <p>

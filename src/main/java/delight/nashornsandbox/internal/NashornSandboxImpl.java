@@ -7,10 +7,10 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
-import org.eclipse.xtext.xbase.lib.Exceptions;
 
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 /**
@@ -23,7 +23,6 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
  * @author <a href="mailto:dev@youness.org">Youness SAHOUANE</a> 
  * @author <a href="mailto:eduveks@gmail.com">Eduardo Velasques</a> 
  * @author <a href="mailto:philip.borgstrom@gmail.com">philipborg</a> 
- *
  * @author <a href="mailto:marcin.golebski@verbis.pl">Marcin Golebski</a>
  * @version $Id$
  */
@@ -38,6 +37,9 @@ public class NashornSandboxImpl implements NashornSandbox {
   
   /** Maximum CPU time in miliseconds.*/
   private long maxCPUTime = 0L;
+
+  /** Naximum memory of executor thread used.*/
+  private long maxMemory = 0L;
   
   private ExecutorService executor;
   
@@ -50,6 +52,8 @@ public class NashornSandboxImpl implements NashornSandbox {
   private boolean allowExitFunctions = false;
   
   private boolean allowGlobalsObjects = false;
+  
+  private boolean allowNoBraces = false;
   
   private JsEvaluator evaluator;
   
@@ -90,7 +94,7 @@ public class NashornSandboxImpl implements NashornSandbox {
       scriptEngine.eval(sb.toString());
     } 
     catch (final Exception e) {
-      throw Exceptions.sneakyThrow(e);
+      throw new RuntimeException(e);
     }
   }
   
@@ -101,7 +105,7 @@ public class NashornSandboxImpl implements NashornSandbox {
       assertScriptEngine();
     }
     try {
-      if (this.maxCPUTime == 0) {
+      if (maxCPUTime==0 && maxMemory==0) {
         if (LOG.isDebugEnabled()) {
           LOG.debug("--- Running JS ---");
           LOG.debug(js);
@@ -109,47 +113,46 @@ public class NashornSandboxImpl implements NashornSandbox {
         }
         return this.scriptEngine.eval(js);
       }
-      synchronized (this) {
-        checkExecutorPresence();
-        final JsSanitizer sanitizer = getSanitizer();
-        final String securedJs = sanitizer.secureJs(js);
-        final JsEvaluator evaluator = getEvaluator();
-        evaluator.setJs(securedJs);
-        executor.execute(evaluator);
-        evaluator.runMonitor();
-        if (evaluator.isCPULimitExceeded()) {
-          String notGraceful = "";
-          if (!evaluator.isEvalAborted()) {
-            notGraceful = " The operation could not be gracefully interrupted.";
-          }
-          throw new ScriptCPUAbuseException(
-                "Script used more than the allowed [" + maxCPUTime + 
-                  " ms] of CPU time. " + notGraceful, evaluator.getException());
-        }
-        if (evaluator.getException() != null) {
-          throw evaluator.getException();
-        }
-        return evaluator.getResult();
+      checkExecutorPresence();
+      final JsSanitizer sanitizer = getSanitizer();
+      final String securedJs = sanitizer.secureJs(js);
+      final JsEvaluator evaluator = getEvaluator();
+      evaluator.setJs(securedJs);
+      executor.execute(evaluator);
+      evaluator.runMonitor();
+      if (evaluator.isCPULimitExceeded()) {
+        throw new ScriptCPUAbuseException("Script used more than the allowed [" + 
+            maxCPUTime + " ms] of CPU time.", evaluator.isScriptKilled(), 
+            evaluator.getException());
       }
-    } 
-    catch (ScriptCPUAbuseException | ScriptException e) {
+      else if(evaluator.isMemoryLimitExceeded()) {
+        throw new ScriptMemoryAbuseException("Script used more than the allowed [" + 
+             maxMemory + " B] of memory.", evaluator.isScriptKilled(), 
+             evaluator.getException());
+      }
+      if (evaluator.getException() != null) {
+        throw evaluator.getException();
+      }
+      return evaluator.getResult();
+    }
+    catch (RuntimeException | ScriptException e) {
       throw e;
     }
     catch (final Exception e) {
-      throw Exceptions.sneakyThrow(e);
+      throw new RuntimeException(e);
     }
   }
 
   private JsEvaluator getEvaluator() {
     if(evaluator == null) {
-      evaluator = new JsEvaluator(scriptEngine, this, maxCPUTime);
+      evaluator = new JsEvaluator(scriptEngine, maxCPUTime, maxMemory);
     }
     return evaluator;
   }
 
   private void checkExecutorPresence() {
     if (executor == null) {
-      throw new IllegalStateException("When a CPU time limit is set, an executor " +
+      throw new IllegalStateException("When a CPU time or memory limit is set, an executor " +
               "needs to be provided by calling .setExecutor(...)");
     }
   }
@@ -159,9 +162,14 @@ public class NashornSandboxImpl implements NashornSandbox {
       maxCPUTime = limit;
   }
 
+  @Override
+  public void setMaxMemory(final long limit) {
+      maxMemory = limit;
+  }
+  
   JsSanitizer getSanitizer() {
     if(sanitizer==null) {
-      sanitizer = new JsSanitizer(scriptEngine, maxPreparedStatements);
+      sanitizer = new JsSanitizer(scriptEngine, maxPreparedStatements, allowNoBraces);
     }
     return sanitizer;
   }
@@ -235,6 +243,14 @@ public class NashornSandboxImpl implements NashornSandbox {
   }
   
   @Override
+  public void allowNoBraces(final boolean v) {
+    if(allowNoBraces != v) {
+       sanitizer = null;
+    }
+    allowNoBraces = v;
+  }
+  
+  @Override
   public void setWriter(final Writer writer) {
     scriptEngine.getContext().setWriter(writer);
   }
@@ -247,8 +263,4 @@ public class NashornSandboxImpl implements NashornSandbox {
     maxPreparedStatements = max;
   }
 
-  String getJsInterruptedError() {
-    return getSanitizer().getJsInterruptedError();
-  }
-  
 }

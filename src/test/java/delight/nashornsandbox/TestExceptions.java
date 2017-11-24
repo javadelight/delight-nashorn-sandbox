@@ -7,8 +7,6 @@ import javax.script.ScriptException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
 @SuppressWarnings("all")
@@ -73,7 +71,7 @@ public class TestExceptions {
       if (_t instanceof Throwable) {
         final Throwable t = _t;
         sandbox.getExecutor().shutdown();
-        Assert.assertTrue(t.getMessage().contains("2"));
+        Assert.assertTrue(t.getMessage().contains("4"));
         return;
       } else {
         throw new RuntimeException(_t);

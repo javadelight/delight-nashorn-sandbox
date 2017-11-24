@@ -5,7 +5,6 @@ import static delight.nashornsandbox.internal.NashornSandboxImpl.LOG;
 import java.util.concurrent.ExecutorService;
 
 import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 
 /**
  * The JavaScript evaluator. It is designed to run Nashorn engine in separate
@@ -18,7 +17,6 @@ import javax.script.ScriptException;
  * @version $Id$
  */
 class JsEvaluator implements Runnable {
-  private final NashornSandboxImpl sandbox;
   private final ThreadMonitor threadMonitor;
   private String js;
   private final ScriptEngine scriptEngine;
@@ -26,19 +24,21 @@ class JsEvaluator implements Runnable {
   private Object result = null;
   private Exception exception = null;
     
-  JsEvaluator(final ScriptEngine scriptEngine, final NashornSandboxImpl sandbox, 
-      final long maxCPUTime) {
+  JsEvaluator(final ScriptEngine scriptEngine, final long maxCPUTime, final long maxMemory) {
     this.scriptEngine = scriptEngine;
-    this.sandbox = sandbox;
-    this.threadMonitor = new ThreadMonitor(maxCPUTime);
+    this.threadMonitor = new ThreadMonitor(maxCPUTime, maxMemory);
   }
 
-  boolean isEvalAborted() {
-    return threadMonitor.isEvalAborted();
+  boolean isScriptKilled() {
+    return threadMonitor.isScriptKilled();
   }
 
   boolean isCPULimitExceeded() {
     return threadMonitor.isCPULimitExceeded();
+  }
+  
+  boolean isMemoryLimitExceeded() {
+    return threadMonitor.isMemoryLimitExceeded();
   }
 
   /**
@@ -59,16 +59,18 @@ class JsEvaluator implements Runnable {
       }
       result = scriptEngine.eval(js);
     } 
-    catch (final ScriptException e) {
-      if (e.getMessage().contains(sandbox.getJsInterruptedError())) {
-        threadMonitor.evalAborted();
-      } 
+    catch (final RuntimeException e) {
+      if(e.getCause() instanceof InterruptedException) {
+        threadMonitor.scriptFinished();
+      }
       else {
         exception = e;
+        threadMonitor.scriptFinished();
       }
     }
     catch (final Exception e) {
       exception = e;
+      threadMonitor.scriptFinished();
     } 
     finally {
       threadMonitor.stopMonitor();

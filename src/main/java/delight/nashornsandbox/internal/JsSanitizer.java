@@ -5,17 +5,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.SoftReference;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
-import org.eclipse.xtext.xbase.lib.Exceptions;
-
+import delight.nashornsandbox.exceptions.BracesException;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 /**
@@ -31,7 +32,61 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 @SuppressWarnings("restriction")
 class JsSanitizer
 {
+    private static class PoisonPil {
+      Pattern pattern;
+      String replacement;
+
+      PoisonPil(final Pattern pattern, final String replacement) {
+        this.pattern = pattern;
+        this.replacement = replacement;
+      }
+    }
+    
+    /**The resource name of beautify.min.js script.*/
     private final static String BEAUTIFY_JS = "delight/nashornsandbox/internal/beautify.min.js";
+    
+    /**Pattern for back braces.*/
+    private final static List<Pattern> LACK_EXPECTED_BRACES = Arrays.asList(
+      Pattern.compile("(function|for)[^\\{]+$"),
+      Pattern.compile("^\\s*do[^\\{]*$"),
+      Pattern.compile("^[^\\}]*while[^\\{]+$"));
+    
+    /**
+     * The name of the JS function to be inserted into user script. To prevent
+     * collisions random sufix is added.
+     */
+    final static String JS_INTERRUPTED_FUNCTION = "__if";
+    
+    /**
+     * The name of the variable which holds reference to interruption checking
+     * class. To prevent collisions random sufix is added.
+     */
+    final static String JS_INTERRUPTED_TEST = "__it";
+    
+    private final static List<PoisonPil> POISON_PILLS = Arrays.asList(
+      // every 10th statments ended with semicolon put intterupt checking function
+      new PoisonPil(Pattern.compile("(([^;]+;){9}[^;]+;)\\n"), JS_INTERRUPTED_FUNCTION+"();\n"),
+      // every (except switch) block start brace put intterupt checking function
+      new PoisonPil(Pattern.compile("(\\s*for\\s*\\([^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION+"();"),
+      new PoisonPil(Pattern.compile("(\\s*function\\s*[^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION+"();"),
+      new PoisonPil(Pattern.compile("(\\s*while\\s*\\([^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION+"();"),
+      new PoisonPil(Pattern.compile("(\\s*do\\s*\\{)"), JS_INTERRUPTED_FUNCTION+"();")
+    );    
+    
+    /**
+     * The beautifier options. Don't change if you are not know what you are 
+     * doing, becouse regexps are dependend on it.
+     */
+    private final static Map<String, Object> BEAUTIFY_OPTIONS = new HashMap<>();
+    
+    static {
+      BEAUTIFY_OPTIONS.put("brace_style", "collapse");
+      BEAUTIFY_OPTIONS.put("preserve_newlines", false);
+      BEAUTIFY_OPTIONS.put("indent_size", 1);
+      BEAUTIFY_OPTIONS.put("max_preserve_newlines", 0);
+    }
+    
+    /**Soft reference to the text of the js script.*/
     private static SoftReference<String> beautifysScript = new SoftReference<>(null);
     
     private final ScriptEngine scriptEngine;
@@ -40,33 +95,17 @@ class JsSanitizer
     private final ScriptObjectMirror jsBeautify;
 
     private final Map<String,String> securedJsCache;
+
+    /**<code>true</code> when lack of braces is allowed.*/
+    private final boolean allowNoBraces;
     
-    /** 
-     * The name of the JS error thrown when script is intrrupted. To prevent
-     * collisions random sufix is added.
-     */
-    private final String jsInterruptedError;
     
-    /**
-     * The name of the JS function to be inserted into user script. To prevent
-     * collisions random sufix is added.
-     */
-    private final String jsInterruptedFunction;
-    
-    /**
-     * The name of the variable which holds reference to interruption checking
-     * class. To prevent collisions random sufix is added.
-     */
-    private final String jsInterruptedTest;
-    
-    JsSanitizer(final ScriptEngine scriptEngine, final int maxPreparedStatements)
+    JsSanitizer(final ScriptEngine scriptEngine, final int maxPreparedStatements,
+        final boolean allowNoBraces)
     {
         this.scriptEngine = scriptEngine;
+        this.allowNoBraces = allowNoBraces;
         this.securedJsCache = createSecuredJsCache(maxPreparedStatements);
-        final int random = Math.abs(new Random().nextInt());
-        this.jsInterruptedError = "Interrupted_" + random;
-        this.jsInterruptedFunction = "intCheckForInterruption_" + random;
-        this.jsInterruptedTest = "InterruptTest_" + random;
         assertScriptEngine();
         this.jsBeautify = getBeautifHandler(scriptEngine);
     }
@@ -77,7 +116,7 @@ class JsSanitizer
         scriptEngine.eval(getBeautifyJs());
       } 
       catch (final Exception e) {
-        throw Exceptions.sneakyThrow(e);
+        throw new RuntimeException(e);
       }
     }
           
@@ -110,41 +149,52 @@ class JsSanitizer
       }
     }
     
-    private static String replaceGroup(final String str, final String regex, final String replacement) {
-      final Pattern pattern = Pattern.compile(regex);
-      final Matcher matcher = pattern.matcher(str);
-      final StringBuffer sb = new StringBuffer();
-      while (matcher.find()) {
-        matcher.appendReplacement(sb, ("$1" + replacement));
+    /**
+     *  After beautifyier every braces should be in plece, if not, or to many
+     *  w need to prevent script execution
+     * 
+     * @param beautifiedJs evaluated script
+     * @throws BracesException when baces are incorrect
+     */
+    void checkBraces(final String beautifiedJs) throws BracesException {
+      if(allowNoBraces) {
+        return;
       }
-      matcher.appendTail(sb);
-      return sb.toString();
+      for(final Pattern pattern : LACK_EXPECTED_BRACES) {
+        final Matcher matcher = pattern.matcher(beautifiedJs);
+        if(matcher.find()) {
+          throw new BracesException("No block braces after function|for|while|do");
+        }
+      }
     }
-      
-    private String injectInterruptionCalls(final String str) {
-      String res = str.replaceAll(";\\n(?![\\s]*else[\\s]+)", ";"+jsInterruptedFunction+"();");
-      res = replaceGroup(res, "(while \\([^\\)]*)(\\) \\{)", "){"+jsInterruptedFunction+"();");
-      res = replaceGroup(res, "(for \\([^\\)]*)(\\) \\{)", "){"+jsInterruptedFunction+"();");
-      return res.replaceAll("\\} while \\(", "\n"+jsInterruptedFunction+"();\n\\} while \\(");
+    
+    String injectInterruptionCalls(final String str) {
+      String current = str;
+      for(final PoisonPil pp : POISON_PILLS) {
+        final StringBuffer sb = new StringBuffer();
+        final Matcher matcher = pp.pattern.matcher(current);
+        while (matcher.find()) {
+          matcher.appendReplacement(sb, ("$1" + pp.replacement));
+        }
+        matcher.appendTail(sb);
+        current = sb.toString();
+      }
+      return current;
     }
 
     private String getPreamble() {
       final String clazzName = InterruptTest.class.getName();
       final StringBuilder sb = new StringBuilder();
-      sb.append("var ").append(jsInterruptedTest).append("=Java.type('").append(clazzName).append("');");
-      sb.append("var ").append(jsInterruptedFunction).append("=function(){");
-      sb.append("if(").append(jsInterruptedTest).append(".isInterrupted()) {");
-      sb.append("throw new Error('").append(jsInterruptedError).append("');");
-      sb.append("}");
-      sb.append("};\n");
+      sb.append("var ").append(JS_INTERRUPTED_TEST).append("=Java.type('").append(clazzName).append("');");
+      sb.append("var ").append(JS_INTERRUPTED_FUNCTION).append("=function(){");
+      sb.append(JS_INTERRUPTED_TEST).append(".test();};\n");
       return sb.toString();
     }
     
     private void checkJs(final String js) {
-      if (js.contains(jsInterruptedError) || js.contains(jsInterruptedFunction) || 
-          js.contains(jsInterruptedTest)) {
+      if (js.contains(JS_INTERRUPTED_FUNCTION) || js.contains(JS_INTERRUPTED_TEST)) {
         throw new IllegalArgumentException("Script contains the illegal string [" + 
-          jsInterruptedError+","+jsInterruptedFunction+"]");
+            JS_INTERRUPTED_TEST+","+JS_INTERRUPTED_FUNCTION+"]");
       }
     }
 
@@ -155,22 +205,28 @@ class JsSanitizer
       }
       if(securedJs == null) {
         checkJs(js);
-        final String beautifiedJs = (String) jsBeautify.call("beautify", js);
+        final String beautifiedJs = beautifyJs(js);
+        checkBraces(beautifiedJs);
         final String injectedJs = injectInterruptionCalls(beautifiedJs);
-        final String preamble = getPreamble();
-        securedJs = preamble + injectedJs;
+        // if no injection, no need to add preamble
+        if(beautifiedJs.equals(injectedJs)) {
+            securedJs = beautifiedJs;
+        }
+        else {
+          final String preamble = getPreamble();
+          securedJs = preamble + injectedJs;
+        }
         if(securedJsCache != null) {
           securedJsCache.put(js, securedJs);
         }
       }
       return securedJs;
     }
-    
-    String getJsInterruptedError()
-    {
-        return jsInterruptedError;
+
+    String beautifyJs(final String js) {
+      return (String) jsBeautify.call("beautify", js, BEAUTIFY_OPTIONS);
     }
- 
+    
     private static String getBeautifyJs() {
       String script = beautifysScript.get();
       if(script == null) {

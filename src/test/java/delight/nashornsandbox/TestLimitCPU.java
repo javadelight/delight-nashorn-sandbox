@@ -1,13 +1,14 @@
 package delight.nashornsandbox;
 
+import static org.junit.Assert.fail;
+
 import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
 
 import org.junit.Test;
 
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
+import delight.nashornsandbox.exceptions.BracesException;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
 @SuppressWarnings("all")
@@ -33,13 +34,21 @@ public class TestLimitCPU {
   @Test(expected = ScriptCPUAbuseException.class)
   public void test_evil_script() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
+    sandbox.setMaxCPUTime(50);
+    sandbox.setExecutor(Executors.newSingleThreadExecutor());
+    final String js = "var x = 1;\nwhile (true) { }\n";
     try {
-      sandbox.setMaxCPUTime(50);
-      sandbox.setExecutor(Executors.newSingleThreadExecutor());
-      final StringBuilder _builder = new StringBuilder();
-      _builder.append("var x = 1;\n");
-      _builder.append("while (true) { }\n");
-      sandbox.eval(_builder.toString());
+      // try evaluate bad js
+      try {
+        sandbox.eval(js);
+        fail("Should exception be thrown");
+      }
+      catch(final BracesException e) {
+        // nothing to do
+      }
+      // allow evaluate bad js
+      sandbox.allowNoBraces(true);
+      sandbox.eval(js);
     } finally {
       sandbox.getExecutor().shutdown();
     }
@@ -60,15 +69,69 @@ public class TestLimitCPU {
     sandbox.getExecutor().shutdown();
   }
   
-  @Test(expected = ScriptCPUAbuseException.class)
+  @Test(expected = BracesException.class)
   public void test_only_while() throws ScriptCPUAbuseException, ScriptException {
+    final NashornSandbox sandbox = NashornSandboxes.create();
+    sandbox.setMaxCPUTime(50);
+    sandbox.setExecutor(Executors.newSingleThreadExecutor());
+    try {
+        final String badScript = "while (true);\n"; 
+        sandbox.eval(badScript);
+    } finally {
+      sandbox.getExecutor().shutdown();
+    }
+  }
+
+  @Test(expected = ScriptCPUAbuseException.class)
+  public void test_only_while_allowed_bad_script() throws ScriptCPUAbuseException, ScriptException {
+    final NashornSandbox sandbox = NashornSandboxes.create();
+    sandbox.setMaxCPUTime(50);
+    sandbox.setExecutor(Executors.newSingleThreadExecutor());
+    try {
+        final String badScript = "while (true);\n"; 
+        sandbox.allowNoBraces(true);
+        sandbox.eval(badScript);
+    } finally {
+      sandbox.getExecutor().shutdown();
+    }
+  }  
+  
+  @Test(expected = ScriptCPUAbuseException.class)
+  public void test_only_while_good_script() throws ScriptCPUAbuseException, ScriptException {
+    final NashornSandbox sandbox = NashornSandboxes.create();
+    sandbox.setMaxCPUTime(50);
+    sandbox.setExecutor(Executors.newSingleThreadExecutor());
+    try {
+        final String goodScript = "while (true); {i=1;}"; 
+        sandbox.allowNoBraces(true);
+        sandbox.eval(goodScript);
+    } finally {
+      sandbox.getExecutor().shutdown();
+    }
+  }   
+  
+  @Test(expected = BracesException.class)
+  public void test_while_plus_iteration_bad_script() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
     try {
       sandbox.setMaxCPUTime(50);
       sandbox.setExecutor(Executors.newSingleThreadExecutor());
-      final StringBuilder _builder = new StringBuilder();
-      _builder.append("while (true);\n");
-      sandbox.eval(_builder.toString());
+      final String badScirpt = "var x=0;\nwhile (true) x++;\n";
+      sandbox.eval(badScirpt);
+    } finally {
+      sandbox.getExecutor().shutdown();
+    }
+  }
+
+  @Test(expected = ScriptCPUAbuseException.class)
+  public void test_while_plus_iteration_bad_scrip_allowed() throws ScriptCPUAbuseException, ScriptException {
+    final NashornSandbox sandbox = NashornSandboxes.create();
+    try {
+      sandbox.setMaxCPUTime(50);
+      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      final String badScirpt = "var x=0;\nwhile (true) x++;\n";
+      sandbox.allowNoBraces(true);
+      sandbox.eval(badScirpt);
     } finally {
       sandbox.getExecutor().shutdown();
     }
@@ -80,15 +143,13 @@ public class TestLimitCPU {
     try {
       sandbox.setMaxCPUTime(50);
       sandbox.setExecutor(Executors.newSingleThreadExecutor());
-      final StringBuilder _builder = new StringBuilder();
-      _builder.append("var x=0;\n");
-      _builder.append("while (true) x++;\n");
-      sandbox.eval(_builder.toString());
+      final String goodScript = "var x=0;\nwhile (true) {x++;}\n";
+      sandbox.eval(goodScript);
     } finally {
       sandbox.getExecutor().shutdown();
     }
   }
-  
+
   @Test(expected = ScriptCPUAbuseException.class)
   public void test_do_while() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
