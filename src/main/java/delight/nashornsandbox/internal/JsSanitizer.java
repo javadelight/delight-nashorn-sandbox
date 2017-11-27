@@ -48,8 +48,8 @@ class JsSanitizer
     /**Pattern for back braces.*/
     private final static List<Pattern> LACK_EXPECTED_BRACES = Arrays.asList(
       Pattern.compile("(function|for)[^\\{]+$"),
-      Pattern.compile("^\\s*do[^\\{]*$"),
-      Pattern.compile("^[^\\}]*while[^\\{]+$"));
+      Pattern.compile("^\\s*do[^\\{]*$", Pattern.MULTILINE),
+      Pattern.compile("^[^\\}]*while[^\\{]+$", Pattern.MULTILINE));
     
     /**
      * The name of the JS function to be inserted into user script. To prevent
@@ -65,7 +65,7 @@ class JsSanitizer
     
     private final static List<PoisonPil> POISON_PILLS = Arrays.asList(
       // every 10th statments ended with semicolon put intterupt checking function
-      new PoisonPil(Pattern.compile("(([^;]+;){9}[^;]+;)\\n"), JS_INTERRUPTED_FUNCTION+"();\n"),
+      new PoisonPil(Pattern.compile("(([^;]+;){9}[^;]+(?<!break|continue);)\\n"), JS_INTERRUPTED_FUNCTION+"();\n"),
       // every (except switch) block start brace put intterupt checking function
       new PoisonPil(Pattern.compile("(\\s*for\\s*\\([^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION+"();"),
       new PoisonPil(Pattern.compile("(\\s*function\\s*[^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION+"();"),

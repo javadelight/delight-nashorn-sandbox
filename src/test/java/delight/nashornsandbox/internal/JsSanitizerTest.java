@@ -66,6 +66,22 @@ public class JsSanitizerTest {
     final String bjs2 = jsSanitizer.secureJs(js2);
     assertTrue(bjs2.contains("var i = 10;"+JsSanitizer.JS_INTERRUPTED_FUNCTION));
   }  
+  
+  @Test
+  public void testSecureJs_10statment_break() throws Exception {
+    final String js1 = "var i=0;\nvar i=0;\nvar i=0;\nvar i=0;\nvar i=0;\n" +
+            "var i=0;\nvar i=0;\nvar i=0;\nvar i=0;\nvar i=10;\nvar i=11;";
+    final String bjs1 = jsSanitizer.secureJs(js1);
+    assertTrue(bjs1.contains("var i = 10;"+JsSanitizer.JS_INTERRUPTED_FUNCTION));
+    final String js2 = "var i=0;\nvar i=0;\nvar i=0;\nvar i=0;\nvar i=0;\n" +
+            "var i=0;\nvar i=0;\nvar i=0;\nvar i=0;\n" +
+            "for(var i=0; i<10; i++) {break; continue; i--}\n" +
+            "var i=10;\nvar i=11;";
+    final String bjs2 = jsSanitizer.secureJs(js2);
+    assertFalse(bjs2.contains("break;"+JsSanitizer.JS_INTERRUPTED_FUNCTION));
+    assertFalse(bjs2.contains("continue;"+JsSanitizer.JS_INTERRUPTED_FUNCTION));
+  }  
+  
   @Test
   public void testSecureJs_simple() throws Exception {
     final String js1 = "sum(a) + avg(b)";

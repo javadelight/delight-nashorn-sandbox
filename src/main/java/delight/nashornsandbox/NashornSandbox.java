@@ -69,7 +69,7 @@ public interface NashornSandbox {
    * <p>
    *   Note, {@link ExecutorService} should be also set when memory limit is set
    *   greater than 0. Nashorn takes some memory at start, be denerous and give
-   *   at least 30kB.
+   *   at least 1MB.
    * </p>
    * <p>
    *   Current implementation of this limit works only on Sun/Oracle JVM.

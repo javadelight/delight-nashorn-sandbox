@@ -60,19 +60,17 @@ class JsEvaluator implements Runnable {
       result = scriptEngine.eval(js);
     } 
     catch (final RuntimeException e) {
-      if(e.getCause() instanceof InterruptedException) {
-        threadMonitor.scriptFinished();
-      }
-      else {
+      // InterruptedException means script was successfully interrupted,
+      // so no exception should be propagated
+      if(!(e.getCause() instanceof InterruptedException)) {
         exception = e;
-        threadMonitor.scriptFinished();
       }
     }
     catch (final Exception e) {
       exception = e;
-      threadMonitor.scriptFinished();
     } 
     finally {
+      threadMonitor.scriptFinished();
       threadMonitor.stopMonitor();
     }
   }
