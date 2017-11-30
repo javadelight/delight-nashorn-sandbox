@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!-- Template: Source 
-	+ GWT + in workspace dependencies 27.11.2010 --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
 	<groupId>org.javadelight</groupId>
 	<artifactId>delight-nashorn-sandbox</artifactId>
-	<version>0.0.13-SNAPSHOT</version>
+	<version>1.0.0-beta-SNAPSHOT</version>
 	<description>A safe sandbox to execute JavaScript code from Nashorn.</description>
 	<url>https://github.com/javadelight/delight-nashorn-sandbox</url>
 
@@ -21,7 +23,6 @@
 	<!-- Dependent Modules -->
 	<dependencies>
 
-
 		 <dependency>
 			<groupId>com.sun</groupId>
 			<artifactId>tools</artifactId>
@@ -29,19 +30,6 @@
 			<scope>system</scope>
 			<systemPath>${java.home}/../lib/tools.jar</systemPath>
 		</dependency> 
-		
-
-		<dependency>
-			<groupId>org.eclipse.xtend</groupId>
-			<artifactId>org.eclipse.xtend.lib.gwt</artifactId>
-			<version>2.13.0</version>
-			<exclusions>
-				<exclusion>  
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava-gwt</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -50,20 +38,14 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.javadelight</groupId>
-			<artifactId>delight-async</artifactId>
-			<version>0.1.4</version>
-			<exclusions>
-				<exclusion>  
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava-gwt</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+          <version>1.2.11</version>
+        </dependency>
+
 
 	</dependencies>
-
 
 	<!-- XXXXXXXXXXXXXX Maven declarations XXXXXXXXXXXXXXXXXX -->
 
@@ -162,7 +144,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -272,8 +253,6 @@
 							<version>2.4</version>
 						</plugin>
 
-
-
 					</reportPlugins>
 				</configuration>
 			</plugin>
@@ -287,7 +266,9 @@
 				<directory>src/main/java</directory>
 				<includes>
 					<include>**/*.java</include>
+					<include>**/*.js</include>
 					<include>**/*.gwt.xml</include>
+					<include>**/log4j.properties</include>
 				</includes>
 			</resource>
 
@@ -309,7 +290,6 @@
 
 		</resources>
 
-
 	</build>
 
 	<distributionManagement>
@@ -319,7 +299,6 @@
 			<url>https://api.bintray.com/maven/javadelight/javadelight/delight-nashorn-sandbox/;publish=1</url>
 		</repository>
 	</distributionManagement>
-
 
 
 	<developers>
@@ -359,7 +338,5 @@
 			<url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
 		</license>
 	</licenses>
-
-
 
 </project>

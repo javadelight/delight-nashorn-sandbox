@@ -3,85 +3,222 @@ package delight.nashornsandbox;
 import java.io.Writer;
 import java.util.concurrent.ExecutorService;
 
-@SuppressWarnings("all")
+import javax.script.ScriptException;
+
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+
+/**
+ * The Nashorn sandbox interface.
+ *
+ * <p>Created on 2015-08-06</p>
+ * 
+ * @author <a href="mailto:mxro@nowhere.com">mxro</a> 
+ * @author <a href="mailto:dev@youness.org">Youness SAHOUANE</a> 
+ * @author <a href="mailto:eduveks@gmail.com">Eduardo Velasques</a> 
+ * @author <a href="mailto:philip.borgstrom@gmail.com">philipborg</a> 
+ * @author <a href="mailto:marcin.golebski@verbis.pl">Marcin Golebski</a>
+ * @version $Id$
+ */
 public interface NashornSandbox {
+    
   /**
-   * <p>Add a new class to the list of allowed classes.
-   * <p>WARNING: Adding a new class, AFTER a script has been evaluated, will destroy the engine and recreate it. The script context will thus be lost.
+   * Add a new class to the list of allowed classes.
    */
-  public abstract NashornSandbox allow(final Class<?> clazz);
+  void allow(Class<?> clazz);
   
   /**
-   * <p>Remove a class from the list of allowed classes.
+   * Remove a class from the list of allowed classes.
    */
-  public abstract void disallow(final Class<?> clazz);
+  void disallow(Class<?> clazz);
   
   /**
-   * <p>Check if a class is in the list of allowed classes.
+   * Check if a class is in the list of allowed classes.
    */
-  public abstract boolean isAllowed(final Class<?> clazz);
+  boolean isAllowed(Class<?> clazz);
   
   /**
-   * <p>Remove all classes from the list of allowed classes.
+   * Remove all classes from the list of allowed classes.
    */
-  public abstract void disallowAllClasses();
+  void disallowAllClasses();
   
   /**
    * Will add a global variable available to all scripts executed with this sandbox.
+   * 
+   * @param variableName the name of the variable
+   * @param object the value, can be <code>null</code>
    */
-  public abstract NashornSandbox inject(final String variableName, final Object object);
+  void inject(String variableName, Object object);
   
   /**
    * Sets the maximum CPU time in milliseconds allowed for script execution.
+   * <p>
+   *   Note, {@link ExecutorService} should be also set when time is set greater
+   *   than 0.
+   * </p>
+   *
+   * @param limit time limit in miliseconds
+   * @see #setExecutor(ExecutorService)
    */
-  public abstract NashornSandbox setMaxCPUTime(final long limit);
-  
-  public abstract void setWriter(final Writer writer);
+  void setMaxCPUTime(long limit);
   
   /**
-   * Specifies the executor service which is used to run scripts when a CPU time limit is specified.
+   * Sets the maximum memory in Bytes which JS executor thread can allocate.
+   * <p>
+   *   Note, thread memory usage is only approximation.
+   * </p>
+   * <p>
+   *   Note, {@link ExecutorService} should be also set when memory limit is set
+   *   greater than 0. Nashorn takes some memory at start, be denerous and give
+   *   at least 1MB.
+   * </p>
+   * <p>
+   *   Current implementation of this limit works only on Sun/Oracle JVM.
+   * </p>
+   * 
+   * @param limit limit in bytes
+   * @see com.sun.management.ThreadMXBean#getThreadAllocatedBytes(long)
    */
-  public abstract NashornSandbox setExecutor(final ExecutorService executor);
-  
-  public abstract ExecutorService getExecutor();
+  void setMaxMemory(long limit);
   
   /**
-   * Evaluates the string.
+   * Sets the writer, whem want to have output from writer funcion called in
+   * JS script
+   * 
+   * @param writer the writer, eg. {@ling StringWriter}
    */
-  public abstract Object eval(final String js);
+  void setWriter(Writer writer);
   
   /**
-   * Enables debug output from the Sandbox.
+   * Specifies the executor service which is used to run scripts when a CPU time 
+   * limit is specified.
+   * 
+   * @param executor the executor service
+   * @see #setMaxCPUTime(long)
    */
-  public abstract void setDebug(final boolean value);
+  void setExecutor(ExecutorService executor);
+  
+  /**
+   * Gets the current executor service.
+   *  
+   * @return current executor service
+   */
+  ExecutorService getExecutor();
+  
+  /**
+   * Evaluates the JavaScript string.
+   * 
+   * @param js the JavaScript script to be evaluated
+   * @throws ScriptCPUAbuseException when execution time exided (when greater
+   *      than 0 is set
+   * @throws ScriptException when script syntax error occures
+   * @see #setMaxCPUTime(long)
+   */
+  Object eval(String js) throws ScriptCPUAbuseException, ScriptException;
   
   /**
    * Obtains the value of the specified JavaScript variable.
    */
-  public abstract Object get(final String variableName);
+  Object get(String variableName);
   
   /**
    * Allow Nashorn print and echo functions.
+   * <p>
+   *   Only before first {@link #eval(String)} call cause efect.
+   * </p>
    */
-  public abstract void allowPrintFunctions(final boolean v);
+  void allowPrintFunctions(boolean v);
   
   /**
    * Allow Nashorn readLine and readFully functions.
+   * <p>
+   *   Only before first {@link #eval(String)} call cause efect.
+   * </p>
    */
-  public abstract void allowReadFunctions(final boolean v);
+  void allowReadFunctions(boolean v);
   
   /**
    * Allow Nashorn load and loadWithNewGlobal functions.
+   * <p>
+   *   Only before first {@link #eval(String)} call cause efect.
+   * </p>
    */
-  public abstract void allowLoadFunctions(final boolean v);
+  void allowLoadFunctions(boolean v);
   
   /**
    * Allow Nashorn quit and exit functions.
+   * <p>
+   *   Only before first {@link #eval(String)} call cause efect.
+   * </p>
    */
-  public abstract void allowExitFunctions(final boolean v);
+  void allowExitFunctions(boolean v);
   
   /**
    * Allow Nashorn globals object $ARG, $ENV, $EXEC, $OPTIONS, $OUT, $ERR and $EXIT.
+   * <p>
+   *   Only before first {@link #eval(String)} call cause efect.
+   * </p>
    */
-  public abstract void allowGlobalsObjects(final boolean v);
+  void allowGlobalsObjects(boolean v);
+
+  /**
+   * Force, to check if all blocks are enclosed with curly braces "{}".
+   * <p>
+   *   Explantion: all loops (for, do-while, while, and if-else, and functions
+   *   should use braces, becouse poison_pill() function will be insertet afet
+   *   each open brace "{", to ensure interruption checking. Otherwise simple
+   *   code like:
+   *   <pre>
+   *     while(true) while(true) {
+   *       // do nothing
+   *     }
+   *   </pre>
+   *   or even:
+   *   <pre>
+   *     while(true)
+   *   </pre>
+   *   cause unbreakable loop, which force this sandbox to use {@link Thread#stop()}
+   *   which make JVM unstable.
+   * </p>
+   * <p>
+   *   Properly writen code (even in bad intention) like:
+   *   <pre>
+   *     while(true) { while(true) {
+   *       // do nothing
+   *     }}
+   *   </pre>
+   *   will be changed into:
+   *   <pre>
+   *     while(true) {poison_pill(); 
+   *       while(true) {poison_pill();
+   *         // do nothing
+   *       }
+   *     }
+   *   </pre>
+   *   which finish nicelly when interrupted.
+   * <p>
+   *   For legacy code, this check can be turn off, but with no garantie, the
+   *   JS thread will gracefully finish when interrupted.
+   * </p>
+   * 
+   * @param v <code>true</code> when sandbox shoud check if all required braces 
+   *      are placed into JS code, <code>false</code> when no check should be 
+   *      performed
+   */
+  void allowNoBraces(boolean v);
+  
+  /**
+   * The size of prepared statments LRU cache. Default 0 (disabled).
+   * <p>
+   *   Each statments when {@link #setMaxCPUTime(long)} is set is prepared to
+   *   quit itself when time exided. To execute only once this procedure per
+   *   statment set this value.
+   * </p>
+   * <p>
+   *   When {@link #setMaxCPUTime(long)} is set 0, this value is ignored.
+   * </p>
+   * 
+   * @param max the maximum number of statments in the LRU cache
+   */
+  void setMaxPerparedStatements(int max);
+  
 }
