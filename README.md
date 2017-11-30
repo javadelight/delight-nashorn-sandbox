@@ -88,6 +88,9 @@ If you are looking for a JAR with all dependencies, you can also download it fro
 ## Contributors
 
 [Eduardo Velasques](https://github.com/eduveks): API extensions to block/allow Rhino system functions; Capability to block/allow variables after Sandbox has been created. 
+
+[Marcin Gołębski](https://github.com/mgolebsk): Major refactoring and performance improvements. Among other things improved the performance
+for JS evaluation and better handling of monitoring for threads for possible CPU abuse ([#23](https://github.com/javadelight/delight-nashorn-sandbox/pull/23)).
     
 ## Further Documentation
 
