@@ -31,38 +31,38 @@ public class NashornSandboxImpl implements NashornSandbox {
     
   static final Logger LOG = Logger.getLogger(NashornSandbox.class);
   
-  private final SandboxClassFilter sandboxClassFilter;
+  protected final SandboxClassFilter sandboxClassFilter;
   
-  private final ScriptEngine scriptEngine;
+  protected final ScriptEngine scriptEngine;
   
   /** Maximum CPU time in miliseconds.*/
-  private long maxCPUTime = 0L;
+  protected long maxCPUTime = 0L;
 
-  /** Naximum memory of executor thread used.*/
-  private long maxMemory = 0L;
+  /** Maximum memory of executor thread used.*/
+  protected long maxMemory = 0L;
   
-  private ExecutorService executor;
+  protected ExecutorService executor;
   
-  private boolean allowPrintFunctions = false;
+  protected boolean allowPrintFunctions = false;
   
-  private boolean allowReadFunctions = false;
+  protected boolean allowReadFunctions = false;
   
-  private boolean allowLoadFunctions = false;
+  protected boolean allowLoadFunctions = false;
   
-  private boolean allowExitFunctions = false;
+  protected boolean allowExitFunctions = false;
   
-  private boolean allowGlobalsObjects = false;
+  protected boolean allowGlobalsObjects = false;
   
-  private boolean allowNoBraces = false;
+  protected boolean allowNoBraces = false;
   
-  private JsEvaluator evaluator;
+  protected JsEvaluator evaluator;
   
-  private JsSanitizer sanitizer;
+  protected JsSanitizer sanitizer;
   
-  private boolean engineAsserted;
+  protected boolean engineAsserted;
   
   /**The size of the LRU cache of prepared statemensts.*/
-  private int maxPreparedStatements;
+  protected int maxPreparedStatements;
   
   public NashornSandboxImpl() {
     this.maxPreparedStatements = 0;
