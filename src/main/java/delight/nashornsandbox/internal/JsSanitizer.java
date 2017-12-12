@@ -122,7 +122,9 @@ class JsSanitizer
           
     private static ScriptObjectMirror getBeautifHandler(final ScriptEngine scriptEngine) {
       try {
-        return (ScriptObjectMirror) scriptEngine.eval("window.js_beautify;");
+        return scriptEngine.eval("window.js_beautify;") != null ? (ScriptObjectMirror) scriptEngine.eval("window.js_beautify;")
+        : scriptEngine.eval("exports.js_beautify;") != null ? (ScriptObjectMirror) scriptEngine.eval("exports.js_beautify;")
+        : (ScriptObjectMirror) scriptEngine.eval("global.js_beautify;");
       }
       catch(final ScriptException e) {
         // should never happen
