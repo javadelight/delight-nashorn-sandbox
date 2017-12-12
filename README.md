@@ -40,7 +40,7 @@ NashornSandbox sandbox = NashornSandboxes.create();
 sandbox.setMaxCPUTime(100);
 sandbox.setMaxMemory(50*1024);
 sandbox.allowNoBraces(false);
-sandbox.setMaxPerparedStatements(30); // becouse preparing scipt for execusion is expensive
+sandbox.setMaxPerparedStatements(30); // because preparing scripts for execution is expensive
 sandbox.setExecutor(Executors.newSingleThreadExecutor());
      
 sandbox.eval("var o={}, i=0; while (true) {o[i++]='abc';};");
