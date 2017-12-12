@@ -91,7 +91,13 @@ If you are looking for a JAR with all dependencies, you can also download it fro
 
 [Marcin Gołębski](https://github.com/mgolebsk): Major refactoring and performance improvements. Among other things improved the performance
 for JS evaluation and better handling of monitoring for threads for possible CPU abuse ([#23](https://github.com/javadelight/delight-nashorn-sandbox/pull/23)).
-    
+
+## Version History
+
+- 0.1.2: Improving way JsBeautifier instance is obtained ([PR 24](https://github.com/javadelight/delight-nashorn-sandbox/pull/24)]) 
+- 0.1.1: Making all fields in NashornSandboxImpl `protected` rather than `private` (see issue #19)
+- 0.1.0: Major rework and performance improvements implemented by [Marcin Gołębski](https://github.com/mgolebsk) ([PR 23](https://github.com/javadelight/delight-nashorn-sandbox/pull/23))
+
 ## Further Documentation
 
 - [JavaDocs](http://modules.appjangle.com/delight-nashorn-sandbox/latest/apidocs/index.html)
