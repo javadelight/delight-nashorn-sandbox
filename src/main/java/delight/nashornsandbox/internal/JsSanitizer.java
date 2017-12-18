@@ -47,7 +47,7 @@ class JsSanitizer
 
     /**The beautify function search list.*/
     private static final List<String> BEAUTIFY_FUNCTIONS = Arrays.asList("window.js_beautify;",
-        "exports.js_beautify;", "global.js_beautify;");
+      "exports.js_beautify;", "global.js_beautify;");
 
     /**Pattern for back braces.*/
     private final static List<Pattern> LACK_EXPECTED_BRACES = Arrays.asList(
