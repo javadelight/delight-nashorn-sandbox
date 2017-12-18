@@ -41,28 +41,32 @@ class JsSanitizer
         this.replacement = replacement;
       }
     }
-    
+
     /**The resource name of beautify.min.js script.*/
     private final static String BEAUTIFY_JS = "delight/nashornsandbox/internal/beautify.min.js";
-    
+
+    /**The beautify function search list.*/
+    private static final List<String> BEAUTIFY_FUNCTIONS = Arrays.asList("window.js_beautify;",
+        "exports.js_beautify;", "global.js_beautify;");
+
     /**Pattern for back braces.*/
     private final static List<Pattern> LACK_EXPECTED_BRACES = Arrays.asList(
       Pattern.compile("(function|for)[^\\{]+$"),
       Pattern.compile("^\\s*do[^\\{]*$", Pattern.MULTILINE),
       Pattern.compile("^[^\\}]*while[^\\{]+$", Pattern.MULTILINE));
-    
+
     /**
      * The name of the JS function to be inserted into user script. To prevent
      * collisions random sufix is added.
      */
     final static String JS_INTERRUPTED_FUNCTION = "__if";
-    
+
     /**
      * The name of the variable which holds reference to interruption checking
      * class. To prevent collisions random sufix is added.
      */
     final static String JS_INTERRUPTED_TEST = "__it";
-    
+
     private final static List<PoisonPil> POISON_PILLS = Arrays.asList(
       // every 10th statments ended with semicolon put intterupt checking function
       new PoisonPil(Pattern.compile("(([^;]+;){9}[^;]+(?<!break|continue);)\\n"), JS_INTERRUPTED_FUNCTION+"();\n"),
@@ -71,26 +75,26 @@ class JsSanitizer
       new PoisonPil(Pattern.compile("(\\s*function\\s*[^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION+"();"),
       new PoisonPil(Pattern.compile("(\\s*while\\s*\\([^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION+"();"),
       new PoisonPil(Pattern.compile("(\\s*do\\s*\\{)"), JS_INTERRUPTED_FUNCTION+"();")
-    );    
-    
+    );
+
     /**
-     * The beautifier options. Don't change if you are not know what you are 
+     * The beautifier options. Don't change if you are not know what you are
      * doing, becouse regexps are dependend on it.
      */
     private final static Map<String, Object> BEAUTIFY_OPTIONS = new HashMap<>();
-    
+
     static {
       BEAUTIFY_OPTIONS.put("brace_style", "collapse");
       BEAUTIFY_OPTIONS.put("preserve_newlines", false);
       BEAUTIFY_OPTIONS.put("indent_size", 1);
       BEAUTIFY_OPTIONS.put("max_preserve_newlines", 0);
     }
-    
+
     /**Soft reference to the text of the js script.*/
     private static SoftReference<String> beautifysScript = new SoftReference<>(null);
-    
+
     private final ScriptEngine scriptEngine;
-    
+
     /**JS beutify() function reference.*/
     private final ScriptObjectMirror jsBeautify;
 
@@ -98,8 +102,8 @@ class JsSanitizer
 
     /**<code>true</code> when lack of braces is allowed.*/
     private final boolean allowNoBraces;
-    
-    
+
+
     JsSanitizer(final ScriptEngine scriptEngine, final int maxPreparedStatements,
         final boolean allowNoBraces)
     {
@@ -114,24 +118,28 @@ class JsSanitizer
       try {
         scriptEngine.eval("var window = {};");
         scriptEngine.eval(getBeautifyJs());
-      } 
+      }
       catch (final Exception e) {
         throw new RuntimeException(e);
       }
     }
-          
+
     private static ScriptObjectMirror getBeautifHandler(final ScriptEngine scriptEngine) {
       try {
-        return scriptEngine.eval("window.js_beautify;") != null ? (ScriptObjectMirror) scriptEngine.eval("window.js_beautify;")
-        : scriptEngine.eval("exports.js_beautify;") != null ? (ScriptObjectMirror) scriptEngine.eval("exports.js_beautify;")
-        : (ScriptObjectMirror) scriptEngine.eval("global.js_beautify;");
+        for(final String name : BEAUTIFY_FUNCTIONS) {
+          final Object somWindow = scriptEngine.eval(name);
+          if(somWindow != null) {
+            return (ScriptObjectMirror) somWindow;
+          }
+        }
+        throw new RuntimeException("Cannot find function 'js_beautify' in: window, exports, global");
       }
       catch(final ScriptException e) {
         // should never happen
         throw new RuntimeException(e);
       }
     }
-    
+
     private Map<String,String> createSecuredJsCache(final int maxPreparedStatements) {
       // Create cache
       if(maxPreparedStatements == 0)
@@ -150,11 +158,11 @@ class JsSanitizer
         };
       }
     }
-    
+
     /**
-     *  After beautifyier every braces should be in plece, if not, or to many
-     *  w need to prevent script execution
-     * 
+     * After beautifyier every braces should be in plece, if not, or to many
+     * w need to prevent script execution.
+     *
      * @param beautifiedJs evaluated script
      * @throws BracesException when baces are incorrect
      */
@@ -169,7 +177,7 @@ class JsSanitizer
         }
       }
     }
-    
+
     String injectInterruptionCalls(final String str) {
       String current = str;
       for(final PoisonPil pp : POISON_PILLS) {
@@ -192,10 +200,10 @@ class JsSanitizer
       sb.append(JS_INTERRUPTED_TEST).append(".test();};\n");
       return sb.toString();
     }
-    
+
     private void checkJs(final String js) {
       if (js.contains(JS_INTERRUPTED_FUNCTION) || js.contains(JS_INTERRUPTED_TEST)) {
-        throw new IllegalArgumentException("Script contains the illegal string [" + 
+        throw new IllegalArgumentException("Script contains the illegal string [" +
             JS_INTERRUPTED_TEST+","+JS_INTERRUPTED_FUNCTION+"]");
       }
     }
@@ -228,7 +236,7 @@ class JsSanitizer
     String beautifyJs(final String js) {
       return (String) jsBeautify.call("beautify", js, BEAUTIFY_OPTIONS);
     }
-    
+
     private static String getBeautifyJs() {
       String script = beautifysScript.get();
       if(script == null) {
@@ -248,5 +256,5 @@ class JsSanitizer
       }
       return script;
     }
-    
+
 }
