@@ -71,8 +71,9 @@ class JsSanitizer
       // every 10th statments ended with semicolon put intterupt checking function
       new PoisonPil(Pattern.compile("(([^;]+;){9}[^;]+(?<!break|continue);)\\n"), JS_INTERRUPTED_FUNCTION+"();\n"),
       // every (except switch) block start brace put intterupt checking function
-      new PoisonPil(Pattern.compile("(\\s*for\\s*\\([^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION+"();"),
-      new PoisonPil(Pattern.compile("(\\s*function\\s*[^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION+"();"),
+      new PoisonPil(Pattern.compile("(\\s*for\\s*\\([^\\{]+\\)\\s*\\{)"), JS_INTERRUPTED_FUNCTION+"();"), // for with block
+      new PoisonPil(Pattern.compile("(\\s*for\\s*\\([^\\{]+\\)\\s*[^\\{]+;)"), JS_INTERRUPTED_FUNCTION+"();"), // for without block
+      new PoisonPil(Pattern.compile("(\\s*([^\"]?function[^\"])\\s*[^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION+"();"), // function except when enclosed in quotes
       new PoisonPil(Pattern.compile("(\\s*while\\s*\\([^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION+"();"),
       new PoisonPil(Pattern.compile("(\\s*do\\s*\\{)"), JS_INTERRUPTED_FUNCTION+"();")
     );
