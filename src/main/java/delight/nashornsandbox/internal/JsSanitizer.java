@@ -242,7 +242,7 @@ class JsSanitizer
       String script = beautifysScript.get();
       if(script == null) {
         try(final BufferedReader reader = new BufferedReader(new InputStreamReader(
-            new BufferedInputStream(JsSanitizer.class.getClassLoader().getResourceAsStream(BEAUTIFY_JS))))) {
+            new BufferedInputStream(JsSanitizer.class.getClassLoader().getResourceAsStream(BEAUTIFY_JS)), "UTF-8"))) {
           final StringBuilder sb = new StringBuilder();
           String line;
           while ((line=reader.readLine()) != null) {
