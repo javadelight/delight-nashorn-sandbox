@@ -3,6 +3,7 @@ package delight.nashornsandbox.internal;
 import java.io.Writer;
 import java.util.concurrent.ExecutorService;
 
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
@@ -100,6 +101,11 @@ public class NashornSandboxImpl implements NashornSandbox {
   
   @Override
   public Object eval(final String js) throws ScriptCPUAbuseException, ScriptException {
+	  return eval(js, null);
+  }
+  
+  @Override
+  public Object eval(final String js, final ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException {
     if (!engineAsserted) {
       engineAsserted = true;
       assertScriptEngine();
@@ -111,6 +117,11 @@ public class NashornSandboxImpl implements NashornSandbox {
           LOG.debug(js);
           LOG.debug("--- JS END ---");
         }
+        
+        if (scriptContext != null) {
+      	  return scriptEngine.eval(js, scriptContext);
+        }
+        
         return this.scriptEngine.eval(js);
       }
       checkExecutorPresence();
@@ -118,6 +129,7 @@ public class NashornSandboxImpl implements NashornSandbox {
       final String securedJs = sanitizer.secureJs(js);
       final JsEvaluator evaluator = getEvaluator();
       evaluator.setJs(securedJs);
+      evaluator.setScriptContext(scriptContext);
       executor.execute(evaluator);
       evaluator.runMonitor();
       if (evaluator.isCPULimitExceeded()) {
@@ -144,10 +156,7 @@ public class NashornSandboxImpl implements NashornSandbox {
   }
 
   private JsEvaluator getEvaluator() {
-    if(evaluator == null) {
-      evaluator = new JsEvaluator(scriptEngine, maxCPUTime, maxMemory);
-    }
-    return evaluator;
+    return new JsEvaluator(scriptEngine, maxCPUTime, maxMemory);
   }
 
   private void checkExecutorPresence() {

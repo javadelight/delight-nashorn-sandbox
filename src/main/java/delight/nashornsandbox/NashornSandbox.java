@@ -3,6 +3,7 @@ package delight.nashornsandbox;
 import java.io.Writer;
 import java.util.concurrent.ExecutorService;
 
+import javax.script.ScriptContext;
 import javax.script.ScriptException;
 
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
@@ -114,6 +115,19 @@ public interface NashornSandbox {
    * @see #setMaxCPUTime(long)
    */
   Object eval(String js) throws ScriptCPUAbuseException, ScriptException;
+  
+  /**
+   * Evaluates the JavaScript string for a given script context
+   * 
+   * @param js the JavaScript script to be evaluated
+   * @param js the JavaScript script to be evaluated
+   * @param scriptContext the ScriptContext exposing sets of attributes in different scopes. 
+   * @throws ScriptCPUAbuseException when execution time exided (when greater
+   *      than 0 is set
+   * @throws ScriptException when script syntax error occures
+   * @see #setMaxCPUTime(long)
+   */
+  Object eval(String js, ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException;
   
   /**
    * Obtains the value of the specified JavaScript variable.
