@@ -4,6 +4,7 @@ import static delight.nashornsandbox.internal.NashornSandboxImpl.LOG;
 
 import java.util.concurrent.ExecutorService;
 
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 /**
@@ -23,6 +24,7 @@ class JsEvaluator implements Runnable {
     
   private Object result = null;
   private Exception exception = null;
+  private ScriptContext scriptContext = null;
     
   JsEvaluator(final ScriptEngine scriptEngine, final long maxCPUTime, final long maxMemory) {
     this.scriptEngine = scriptEngine;
@@ -57,7 +59,12 @@ class JsEvaluator implements Runnable {
         LOG.debug(js);
         LOG.debug("--- JS END ---");
       }
-      result = scriptEngine.eval(js);
+      
+      if (scriptContext != null) {
+    	  result = scriptEngine.eval(js, scriptContext);
+      } else {
+    	  result = scriptEngine.eval(js);
+      }
     } 
     catch (final RuntimeException e) {
       // InterruptedException means script was successfully interrupted,
@@ -86,6 +93,11 @@ class JsEvaluator implements Runnable {
   
   Object getResult() {
     return result;
+  }
+  
+  /** Set ScriptContext to set set different scopes to evaluate */
+  void setScriptContext(ScriptContext scriptContext) {
+		this.scriptContext = scriptContext;
   }
   
 }
