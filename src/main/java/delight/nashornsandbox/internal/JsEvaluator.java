@@ -44,7 +44,7 @@ class JsEvaluator implements Runnable {
   }
 
   /**
-   * Enter the monitor mehtod. It should be called from main thread. 
+   * Enter the monitor method. It should be called from main thread. 
    */
   void runMonitor() {
     threadMonitor.run();
