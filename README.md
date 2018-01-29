@@ -98,7 +98,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 - 0.1.5: Fixing [bug #28](https://github.com/javadelight/delight-nashorn-sandbox/issues/28) with [PR 29](https://github.com/javadelight/delight-nashorn-sandbox/pull/29) by [srinivasarajuch](https://github.com/srinivasarajuch) - added support for evaluation JS with specific ScriptContext 
 - 0.1.4: Fixing [bug #27](https://github.com/javadelight/delight-nashorn-sandbox/issues/27)
 - 0.1.3: Improving regex for interrupt injections ([PR 26](https://github.com/javadelight/delight-nashorn-sandbox/pull/26)), cleaning up code for obtaining JSBeautifier instance ([PR 25](https://github.com/javadelight/delight-nashorn-sandbox/pull/25)) 
-- 0.1.2: Improving way JsBeautifier instance is obtained ([PR 24](https://github.com/javadelight/delight-nashorn-sandbox/pull/24)]) 
+- 0.1.2: Improving way JsBeautifier instance is obtained ([PR 24](https://github.com/javadelight/delight-nashorn-sandbox/pull/24)) 
 - 0.1.1: Making all fields in NashornSandboxImpl `protected` rather than `private` (see issue #19)
 - 0.1.0: Major rework and performance improvements implemented by [Marcin Gołębski](https://github.com/mgolebsk) ([PR 23](https://github.com/javadelight/delight-nashorn-sandbox/pull/23))
 
