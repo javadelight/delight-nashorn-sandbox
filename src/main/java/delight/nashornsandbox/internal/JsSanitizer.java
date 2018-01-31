@@ -43,7 +43,7 @@ class JsSanitizer
     }
 
     /**The resource name of beautify.min.js script.*/
-    private final static String BEAUTIFY_JS = "delight/nashornsandbox/internal/beautify.min.js";
+    private final static String BEAUTIFY_JS = "/META-INF/resources/webjars/js-beautify/1.6.12/js/lib/beautify.js";
 
     /**The beautify function search list.*/
     private static final List<String> BEAUTIFY_FUNCTIONS = Arrays.asList("window.js_beautify;",
@@ -242,7 +242,7 @@ class JsSanitizer
       String script = beautifysScript.get();
       if(script == null) {
         try(final BufferedReader reader = new BufferedReader(new InputStreamReader(
-            new BufferedInputStream(JsSanitizer.class.getClassLoader().getResourceAsStream(BEAUTIFY_JS)), "UTF-8"))) {
+            new BufferedInputStream(JsSanitizer.class.getResourceAsStream(BEAUTIFY_JS)), "UTF-8"))) {
           final StringBuilder sb = new StringBuilder();
           String line;
           while ((line=reader.readLine()) != null) {

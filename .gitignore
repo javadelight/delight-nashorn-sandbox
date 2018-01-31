@@ -9,4 +9,5 @@ src/main/gwt-unitCache/
 *.java._trace
 *.xtendbin
 *._trace
-
+.idea/
+*.iml
