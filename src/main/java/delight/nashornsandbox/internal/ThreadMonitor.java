@@ -106,7 +106,7 @@ public class ThreadMonitor {
 						return;
 					}
 					if (!scriptFinished.get()) {
-						LOG.fatal(this.getClass().getSimpleName() + ": Thread hard shutdown!");
+						LOG.error(this.getClass().getSimpleName() + ": Thread hard shutdown!");
 						threadToMonitor.stop();
 						scriptKilled.set(true);
 					}

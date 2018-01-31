@@ -7,7 +7,8 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
@@ -32,7 +33,7 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 @SuppressWarnings("restriction")
 public class NashornSandboxImpl implements NashornSandbox {
 
-	static final Logger LOG = Logger.getLogger(NashornSandbox.class);
+	static final Logger LOG = LoggerFactory.getLogger(NashornSandbox.class);
 
 	protected final SandboxClassFilter sandboxClassFilter;
 

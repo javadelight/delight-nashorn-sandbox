@@ -38,9 +38,9 @@ public class JsSanitizerTest {
   @Test
   public void testSecureJs() throws Exception {
     final String js1 = jsSanitizer.secureJs("while(a > 0)\n\n\n {\n\n\nprint(a);}");
-    assertTrue(js1.contains("while(a > 0) {"+JsSanitizer.JS_INTERRUPTED_FUNCTION));
+    assertTrue(js1.contains("while (a > 0) {"+JsSanitizer.JS_INTERRUPTED_FUNCTION));
     final String js2 = jsSanitizer.secureJs("while(a > 0) {print(a);}");
-    assertTrue(js2.contains("while(a > 0) {"+JsSanitizer.JS_INTERRUPTED_FUNCTION));
+    assertTrue(js2.contains("while (a > 0) {"+JsSanitizer.JS_INTERRUPTED_FUNCTION));
     final String js3 = jsSanitizer.secureJs("do { c=1;} while(a > 0)");
     assertTrue(js3.contains("do {"+JsSanitizer.JS_INTERRUPTED_FUNCTION));
     final String js4 = jsSanitizer.secureJs("function a() { b++;}");
@@ -50,7 +50,7 @@ public class JsSanitizerTest {
     final String js6 = jsSanitizer.secureJs("(function() { b++;})();");
     assertTrue(js6.contains("function() {"+JsSanitizer.JS_INTERRUPTED_FUNCTION));
     final String js7 = jsSanitizer.secureJs("switch(expression) { case 'ABC': i++;break;}");
-    assertTrue(js7.contains("switch(expression) {\n case 'ABC':"));
+    assertTrue(js7.contains("switch (expression) {\n case 'ABC':"));
   }
 
   @Test
