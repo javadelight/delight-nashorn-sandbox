@@ -14,6 +14,7 @@ import junit.framework.Assert;
 
 @SuppressWarnings("all")
 public class TestLimitCPU {
+
 	@Test(expected = ScriptCPUAbuseException.class)
 	public void test() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
@@ -167,7 +168,8 @@ public class TestLimitCPU {
 	}
 
 	/**
-	 * See issue <a href='https://github.com/javadelight/delight-nashorn-sandbox/issues/30'>#30</a> 
+	 * See issue <a href=
+	 * 'https://github.com/javadelight/delight-nashorn-sandbox/issues/30'>#30</a>
 	 */
 	@Test
 	public void testIsMatchCpuAbuseDirect() {
@@ -193,4 +195,6 @@ public class TestLimitCPU {
 			Assert.assertNotNull(exp);
 		}
 	}
+
+	
 }
