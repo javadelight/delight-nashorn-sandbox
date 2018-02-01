@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import delight.nashornsandbox.exceptions.BracesException;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import junit.framework.Assert;
 
@@ -67,11 +68,17 @@ public class TestIssue34 {
 		String js = "";
 		js += "function main(){\n" + "logger.debug(\"... In fun1()....\");\n" + "for(var i=0;i<2;i++)//{\n"
 				+ "logger.debug(\"loop cnt-\"+i);\n" + "}\n" + "main();";
+		
+		
+		
+		Throwable ex = null;
+		try {
+			sandbox.eval(js);
+		} catch (Throwable t) {
+			ex = t;
+		}
 
-		sandbox.eval(js);
-
-		Assert.assertTrue(logger.getOutput().contains("loop cnt-0"));
-		Assert.assertTrue(logger.getOutput().contains("... In fun1()...."));
+		Assert.assertTrue(ex instanceof BracesException);
 
 	}
 
@@ -86,7 +93,24 @@ public class TestIssue34 {
 		Assert.assertTrue(logger.getOutput().contains("loop cnt=6"));
 
 	}
+	
+	@Test
+	public void testIssue34_Scenario3_2() throws ScriptCPUAbuseException, ScriptException {
+    String js = "//simple do-while loop for demo\n";
+		js += "function loopTest(){\n" +
+    "var i=0;\n" +
+				"do{\n" +
+    "logger.debug(\"loop cnt=\"+(++i));\n"
+				+ "}while(i<11);" + "}\n" +
+    "loopTest();";
 
+		
+		sandbox.eval(js);
+
+		Assert.assertTrue(logger.getOutput().contains("loop cnt=6"));
+
+	}
+	
 	@Test
 	public void testIssue34_Scenario4()  {
 		String js = "";

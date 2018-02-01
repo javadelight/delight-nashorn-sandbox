@@ -174,9 +174,11 @@ class JsSanitizer {
 		}
 		
 		for (final Pattern pattern : LACK_EXPECTED_BRACES) {
-			final Matcher matcher = pattern.matcher(beautifiedJs);
+			final Matcher matcher = pattern.matcher(RemoveComments.perform(beautifiedJs));
 			if (matcher.find()) {
-				throw new BracesException("No block braces after function|for|while|do");
+				
+				
+				throw new BracesException("No block braces after function|for|while|do. Found ["+matcher.group()+"]");
 			}
 		}
 	}
