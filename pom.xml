@@ -343,8 +343,8 @@
 			<url>http://www.opensource.org/licenses/mit-license.php</url>
 		</license>
 		<license>
-			<name>GPL</name>
-			<url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+			<name>LGPL</name>
+			<url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
 		</license>
 	</licenses>
 
