@@ -51,9 +51,9 @@ class JsSanitizer {
 			"global.js_beautify;");
 
 	/** Pattern for back braces. */
-	private final static List<Pattern> LACK_EXPECTED_BRACES = Arrays.asList(Pattern.compile("(function|for)[^\\{]+$"),
-			Pattern.compile("^\\s*do[^\\{]*$", Pattern.MULTILINE),
-			Pattern.compile("^[^\\}]*while[^\\{]+$", Pattern.MULTILINE));
+	private final static List<Pattern> LACK_EXPECTED_BRACES = Arrays.asList(Pattern.compile("(function|for) [^\\{]+$"),
+			Pattern.compile("^\\s*do [^\\{]*$", Pattern.MULTILINE),
+			Pattern.compile("^[^\\}]*while [^\\{]+$", Pattern.MULTILINE));
 
 	/**
 	 * The name of the JS function to be inserted into user script. To prevent
@@ -176,7 +176,6 @@ class JsSanitizer {
 		for (final Pattern pattern : LACK_EXPECTED_BRACES) {
 			final Matcher matcher = pattern.matcher(RemoveComments.perform(beautifiedJs));
 			if (matcher.find()) {
-				
 				
 				throw new BracesException("No block braces after function|for|while|do. Found ["+matcher.group()+"]");
 			}

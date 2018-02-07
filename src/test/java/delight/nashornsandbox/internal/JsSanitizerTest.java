@@ -108,7 +108,6 @@ public class JsSanitizerTest {
     wellBracesTest("for(int i=1; i<10; i++) {");
     wellBracesTest("for(;;){}");
 
-    badBracesTest("do");
     badBracesTest("do a=1; while(true");
     wellBracesTest("a = 'you must do it yourself';");
     wellBracesTest("do {a=1;} while(true)");
