@@ -94,6 +94,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.1.9: Fixed [bug #36](https://github.com/javadelight/delight-nashorn-sandbox/issues/36)
 - 0.1.8: Fixed that `do`, `while` and `for` in comments might cause BracesExceptions (see [bug #34](https://github.com/javadelight/delight-nashorn-sandbox/issues/34))
 - 0.1.7: Used webjar dependency for BeautifyJS and slf4j as logging dependency ([PR #35](https://github.com/javadelight/delight-nashorn-sandbox/issues/32) by [thjaeckle](https://github.com/thjaeckle)); Updated license (see [bug #32](https://github.com/javadelight/delight-nashorn-sandbox/issues/32))
 - 0.1.6: Fixing bug that monitor checking for CPU abuses would hang when it encountered `monitor.wait(0)` (see [issue 30](https://github.com/javadelight/delight-nashorn-sandbox/issues/30))

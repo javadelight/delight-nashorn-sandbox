@@ -51,7 +51,8 @@ class JsSanitizer {
 			"global.js_beautify;");
 
 	/** Pattern for back braces. */
-	private final static List<Pattern> LACK_EXPECTED_BRACES = Arrays.asList(Pattern.compile("(function|for) [^\\{]+$"),
+	private final static List<Pattern> LACK_EXPECTED_BRACES = Arrays.asList(
+			Pattern.compile("for [^\\{]+$"),
 			Pattern.compile("^\\s*do [^\\{]*$", Pattern.MULTILINE),
 			Pattern.compile("^[^\\}]*while [^\\{]+$", Pattern.MULTILINE));
 
