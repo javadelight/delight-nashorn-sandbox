@@ -3,6 +3,7 @@ package delight.nashornsandbox.internal;
 import java.io.Writer;
 import java.util.concurrent.ExecutorService;
 
+import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -285,6 +286,11 @@ public class NashornSandboxImpl implements NashornSandbox {
 			sanitizer = null;
 		}
 		maxPreparedStatements = max;
+	}
+
+	@Override
+	public Bindings createBindings() {
+		return scriptEngine.createBindings();
 	}
 
 }
