@@ -21,7 +21,7 @@ public class TestEvalWithScriptContextWIthNewBindings {
 		newContext.setBindings(newBinding, ScriptContext.ENGINE_SCOPE);
 
 		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newContext);
-		Assert.assertEquals(2112018, res);
+		Assert.assertEquals(2112018.0, res);
 	}
 
 	@Test
