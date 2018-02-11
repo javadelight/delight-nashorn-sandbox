@@ -177,8 +177,8 @@ public interface NashornSandbox {
   /**
    * Force, to check if all blocks are enclosed with curly braces "{}".
    * <p>
-   *   Explantion: all loops (for, do-while, while, and if-else, and functions
-   *   should use braces, becouse poison_pill() function will be insertet afet
+   *   Explanation: all loops (for, do-while, while, and if-else, and functions
+   *   should use braces, because poison_pill() function will be inserted afer
    *   each open brace "{", to ensure interruption checking. Otherwise simple
    *   code like:
    *   <pre>
@@ -208,13 +208,13 @@ public interface NashornSandbox {
    *       }
    *     }
    *   </pre>
-   *   which finish nicelly when interrupted.
+   *   which finish nicely when interrupted.
    * <p>
-   *   For legacy code, this check can be turn off, but with no garantie, the
+   *   For legacy code, this check can be turned off, but with no guarantee, the
    *   JS thread will gracefully finish when interrupted.
    * </p>
    * 
-   * @param v <code>true</code> when sandbox shoud check if all required braces 
+   * @param v <code>true</code> when sandbox should check if all required braces 
    *      are placed into JS code, <code>false</code> when no check should be 
    *      performed
    */

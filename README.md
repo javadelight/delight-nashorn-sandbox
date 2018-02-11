@@ -94,9 +94,14 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.1.9: Fixed [bug #36](https://github.com/javadelight/delight-nashorn-sandbox/issues/36)
+- 0.1.8: Fixed that `do`, `while` and `for` in comments might cause BracesExceptions (see [bug #34](https://github.com/javadelight/delight-nashorn-sandbox/issues/34))
+- 0.1.7: Used webjar dependency for BeautifyJS and slf4j as logging dependency ([PR #35](https://github.com/javadelight/delight-nashorn-sandbox/issues/32) by [thjaeckle](https://github.com/thjaeckle)); Updated license (see [bug #32](https://github.com/javadelight/delight-nashorn-sandbox/issues/32))
+- 0.1.6: Fixing bug that monitor checking for CPU abuses would hang when it encountered `monitor.wait(0)` (see [issue 30](https://github.com/javadelight/delight-nashorn-sandbox/issues/30))
+- 0.1.5: Fixing [bug #28](https://github.com/javadelight/delight-nashorn-sandbox/issues/28) with [PR 29](https://github.com/javadelight/delight-nashorn-sandbox/pull/29) by [srinivasarajuch](https://github.com/srinivasarajuch) - added support for evaluation JS with specific ScriptContext 
 - 0.1.4: Fixing [bug #27](https://github.com/javadelight/delight-nashorn-sandbox/issues/27)
 - 0.1.3: Improving regex for interrupt injections ([PR 26](https://github.com/javadelight/delight-nashorn-sandbox/pull/26)), cleaning up code for obtaining JSBeautifier instance ([PR 25](https://github.com/javadelight/delight-nashorn-sandbox/pull/25)) 
-- 0.1.2: Improving way JsBeautifier instance is obtained ([PR 24](https://github.com/javadelight/delight-nashorn-sandbox/pull/24)]) 
+- 0.1.2: Improving way JsBeautifier instance is obtained ([PR 24](https://github.com/javadelight/delight-nashorn-sandbox/pull/24)) 
 - 0.1.1: Making all fields in NashornSandboxImpl `protected` rather than `private` (see issue #19)
 - 0.1.0: Major rework and performance improvements implemented by [Marcin Gołębski](https://github.com/mgolebsk) ([PR 23](https://github.com/javadelight/delight-nashorn-sandbox/pull/23))
 
