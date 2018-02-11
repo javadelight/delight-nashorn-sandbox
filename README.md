@@ -94,6 +94,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.1.10: Added createBindings to the API to allow overriding global properties (see [PR #39](https://github.com/javadelight/delight-nashorn-sandbox/pull/39) by [Srinivasa Chintalapati](https://github.com/srinivasarajuch))
 - 0.1.9: Fixed [bug #36](https://github.com/javadelight/delight-nashorn-sandbox/issues/36)
 - 0.1.8: Fixed that `do`, `while` and `for` in comments might cause BracesExceptions (see [bug #34](https://github.com/javadelight/delight-nashorn-sandbox/issues/34))
 - 0.1.7: Used webjar dependency for BeautifyJS and slf4j as logging dependency ([PR #35](https://github.com/javadelight/delight-nashorn-sandbox/issues/32) by [thjaeckle](https://github.com/thjaeckle)); Updated license (see [bug #32](https://github.com/javadelight/delight-nashorn-sandbox/issues/32))
