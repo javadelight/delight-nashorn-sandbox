@@ -3,6 +3,7 @@ package delight.nashornsandbox;
 import java.io.Writer;
 import java.util.concurrent.ExecutorService;
 
+import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
 
@@ -234,5 +235,15 @@ public interface NashornSandbox {
    * @param max the maximum number of statments in the LRU cache
    */
   void setMaxPerparedStatements(int max);
+  
+  /**
+   * Create new bindings used to replace the state of the current script engine
+   * <p>
+   * 	This can be typically used to override ECMAScript "global" properties
+   * </p>
+   * 
+   * @return
+   */
+  Bindings createBindings();
   
 }
