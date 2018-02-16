@@ -4,6 +4,7 @@ import java.io.Writer;
 import java.util.concurrent.ExecutorService;
 
 import javax.script.Bindings;
+import javax.script.Invocable;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -66,6 +67,8 @@ public class NashornSandboxImpl implements NashornSandbox {
 
 	protected boolean engineAsserted;
 
+	protected Invocable lazyInvocable;
+
 	/** The size of the LRU cache of prepared statemensts. */
 	protected int maxPreparedStatements;
 
@@ -110,30 +113,23 @@ public class NashornSandboxImpl implements NashornSandbox {
 	@Override
 	public Object eval(final String js, final ScriptContext scriptContext)
 			throws ScriptCPUAbuseException, ScriptException {
+		final JsSanitizer sanitizer = getSanitizer();
+		final String securedJs = sanitizer.secureJs(js);
+		EvaluateOperation op = new EvaluateOperation(securedJs, scriptContext);
+		return executeSandboxedOperation(op);
+	}
+
+	private Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
 		if (!engineAsserted) {
 			engineAsserted = true;
 			assertScriptEngine();
 		}
 		try {
 			if (maxCPUTime == 0 && maxMemory == 0) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("--- Running JS ---");
-					LOG.debug(js);
-					LOG.debug("--- JS END ---");
-				}
-
-				if (scriptContext != null) {
-					return scriptEngine.eval(js, scriptContext);
-				}
-
-				return this.scriptEngine.eval(js);
+				return op.executeScriptEngineOperation(scriptEngine);
 			}
 			checkExecutorPresence();
-			final JsSanitizer sanitizer = getSanitizer();
-			final String securedJs = sanitizer.secureJs(js);
-			final JsEvaluator evaluator = getEvaluator();
-			evaluator.setJs(securedJs);
-			evaluator.setScriptContext(scriptContext);
+			final JsEvaluator evaluator = getEvaluator(op);
 			executor.execute(evaluator);
 			evaluator.runMonitor();
 			if (evaluator.isCPULimitExceeded()) {
@@ -156,8 +152,8 @@ public class NashornSandboxImpl implements NashornSandbox {
 		}
 	}
 
-	private JsEvaluator getEvaluator() {
-		return new JsEvaluator(scriptEngine, maxCPUTime, maxMemory);
+	private JsEvaluator getEvaluator(ScriptEngineOperation op) {
+		return new JsEvaluator(scriptEngine, maxCPUTime, maxMemory, op);
 	}
 
 	private void checkExecutorPresence() {
@@ -291,6 +287,59 @@ public class NashornSandboxImpl implements NashornSandbox {
 	@Override
 	public Bindings createBindings() {
 		return scriptEngine.createBindings();
+	}
+
+	@Override
+	public Invocable getSandboxedInvocable() {
+		if (maxMemory == 0 && maxCPUTime == 0) {
+			return (Invocable)scriptEngine;
+		}
+		return getLazySandboxedInvocable();
+	}
+
+	private Invocable getLazySandboxedInvocable() {
+		if (lazyInvocable == null) {
+			Invocable sandboxInvocable = new Invocable() {
+
+				@Override
+				public Object invokeMethod(Object thiz, String name, Object... args) throws ScriptException, NoSuchMethodException {
+					InvokeOperation op = new InvokeOperation(thiz, name, args);
+					try {
+						return executeSandboxedOperation(op);
+					} catch (ScriptException e) {
+						throw e;
+					} catch (Exception e) {
+						throw new ScriptException(e);
+					}
+				}
+
+				@Override
+				public Object invokeFunction(String name, Object... args) throws ScriptException, NoSuchMethodException {
+					InvokeOperation op = new InvokeOperation(null, name, args);
+					try {
+						return executeSandboxedOperation(op);
+					} catch (ScriptException e) {
+						throw e;
+					} catch (Exception e) {
+						throw new ScriptException(e);
+					}
+				}
+
+				@Override
+				public <T> T getInterface(Object thiz, Class<T> clasz) {
+					// TODO add proxy wrapper for proper sandboxing
+					throw new IllegalStateException("Not yet implemented");
+				}
+
+				@Override
+				public <T> T getInterface(Class<T> clasz) {
+					// TODO add proxy wrapper for proper sandboxing
+					throw new IllegalStateException("Not yet implemented");
+				}
+			};
+			lazyInvocable = sandboxInvocable;
+		}
+		return lazyInvocable;
 	}
 
 }

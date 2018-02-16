@@ -4,6 +4,7 @@ import java.io.Writer;
 import java.util.concurrent.ExecutorService;
 
 import javax.script.Bindings;
+import javax.script.Invocable;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
 
@@ -245,5 +246,11 @@ public interface NashornSandbox {
    * @return
    */
   Bindings createBindings();
-  
+
+  /**
+   * Returns an {@link Invocable} instance, so that method invocations are also sandboxed.
+   * @return
+   */
+  Invocable getSandboxedInvocable();
+
 }
