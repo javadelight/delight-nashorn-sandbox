@@ -70,10 +70,16 @@ public class NashornSandboxImpl implements NashornSandbox {
 	protected int maxPreparedStatements;
 
 	public NashornSandboxImpl() {
+		this(new String[0]);
+	}
+	
+	public NashornSandboxImpl(String... params) {
 		this.maxPreparedStatements = 0;
 		this.sandboxClassFilter = new SandboxClassFilter();
 		final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
-		this.scriptEngine = factory.getScriptEngine(this.sandboxClassFilter);
+		
+		this.scriptEngine = factory.getScriptEngine(params, this.getClass().getClassLoader(), this.sandboxClassFilter);
+		
 		this.allow(InterruptTest.class);
 	}
 
