@@ -40,7 +40,7 @@ public class NashornSandboxImpl implements NashornSandbox {
 
 	protected final ScriptEngine scriptEngine;
 
-	/** Maximum CPU time in miliseconds. */
+	/** Maximum CPU time in milliseconds. */
 	protected long maxCPUTime = 0L;
 
 	/** Maximum memory of executor thread used. */
@@ -287,7 +287,7 @@ public class NashornSandboxImpl implements NashornSandbox {
 	}
 
 	@Override
-	public void setMaxPerparedStatements(final int max) {
+	public void setMaxPreparedStatements(final int max) {
 		if (maxPreparedStatements != max) {
 			sanitizer = null;
 		}

@@ -40,7 +40,7 @@ public class TestIssue34 {
 		sandbox.setMaxMemory(1000 * 1000); // 1 MB
 		sandbox.allowNoBraces(false);
 		sandbox.allowPrintFunctions(true);
-		sandbox.setMaxPerparedStatements(30);
+		sandbox.setMaxPreparedStatements(30);
 		sandbox.setExecutor(Executors.newSingleThreadExecutor());
 		logger = new Logger();
 		sandbox.inject("logger", logger);
