@@ -70,7 +70,7 @@ public interface NashornSandbox {
    * </p>
    * <p>
    *   Note, {@link ExecutorService} should be also set when memory limit is set
-   *   greater than 0. Nashorn takes some memory at start, be denerous and give
+   *   greater than 0. Nashorn takes some memory at start, be generous and give
    *   at least 1MB.
    * </p>
    * <p>
@@ -83,7 +83,7 @@ public interface NashornSandbox {
   void setMaxMemory(long limit);
   
   /**
-   * Sets the writer, whem want to have output from writer funcion called in
+   * Sets the writer, whem want to have output from writer function called in
    * JS script
    * 
    * @param writer the writer, eg. {@ling StringWriter}
@@ -110,9 +110,9 @@ public interface NashornSandbox {
    * Evaluates the JavaScript string.
    * 
    * @param js the JavaScript script to be evaluated
-   * @throws ScriptCPUAbuseException when execution time exided (when greater
+   * @throws ScriptCPUAbuseException when execution time exceeded (when greater
    *      than 0 is set
-   * @throws ScriptException when script syntax error occures
+   * @throws ScriptException when script syntax error occurs
    * @see #setMaxCPUTime(long)
    */
   Object eval(String js) throws ScriptCPUAbuseException, ScriptException;
@@ -123,9 +123,9 @@ public interface NashornSandbox {
    * @param js the JavaScript script to be evaluated
    * @param js the JavaScript script to be evaluated
    * @param scriptContext the ScriptContext exposing sets of attributes in different scopes. 
-   * @throws ScriptCPUAbuseException when execution time exided (when greater
+   * @throws ScriptCPUAbuseException when execution time exceeded (when greater
    *      than 0 is set
-   * @throws ScriptException when script syntax error occures
+   * @throws ScriptException when script syntax error occurs
    * @see #setMaxCPUTime(long)
    */
   Object eval(String js, ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException;
@@ -138,7 +138,7 @@ public interface NashornSandbox {
   /**
    * Allow Nashorn print and echo functions.
    * <p>
-   *   Only before first {@link #eval(String)} call cause efect.
+   *   Only before first {@link #eval(String)} call cause effect.
    * </p>
    */
   void allowPrintFunctions(boolean v);
@@ -146,7 +146,7 @@ public interface NashornSandbox {
   /**
    * Allow Nashorn readLine and readFully functions.
    * <p>
-   *   Only before first {@link #eval(String)} call cause efect.
+   *   Only before first {@link #eval(String)} call cause effect.
    * </p>
    */
   void allowReadFunctions(boolean v);
@@ -154,7 +154,7 @@ public interface NashornSandbox {
   /**
    * Allow Nashorn load and loadWithNewGlobal functions.
    * <p>
-   *   Only before first {@link #eval(String)} call cause efect.
+   *   Only before first {@link #eval(String)} call cause effect.
    * </p>
    */
   void allowLoadFunctions(boolean v);
@@ -170,7 +170,7 @@ public interface NashornSandbox {
   /**
    * Allow Nashorn globals object $ARG, $ENV, $EXEC, $OPTIONS, $OUT, $ERR and $EXIT.
    * <p>
-   *   Only before first {@link #eval(String)} call cause efect.
+   *   Only before first {@link #eval(String)} call cause effect.
    * </p>
    */
   void allowGlobalsObjects(boolean v);
@@ -179,7 +179,7 @@ public interface NashornSandbox {
    * Force, to check if all blocks are enclosed with curly braces "{}".
    * <p>
    *   Explanation: all loops (for, do-while, while, and if-else, and functions
-   *   should use braces, because poison_pill() function will be inserted afer
+   *   should use braces, because poison_pill() function will be inserted after
    *   each open brace "{", to ensure interruption checking. Otherwise simple
    *   code like:
    *   <pre>
@@ -222,19 +222,19 @@ public interface NashornSandbox {
   void allowNoBraces(boolean v);
   
   /**
-   * The size of prepared statments LRU cache. Default 0 (disabled).
+   * The size of prepared statements LRU cache. Default 0 (disabled).
    * <p>
-   *   Each statments when {@link #setMaxCPUTime(long)} is set is prepared to
-   *   quit itself when time exided. To execute only once this procedure per
+   *   Each statements when {@link #setMaxCPUTime(long)} is set is prepared to
+   *   quit itself when time exceeded. To execute only once this procedure per
    *   statment set this value.
    * </p>
    * <p>
    *   When {@link #setMaxCPUTime(long)} is set 0, this value is ignored.
    * </p>
    * 
-   * @param max the maximum number of statments in the LRU cache
+   * @param max the maximum number of statements in the LRU cache
    */
-  void setMaxPerparedStatements(int max);
+  void setMaxPreparedStatements(int max);
   
   /**
    * Create new bindings used to replace the state of the current script engine

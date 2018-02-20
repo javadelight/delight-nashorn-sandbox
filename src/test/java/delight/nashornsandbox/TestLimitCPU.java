@@ -181,7 +181,7 @@ public class TestLimitCPU {
 			sandbox.setMaxCPUTime(100); // in millis
 			sandbox.setMaxMemory(1000 * 1000); // 1 MB
 			sandbox.allowNoBraces(false);
-			sandbox.setMaxPerparedStatements(30);
+			sandbox.setMaxPreparedStatements(30);
 			sandbox.setExecutor(Executors.newSingleThreadExecutor());
 			Exception exp = null;
 			try {

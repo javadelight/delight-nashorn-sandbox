@@ -18,7 +18,7 @@ public class TestGetFunction {
 		sandbox.setMaxCPUTime(100);
 		sandbox.setMaxMemory(50 * 1024);
 		sandbox.allowNoBraces(false);
-		sandbox.setMaxPerparedStatements(30); // because preparing scripts for
+		sandbox.setMaxPreparedStatements(30); // because preparing scripts for
 		// execution is expensive
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		sandbox.setExecutor(executor);
