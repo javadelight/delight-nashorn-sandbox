@@ -1,10 +1,7 @@
 package delight.nashornsandbox.internal;
 
-import static delight.nashornsandbox.internal.NashornSandboxImpl.LOG;
-
 import java.util.concurrent.ExecutorService;
 
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 /**
@@ -19,16 +16,16 @@ import javax.script.ScriptEngine;
  */
 class JsEvaluator implements Runnable {
   private final ThreadMonitor threadMonitor;
-  private String js;
   private final ScriptEngine scriptEngine;
     
   private Object result = null;
   private Exception exception = null;
-  private ScriptContext scriptContext = null;
-    
-  JsEvaluator(final ScriptEngine scriptEngine, final long maxCPUTime, final long maxMemory) {
+  private final ScriptEngineOperation operation;
+
+  JsEvaluator(final ScriptEngine scriptEngine, final long maxCPUTime, final long maxMemory, ScriptEngineOperation operation) {
     this.scriptEngine = scriptEngine;
     this.threadMonitor = new ThreadMonitor(maxCPUTime, maxMemory);
+    this.operation = operation;
   }
 
   boolean isScriptKilled() {
@@ -54,17 +51,7 @@ class JsEvaluator implements Runnable {
   public void run() {
     try {
       threadMonitor.setThreadToMonitor(Thread.currentThread());
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("--- Running JS ---");
-        LOG.debug(js);
-        LOG.debug("--- JS END ---");
-      }
-      
-      if (scriptContext != null) {
-    	  result = scriptEngine.eval(js, scriptContext);
-      } else {
-    	  result = scriptEngine.eval(js);
-      }
+      result = operation.executeScriptEngineOperation(scriptEngine);
     } 
     catch (final RuntimeException e) {
       // InterruptedException means script was successfully interrupted,
@@ -81,11 +68,6 @@ class JsEvaluator implements Runnable {
       threadMonitor.stopMonitor();
     }
   }
-    
-  /**Set JavaScrip text to be evaluated. */
-  void setJs(final String js) {
-    this.js = js;
-  }
 
   Exception getException() {
     return exception;
@@ -94,10 +76,4 @@ class JsEvaluator implements Runnable {
   Object getResult() {
     return result;
   }
-  
-  /** Set ScriptContext to set set different scopes to evaluate */
-  void setScriptContext(ScriptContext scriptContext) {
-		this.scriptContext = scriptContext;
-  }
-  
 }

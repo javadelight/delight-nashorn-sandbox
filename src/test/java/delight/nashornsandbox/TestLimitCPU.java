@@ -1,9 +1,11 @@
 package delight.nashornsandbox;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.concurrent.Executors;
 
+import javax.script.Invocable;
 import javax.script.ScriptException;
 
 import org.junit.Test;
@@ -197,5 +199,27 @@ public class TestLimitCPU {
 		}
 	}
 
-	
+	@Test
+	public void testCpuLmitInInvocable() throws ScriptCPUAbuseException, ScriptException, NoSuchMethodException {
+		final NashornSandbox sandbox = NashornSandboxes.create();
+		sandbox.setMaxCPUTime(50);
+		sandbox.setExecutor(Executors.newSingleThreadExecutor());
+		try {
+			final String badScript = "function x(){while (true){};}\n";
+			try {
+				sandbox.eval(badScript);
+			} catch (ScriptCPUAbuseException e) {
+				fail("we want to test invokeFunction(), but we failed too early");
+			}
+			Invocable invocable = sandbox.getSandboxedInvocable();
+			try {
+				invocable.invokeFunction("x");
+				fail("expected an exception for the infinite loop");
+			} catch (ScriptException e) {
+				assertEquals(ScriptCPUAbuseException.class, e.getCause().getClass());
+			}
+		} finally {
+			sandbox.getExecutor().shutdown();
+		}
+	}
 }
