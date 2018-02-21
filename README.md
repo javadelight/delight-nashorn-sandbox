@@ -94,7 +94,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
-- 0.1.12-SNAPSHOT (not released yet): Fixing typos in method signatures (see [PR #41](https://github.com/javadelight/delight-nashorn-sandbox/pull/41) by [Sina](https://github.com/sinaa))
+- 0.1.12-SNAPSHOT (not released yet): Adding capability for calling Invocable:invoke (see [PR #42](https://github.com/javadelight/delight-nashorn-sandbox/pull/42) from [escitalopram](https://github.com/escitalopram)); Fixing typos in method signatures (see [PR #41](https://github.com/javadelight/delight-nashorn-sandbox/pull/41) by [Sina](https://github.com/sinaa))
 - 0.1.11: Added support for custom parameters in creating Nashorn Script engine (see [issue #40](https://github.com/javadelight/delight-nashorn-sandbox/issues/40)).
 - 0.1.10: Added createBindings to the API to allow overriding global properties (see [PR #39](https://github.com/javadelight/delight-nashorn-sandbox/pull/39) by [Srinivasa Chintalapati](https://github.com/srinivasarajuch))
 - 0.1.9: Fixed [bug #36](https://github.com/javadelight/delight-nashorn-sandbox/issues/36)
