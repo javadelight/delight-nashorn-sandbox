@@ -89,21 +89,32 @@ public class NashornSandboxImpl implements NashornSandbox {
 	private void assertScriptEngine() {
 		try {
 			final StringBuilder sb = new StringBuilder();
+			Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
 			if (!allowExitFunctions) {
-				sb.append("quit=function(){};exit=function(){};");
+				
+				bindings.remove("quit");
+				bindings.remove("exit");
+				sb.append("var quit=function(){};var exit=function(){};");
 			}
 			if (!allowPrintFunctions) {
-				sb.append("print=function(){};echo = function(){};");
+				bindings.remove("print");
+				bindings.remove("echo");
+				sb.append("var print=function(){};var echo = function(){};");
 			}
 			if (!allowReadFunctions) {
-				sb.append("readFully=function(){};").append("readLine=function(){};");
+				bindings.remove("readFully");
+				bindings.remove("readLine");
+				sb.append("var readFully=function(){};").append("var readLine=function(){};");
 			}
 			if (!allowLoadFunctions) {
-				sb.append("load=function(){};loadWithNewGlobal=function(){};");
+				bindings.remove("load");
+				bindings.remove("loadWithNewGlobal");
+				sb.append("var load=function(){};var loadWithNewGlobal=function(){};");
 			}
 			if (!allowGlobalsObjects) {
-				sb.append("$ARG=null;$ENV=null;$EXEC=null;");
-				sb.append("$OPTIONS=null;$OUT=null;$ERR=null;$EXIT=null;");
+				// Max 22nd of Feb 2018: I don't think these are strictly necessary since they are only available in scripting mode
+				sb.append("var $ARG=null;var $ENV=null;var $EXEC=null;");
+				sb.append("var $OPTIONS=null;var $OUT=null;var $ERR=null;var $EXIT=null;");
 			}
 			scriptEngine.eval(sb.toString());
 		} catch (final Exception e) {

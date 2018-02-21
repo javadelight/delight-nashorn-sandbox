@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
-public class TestEvalWithScriptContextWIthNewBindings {
+public class TestEvalWithScriptContextWithNewBindings {
 	@Test
 	public void testWithNewBindings() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
