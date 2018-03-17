@@ -124,15 +124,25 @@ public class NashornSandboxImpl implements NashornSandbox {
 
 	@Override
 	public Object eval(final String js) throws ScriptCPUAbuseException, ScriptException {
-		return eval(js, null);
+		return eval(js, null,null);
 	}
 
 	@Override
-	public Object eval(final String js, final ScriptContext scriptContext)
+	public Object eval(String js, Bindings bindings) throws ScriptCPUAbuseException, ScriptException {
+		return eval(js,null,bindings);
+	}
+
+	@Override
+	public Object eval(String js, ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException {
+		return eval(js, scriptContext,null);
+	}
+
+	@Override
+	public Object eval(final String js, final ScriptContext scriptContext,final Bindings bindings)
 			throws ScriptCPUAbuseException, ScriptException {
 		final JsSanitizer sanitizer = getSanitizer();
 		final String securedJs = sanitizer.secureJs(js);
-		EvaluateOperation op = new EvaluateOperation(securedJs, scriptContext);
+		EvaluateOperation op = new EvaluateOperation(securedJs, scriptContext,bindings);
 		return executeSandboxedOperation(op);
 	}
 
