@@ -1,7 +1,7 @@
 package delight.nashornsandbox.internal;
 
 import java.io.Writer;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 
 import javax.script.Bindings;
 import javax.script.Invocable;
@@ -47,7 +47,7 @@ public class NashornSandboxImpl implements NashornSandbox {
 	/** Maximum memory of executor thread used. */
 	protected long maxMemory = 0L;
 
-	protected ExecutorService executor;
+	protected Executor executor;
 
 	protected boolean allowPrintFunctions = false;
 
@@ -226,12 +226,12 @@ public class NashornSandboxImpl implements NashornSandbox {
 	}
 
 	@Override
-	public void setExecutor(final ExecutorService executor) {
+	public void setExecutor(final Executor executor) {
 		this.executor = executor;
 	}
 
 	@Override
-	public ExecutorService getExecutor() {
+	public Executor getExecutor() {
 		return executor;
 	}
 

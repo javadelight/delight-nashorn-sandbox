@@ -4,6 +4,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
@@ -28,9 +29,10 @@ public class TestMemoryLimit {
     @Test
     public void test() throws ScriptCPUAbuseException, ScriptException {
       final NashornSandbox sandbox = NashornSandboxes.create();
+      ExecutorService executor = Executors.newSingleThreadExecutor();
       try {
         sandbox.setMaxMemory(MEMORY_LIMIT);
-        sandbox.setExecutor(Executors.newSingleThreadExecutor());
+        sandbox.setExecutor(executor);
         final String js = "var o={},i=0; while (true) {o[i++] = 'abc'}";
         sandbox.eval(js);
         fail("Exception should be thrown");
@@ -39,31 +41,33 @@ public class TestMemoryLimit {
         assertFalse(e.isScriptKilled());
       }
       finally {
-        sandbox.getExecutor().shutdown();
+        executor.shutdown();
       }
     }
     
     @Test(expected=BracesException.class)
     public void test_noexpectedbraces() throws ScriptCPUAbuseException, ScriptException {
       final NashornSandbox sandbox = NashornSandboxes.create();
+      ExecutorService executor = Executors.newSingleThreadExecutor();
       try {
         sandbox.setMaxMemory(MEMORY_LIMIT);
-        sandbox.setExecutor(Executors.newSingleThreadExecutor());
+        sandbox.setExecutor(executor);
         final String js = "var o={},i=0; while (true) o[i++] = 'abc'";
         sandbox.eval(js);
         fail("Exception should be thrown");
       }
       finally {
-        sandbox.getExecutor().shutdown();
+        executor.shutdown();
       }
     }
 
     @Test
     public void test_killed() throws ScriptCPUAbuseException, ScriptException {
       final NashornSandbox sandbox = NashornSandboxes.create();
+      ExecutorService executor = Executors.newSingleThreadExecutor();
       try {
         sandbox.setMaxMemory(MEMORY_LIMIT);
-        sandbox.setExecutor(Executors.newSingleThreadExecutor());
+        sandbox.setExecutor(executor);
         sandbox.allowNoBraces(true);
         final String js = "var o={},i=0; while (true) o[i++] = 'abc'";
         sandbox.eval(js);
@@ -73,16 +77,17 @@ public class TestMemoryLimit {
         assertTrue(e.isScriptKilled());
       }
       finally {
-        sandbox.getExecutor().shutdown();
+        executor.shutdown();
       }
     }
 
     @Test
     public void test_no_abuse() throws ScriptCPUAbuseException, ScriptException {
       final NashornSandbox sandbox = NashornSandboxes.create();
+      ExecutorService executor = Executors.newSingleThreadExecutor();
       try {
         sandbox.setMaxMemory(MEMORY_LIMIT);
-        sandbox.setExecutor(Executors.newSingleThreadExecutor());
+        sandbox.setExecutor(executor);
         final String js = "var o={},i=0; while(i<10) {o[i++] = 'abc';}";
         sandbox.eval(js);
       }
@@ -90,7 +95,7 @@ public class TestMemoryLimit {
         fail("No exception should be thrown");
       }
       finally {
-        sandbox.getExecutor().shutdown();
+        executor.shutdown();
       }
     }
     

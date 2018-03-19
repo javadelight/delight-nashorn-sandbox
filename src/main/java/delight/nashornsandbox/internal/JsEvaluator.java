@@ -1,12 +1,12 @@
 package delight.nashornsandbox.internal;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 
 import javax.script.ScriptEngine;
 
 /**
  * The JavaScript evaluator. It is designed to run Nashorn engine in separate
- * thread (using provided {@link ExecutorService}), to allow limit cpu time 
+ * thread (using provided {@link Executor}), to allow limit cpu time
  * consumed. 
  *
  * <p>Created on 2017.11.22</p>

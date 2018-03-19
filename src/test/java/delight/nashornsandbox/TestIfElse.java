@@ -1,5 +1,6 @@
 package delight.nashornsandbox;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
@@ -17,7 +18,8 @@ public class TestIfElse {
   public void testIfElse() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.setMaxCPUTime(500);
-    sandbox.setExecutor(Executors.newSingleThreadExecutor());
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    sandbox.setExecutor(executor);
     final StringBuilder _builder = new StringBuilder();
     _builder.append("if (true)\n");
     _builder.append("var x=1;\n");
@@ -38,6 +40,6 @@ public class TestIfElse {
     _builder_1.append("}\n");
     sandbox.eval(_builder_1.toString());
     Assert.assertEquals(Integer.valueOf(4), sandbox.eval("y"));
-    sandbox.getExecutor().shutdown();
+    executor.shutdown();
   }
 }

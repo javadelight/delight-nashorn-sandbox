@@ -1,5 +1,6 @@
 package delight.nashornsandbox;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
@@ -15,9 +16,10 @@ public class TestScriptInterruptionAndCatch {
   @Test(expected = ScriptCPUAbuseException.class)
   public void test_catch() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
+    ExecutorService executor = Executors.newSingleThreadExecutor();
     try {
       sandbox.setMaxCPUTime(50);
-      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      sandbox.setExecutor(executor);
       final StringBuilder _builder = new StringBuilder();
       _builder.append("try {\n");
       _builder.append("\t");
@@ -34,7 +36,7 @@ public class TestScriptInterruptionAndCatch {
       _builder.append("}\n");
       sandbox.eval(_builder.toString());
     } finally {
-      sandbox.getExecutor().shutdown();
+      executor.shutdown();
     }
   }
 }

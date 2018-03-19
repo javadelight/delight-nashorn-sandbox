@@ -1,7 +1,7 @@
 package delight.nashornsandbox;
 
 import java.io.Writer;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 
 import javax.script.Bindings;
 import javax.script.Invocable;
@@ -55,12 +55,12 @@ public interface NashornSandbox {
   /**
    * Sets the maximum CPU time in milliseconds allowed for script execution.
    * <p>
-   *   Note, {@link ExecutorService} should be also set when time is set greater
+   *   Note, {@link Executor} should be also set when time is set greater
    *   than 0.
    * </p>
    *
    * @param limit time limit in miliseconds
-   * @see #setExecutor(ExecutorService)
+   * @see #setExecutor(Executor)
    */
   void setMaxCPUTime(long limit);
   
@@ -70,7 +70,7 @@ public interface NashornSandbox {
    *   Note, thread memory usage is only approximation.
    * </p>
    * <p>
-   *   Note, {@link ExecutorService} should be also set when memory limit is set
+   *   Note, {@link Executor} should be also set when memory limit is set
    *   greater than 0. Nashorn takes some memory at start, be generous and give
    *   at least 1MB.
    * </p>
@@ -98,14 +98,14 @@ public interface NashornSandbox {
    * @param executor the executor service
    * @see #setMaxCPUTime(long)
    */
-  void setExecutor(ExecutorService executor);
+  void setExecutor(Executor executor);
   
   /**
    * Gets the current executor service.
    *  
    * @return current executor service
    */
-  ExecutorService getExecutor();
+  Executor getExecutor();
   
   /**
    * Evaluates the JavaScript string.

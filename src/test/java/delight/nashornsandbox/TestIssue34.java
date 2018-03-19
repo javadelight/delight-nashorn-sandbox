@@ -3,6 +3,7 @@ package delight.nashornsandbox;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
@@ -19,6 +20,7 @@ public class TestIssue34 {
 
 	Logger logger;
 	NashornSandbox sandbox;
+	ExecutorService executor;
 
 	public static class Logger {
 
@@ -41,7 +43,8 @@ public class TestIssue34 {
 		sandbox.allowNoBraces(false);
 		sandbox.allowPrintFunctions(true);
 		sandbox.setMaxPreparedStatements(30);
-		sandbox.setExecutor(Executors.newSingleThreadExecutor());
+		executor = Executors.newSingleThreadExecutor();
+		sandbox.setExecutor(executor);
 		logger = new Logger();
 		sandbox.inject("logger", logger);
 	}
@@ -152,7 +155,7 @@ public class TestIssue34 {
 
 	@After
 	public void tearDown() {
-		sandbox.getExecutor().shutdown();
+		executor.shutdown();
 	}
 
 }

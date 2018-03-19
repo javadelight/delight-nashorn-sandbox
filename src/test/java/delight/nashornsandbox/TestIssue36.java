@@ -22,8 +22,8 @@ public class TestIssue36 {
 	        sandbox.setExecutor(executor);
 	        Boolean done = (Boolean) sandbox.eval("done = false;");
 	        Assert.assertFalse(done);
-	        
-	        sandbox.getExecutor().shutdown();
+
+		    executor.shutdown();
 	        
 	}
 	

@@ -1,5 +1,6 @@
 package delight.nashornsandbox;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
@@ -54,10 +55,11 @@ public class TestExceptions {
   @Test
   public void test_with_line_number() {
     NashornSandbox sandbox = null;
+    ExecutorService executor = Executors.newSingleThreadExecutor();
     try {
       sandbox = NashornSandboxes.create();
       sandbox.setMaxCPUTime(5000);
-      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      sandbox.setExecutor(executor);
       final StringBuilder _builder = new StringBuilder();
       _builder.append("var in_the_first_line_all_good;\n");
       _builder.append("\t\t\t");
@@ -70,7 +72,7 @@ public class TestExceptions {
     } catch (final Throwable _t) {
       if (_t instanceof Throwable) {
         final Throwable t = _t;
-        sandbox.getExecutor().shutdown();
+        executor.shutdown();
         Assert.assertTrue(t.getMessage().contains("4"));
         return;
       } else {

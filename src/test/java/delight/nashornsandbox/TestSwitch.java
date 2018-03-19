@@ -1,5 +1,6 @@
 package delight.nashornsandbox;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
@@ -15,10 +16,11 @@ public class TestSwitch {
   @Test
   public void test() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
+    ExecutorService executor = Executors.newSingleThreadExecutor();
     try {
       sandbox.allowPrintFunctions(true);
       sandbox.setMaxCPUTime(50);
-      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      sandbox.setExecutor(executor);
       final StringBuilder _builder = new StringBuilder();
       _builder.append("var expr = \"one\";\n\n");
       _builder.append("switch (expr) {\n");
@@ -41,7 +43,7 @@ public class TestSwitch {
       _builder.append("}\n\n");
       sandbox.eval(_builder.toString());
     } finally {
-      sandbox.getExecutor().shutdown();
+      executor.shutdown();
     }
   }
 }
