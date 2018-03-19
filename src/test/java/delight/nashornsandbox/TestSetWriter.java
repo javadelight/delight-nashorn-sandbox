@@ -20,6 +20,8 @@ public class TestSetWriter {
     final StringWriter writer = new StringWriter();
     sandbox.setWriter(writer);
     sandbox.eval("print(\"Hi there!\");");
-    Assert.assertEquals("Hi there!\n", writer.toString());
+    // \n at the end of the string is not enough.
+    // javascript adds an extra carrige return.
+    Assert.assertEquals("Hi there!\r\n", writer.toString());
   }
 }
