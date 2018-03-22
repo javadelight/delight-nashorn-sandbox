@@ -94,7 +94,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
-- 0.1.13-SNAPSHOT: Improving way access to global functions such as `exit` is blocked. 
+- 0.1.13: Added support for providing Bindings for evaluating scrips (see [PR #44](https://github.com/javadelight/delight-nashorn-sandbox/pull/44) by [Frontrider](https://github.com/Frontrider)); Improving way access to global functions such as `exit` is blocked; Allowing for|while|do when they are given in quoted strings in JavaScript (see [issue #47](https://github.com/javadelight/delight-nashorn-sandbox/issues/47)).
 - 0.1.12: Adding capability for calling Invocable:invoke (see [PR #42](https://github.com/javadelight/delight-nashorn-sandbox/pull/42) from [escitalopram](https://github.com/escitalopram)); Fixing typos in method signatures (see [PR #41](https://github.com/javadelight/delight-nashorn-sandbox/pull/41) by [Sina](https://github.com/sinaa))
 - 0.1.11: Added support for custom parameters in creating Nashorn Script engine (see [issue #40](https://github.com/javadelight/delight-nashorn-sandbox/issues/40)).
 - 0.1.10: Added createBindings to the API to allow overriding global properties (see [PR #39](https://github.com/javadelight/delight-nashorn-sandbox/pull/39) by [Srinivasa Chintalapati](https://github.com/srinivasarajuch))
