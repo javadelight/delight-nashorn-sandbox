@@ -117,19 +117,44 @@ public interface NashornSandbox {
    * @see #setMaxCPUTime(long)
    */
   Object eval(String js) throws ScriptCPUAbuseException, ScriptException;
-  
+
+  /**
+   * Evaluates the JavaScript string.
+   *
+   * @param js the JavaScript script to be evaluated
+   * @param bindings the Bindings to use for evaluation
+   * @throws ScriptCPUAbuseException when execution time exceeded (when greater
+   *      than 0 is set
+   * @throws ScriptException when script syntax error occurs
+   * @see #setMaxCPUTime(long)
+   */
+  Object eval(String js,Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
+
   /**
    * Evaluates the JavaScript string for a given script context
-   * 
+   *
    * @param js the JavaScript script to be evaluated
-   * @param js the JavaScript script to be evaluated
-   * @param scriptContext the ScriptContext exposing sets of attributes in different scopes. 
+   * @param scriptContext the ScriptContext exposing sets of attributes in different scopes.
    * @throws ScriptCPUAbuseException when execution time exceeded (when greater
    *      than 0 is set
    * @throws ScriptException when script syntax error occurs
    * @see #setMaxCPUTime(long)
    */
   Object eval(String js, ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException;
+
+
+  /**
+   * Evaluates the JavaScript string for a given script context
+   * 
+   * @param js the JavaScript script to be evaluated
+   * @param bindings the Bindings to use for evaluation
+   * @param scriptContext the ScriptContext exposing sets of attributes in different scopes. 
+   * @throws ScriptCPUAbuseException when execution time exceeded (when greater
+   *      than 0 is set
+   * @throws ScriptException when script syntax error occurs
+   * @see #setMaxCPUTime(long)
+   */
+  Object eval(String js, ScriptContext scriptContext,Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
   
   /**
    * Obtains the value of the specified JavaScript variable.
