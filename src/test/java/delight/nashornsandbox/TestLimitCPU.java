@@ -19,56 +19,25 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Testing CPU abusing")
 public class TestLimitCPU {
 
-    @Nested
-    @DisplayName("Braceless CPU abusing scripts")
-    class EvilScript {
-        NashornSandbox sandbox;
 
-        @BeforeEach
-        void beforeEach() {
-            sandbox = NashornSandboxes.create();
-            sandbox.setMaxCPUTime(50);
-            sandbox.setExecutor(Executors.newSingleThreadExecutor());
-        }
+    NashornSandbox sandbox;
 
-        //I should have the Extendswith on the class
-        // but I could not get it working properly
-        @Test
-        @RepeatedTest(CpuAbuseBracelessScriptProvider.testCount)
-        @ExtendWith(CpuAbuseBracelessScriptProvider.class)
-        @DisplayName("Throws BracesException")
-        void noBraces(String js) {
-            assertThrows(BracesException.class, () -> {
-                sandbox.eval(js);
-            });
-        }
-
-        @Test
-        @RepeatedTest(CpuAbuseBracelessScriptProvider.testCount)
-        @ExtendWith(CpuAbuseBracelessScriptProvider.class)
-        @DisplayName("Throws ScriptCPUAbuseException")
-        void noBracesAllowed(String js) {
-            sandbox.allowNoBraces(true);
-            assertThrows(ScriptCPUAbuseException.class, () -> {
-                sandbox.eval(js);
-            });
-        }
-
-        @AfterEach
-        void afterEach() {
-            sandbox.getExecutor().shutdown();
-        }
+    @BeforeEach
+    void beforeEach() {
+        sandbox = NashornSandboxes.create();
+        sandbox.setMaxCPUTime(50);
+        sandbox.setExecutor(Executors.newSingleThreadExecutor());
     }
 
     @Test
-    @RepeatedTest(NiceScriptProvider.testCount)
-    @ExtendWith(NiceScriptProvider.class)
-    @DisplayName("Nice scripts throw nothing")
-    void noBraces(String js) throws ScriptException {
-        NashornSandbox sandbox = NashornSandboxes.create();
-        sandbox.setMaxCPUTime(500);
-        sandbox.setExecutor(Executors.newSingleThreadExecutor());
-        sandbox.eval(js);
+    @RepeatedTest(CpuAbuseBracelessScriptProvider.testCount)
+    @ExtendWith(CpuAbuseBracelessScriptProvider.class)
+    @DisplayName("Throws ScriptCPUAbuseException")
+    void noBracesAllowed(String js) {
+        sandbox.allowNoBraces(true);
+        assertThrows(ScriptCPUAbuseException.class, () -> {
+            sandbox.eval(js);
+        });
     }
 
 
@@ -86,23 +55,16 @@ public class TestLimitCPU {
         sandbox.getExecutor().shutdown();
     }
 
-    @Test
-    @RepeatedTest(BracelessScriptProvider.testCount)
-    @ExtendWith(BracelessScriptProvider.class)
-    @DisplayName("Testing Braceless scripts")
-    void bracelessScripts(String js) throws ScriptException {
-        NashornSandbox sandbox = NashornSandboxes.create();
-        sandbox.setMaxCPUTime(500);
-        sandbox.setExecutor(Executors.newSingleThreadExecutor());
-        assertThrows(BracesException.class, () -> {
-            sandbox.eval(js);
-        });
+    @AfterEach
+    void afterEach() {
         sandbox.getExecutor().shutdown();
     }
 
+
+
     @Test
-    @RepeatedTest(BracelessScriptProvider.testCount)
-    @ExtendWith(BracelessScriptProvider.class)
+    @RepeatedTest(CpuAbuseBracelessScriptProvider.testCount)
+    @ExtendWith(CpuAbuseBracelessScriptProvider.class)
     @DisplayName("Testing Braceless scripts, braceless Script is allowed")
     void bracelessScriptsAllowe(String js) throws ScriptException {
         NashornSandbox sandbox = NashornSandboxes.create();
@@ -115,7 +77,7 @@ public class TestLimitCPU {
         sandbox.getExecutor().shutdown();
     }
 
-    //if all the CPU abuse tests pass than this one should not matter.
+    //if all the CPU abuse tests pass than this one might not matter.
     /**
      * See issue <a href=
      * 'https://github.com/javadelight/delight-nashorn-sandbox/issues/30'>#30</a>

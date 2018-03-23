@@ -4,6 +4,7 @@ import delight.nashornsandbox.exceptions.BracesException;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.script.ScriptException;
@@ -14,6 +15,8 @@ import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+//Todo add actual descriptions to the nature of these scenarios
+@DisplayName("Failed to restrict the cpu and memory utilization")
 public class TestIssue34 {
 
 	Logger logger;
@@ -46,6 +49,7 @@ public class TestIssue34 {
 	}
 
 	@Test
+    @DisplayName("Scenario 1")
 	public void testIssue34_Scenario1() throws ScriptCPUAbuseException, ScriptException {
 		String js = "";
 		js += "function main(){\n";
@@ -63,6 +67,7 @@ public class TestIssue34 {
 	}
 
 	@Test
+    @DisplayName("Scenario 2")
 	public void testIssue34_Scenario2() throws ScriptCPUAbuseException, ScriptException {
 		String js = "";
 		js += "function main(){\n" + "logger.debug(\"... In fun1()....\");\n" + "for(var i=0;i<2;i++)//{\n"
@@ -82,6 +87,7 @@ public class TestIssue34 {
 	}
 
 	@Test
+    @DisplayName("Scenario 3")
 	public void testIssue34_Scenario3() throws ScriptCPUAbuseException, ScriptException {
 		String js = "";
 		js += "function loopTest(){\n" + "var i=0;\n" + "do{\n" + "logger.debug(\"loop cnt=\"+(++i));\n"
@@ -94,6 +100,7 @@ public class TestIssue34 {
 	}
 	
 	@Test
+    @DisplayName("Scenario 3.2")
 	public void testIssue34_Scenario3_2() throws ScriptCPUAbuseException, ScriptException {
     String js = "//simple do-while loop for demo\n";
 		js += "function loopTest(){\n" +
@@ -111,6 +118,7 @@ public class TestIssue34 {
 	}
 	
 	@Test
+    @DisplayName("Scenario 4")
 	public void testIssue34_Scenario4()  {
 		String js = "";
 		js += "if(srctable.length) srctable.length = 0;__if();\n" + "else {\n" + "for(var key in srctable) {__if();\n"
@@ -128,6 +136,7 @@ public class TestIssue34 {
 	}
 
 	@Test
+    @DisplayName("Scenario 5")
 	public void testIssue34_Scenario5() {
 		String js = "";
 		js += "function loopTest(){\n" + 
