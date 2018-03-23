@@ -1,6 +1,7 @@
 package delight.nashornsandbox;
 
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.script.ScriptException;
@@ -8,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-
+@DisplayName("Error on evaluating code starting with \"do\"")
 public class TestIssue36 {
 
     @Test
