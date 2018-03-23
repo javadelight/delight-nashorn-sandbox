@@ -1,0 +1,328 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: NashornSandbox</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">delight.nashornsandbox</a> ]
+</div>
+
+<h1>Coverage Summary for Class: NashornSandbox (delight.nashornsandbox)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">NashornSandbox</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package delight.nashornsandbox;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.Writer;
+<i>4</i>&nbsp;import java.util.concurrent.ExecutorService;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import javax.script.Bindings;
+<i>7</i>&nbsp;import javax.script.Invocable;
+<i>8</i>&nbsp;import javax.script.ScriptContext;
+<i>9</i>&nbsp;import javax.script.ScriptException;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;/**
+<i>14</i>&nbsp; * The Nashorn sandbox interface.
+<i>15</i>&nbsp; *
+<i>16</i>&nbsp; * &lt;p&gt;Created on 2015-08-06&lt;/p&gt;
+<i>17</i>&nbsp; * 
+<i>18</i>&nbsp; * @author &lt;a href=&quot;mailto:mxro@nowhere.com&quot;&gt;mxro&lt;/a&gt; 
+<i>19</i>&nbsp; * @author &lt;a href=&quot;mailto:dev@youness.org&quot;&gt;Youness SAHOUANE&lt;/a&gt; 
+<i>20</i>&nbsp; * @author &lt;a href=&quot;mailto:eduveks@gmail.com&quot;&gt;Eduardo Velasques&lt;/a&gt; 
+<i>21</i>&nbsp; * @author &lt;a href=&quot;mailto:philip.borgstrom@gmail.com&quot;&gt;philipborg&lt;/a&gt; 
+<i>22</i>&nbsp; * @author &lt;a href=&quot;mailto:marcin.golebski@verbis.pl&quot;&gt;Marcin Golebski&lt;/a&gt;
+<i>23</i>&nbsp; * @version $Id$
+<i>24</i>&nbsp; */
+<i>25</i>&nbsp;public interface NashornSandbox {
+<i>26</i>&nbsp;    
+<i>27</i>&nbsp;  /**
+<i>28</i>&nbsp;   * Add a new class to the list of allowed classes.
+<i>29</i>&nbsp;   */
+<i>30</i>&nbsp;  void allow(Class&lt;?&gt; clazz);
+<i>31</i>&nbsp;  
+<i>32</i>&nbsp;  /**
+<i>33</i>&nbsp;   * Remove a class from the list of allowed classes.
+<i>34</i>&nbsp;   */
+<i>35</i>&nbsp;  void disallow(Class&lt;?&gt; clazz);
+<i>36</i>&nbsp;  
+<i>37</i>&nbsp;  /**
+<i>38</i>&nbsp;   * Check if a class is in the list of allowed classes.
+<i>39</i>&nbsp;   */
+<i>40</i>&nbsp;  boolean isAllowed(Class&lt;?&gt; clazz);
+<i>41</i>&nbsp;  
+<i>42</i>&nbsp;  /**
+<i>43</i>&nbsp;   * Remove all classes from the list of allowed classes.
+<i>44</i>&nbsp;   */
+<i>45</i>&nbsp;  void disallowAllClasses();
+<i>46</i>&nbsp;  
+<i>47</i>&nbsp;  /**
+<i>48</i>&nbsp;   * Will add a global variable available to all scripts executed with this sandbox.
+<i>49</i>&nbsp;   * 
+<i>50</i>&nbsp;   * @param variableName the name of the variable
+<i>51</i>&nbsp;   * @param object the value, can be &lt;code&gt;null&lt;/code&gt;
+<i>52</i>&nbsp;   */
+<i>53</i>&nbsp;  void inject(String variableName, Object object);
+<i>54</i>&nbsp;  
+<i>55</i>&nbsp;  /**
+<i>56</i>&nbsp;   * Sets the maximum CPU time in milliseconds allowed for script execution.
+<i>57</i>&nbsp;   * &lt;p&gt;
+<i>58</i>&nbsp;   *   Note, {@link ExecutorService} should be also set when time is set greater
+<i>59</i>&nbsp;   *   than 0.
+<i>60</i>&nbsp;   * &lt;/p&gt;
+<i>61</i>&nbsp;   *
+<i>62</i>&nbsp;   * @param limit time limit in miliseconds
+<i>63</i>&nbsp;   * @see #setExecutor(ExecutorService)
+<i>64</i>&nbsp;   */
+<i>65</i>&nbsp;  void setMaxCPUTime(long limit);
+<i>66</i>&nbsp;  
+<i>67</i>&nbsp;  /**
+<i>68</i>&nbsp;   * Sets the maximum memory in Bytes which JS executor thread can allocate.
+<i>69</i>&nbsp;   * &lt;p&gt;
+<i>70</i>&nbsp;   *   Note, thread memory usage is only approximation.
+<i>71</i>&nbsp;   * &lt;/p&gt;
+<i>72</i>&nbsp;   * &lt;p&gt;
+<i>73</i>&nbsp;   *   Note, {@link ExecutorService} should be also set when memory limit is set
+<i>74</i>&nbsp;   *   greater than 0. Nashorn takes some memory at start, be generous and give
+<i>75</i>&nbsp;   *   at least 1MB.
+<i>76</i>&nbsp;   * &lt;/p&gt;
+<i>77</i>&nbsp;   * &lt;p&gt;
+<i>78</i>&nbsp;   *   Current implementation of this limit works only on Sun/Oracle JVM.
+<i>79</i>&nbsp;   * &lt;/p&gt;
+<i>80</i>&nbsp;   * 
+<i>81</i>&nbsp;   * @param limit limit in bytes
+<i>82</i>&nbsp;   * @see com.sun.management.ThreadMXBean#getThreadAllocatedBytes(long)
+<i>83</i>&nbsp;   */
+<i>84</i>&nbsp;  void setMaxMemory(long limit);
+<i>85</i>&nbsp;  
+<i>86</i>&nbsp;  /**
+<i>87</i>&nbsp;   * Sets the writer, whem want to have output from writer function called in
+<i>88</i>&nbsp;   * JS script
+<i>89</i>&nbsp;   * 
+<i>90</i>&nbsp;   * @param writer the writer, eg. {@ling StringWriter}
+<i>91</i>&nbsp;   */
+<i>92</i>&nbsp;  void setWriter(Writer writer);
+<i>93</i>&nbsp;  
+<i>94</i>&nbsp;  /**
+<i>95</i>&nbsp;   * Specifies the executor service which is used to run scripts when a CPU time 
+<i>96</i>&nbsp;   * limit is specified.
+<i>97</i>&nbsp;   * 
+<i>98</i>&nbsp;   * @param executor the executor service
+<i>99</i>&nbsp;   * @see #setMaxCPUTime(long)
+<i>100</i>&nbsp;   */
+<i>101</i>&nbsp;  void setExecutor(ExecutorService executor);
+<i>102</i>&nbsp;  
+<i>103</i>&nbsp;  /**
+<i>104</i>&nbsp;   * Gets the current executor service.
+<i>105</i>&nbsp;   *  
+<i>106</i>&nbsp;   * @return current executor service
+<i>107</i>&nbsp;   */
+<i>108</i>&nbsp;  ExecutorService getExecutor();
+<i>109</i>&nbsp;  
+<i>110</i>&nbsp;  /**
+<i>111</i>&nbsp;   * Evaluates the JavaScript string.
+<i>112</i>&nbsp;   * 
+<i>113</i>&nbsp;   * @param js the JavaScript script to be evaluated
+<i>114</i>&nbsp;   * @throws ScriptCPUAbuseException when execution time exceeded (when greater
+<i>115</i>&nbsp;   *      than 0 is set
+<i>116</i>&nbsp;   * @throws ScriptException when script syntax error occurs
+<i>117</i>&nbsp;   * @see #setMaxCPUTime(long)
+<i>118</i>&nbsp;   */
+<i>119</i>&nbsp;  Object eval(String js) throws ScriptCPUAbuseException, ScriptException;
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;  /**
+<i>122</i>&nbsp;   * Evaluates the JavaScript string.
+<i>123</i>&nbsp;   *
+<i>124</i>&nbsp;   * @param js the JavaScript script to be evaluated
+<i>125</i>&nbsp;   * @param bindings the Bindings to use for evaluation
+<i>126</i>&nbsp;   * @throws ScriptCPUAbuseException when execution time exceeded (when greater
+<i>127</i>&nbsp;   *      than 0 is set
+<i>128</i>&nbsp;   * @throws ScriptException when script syntax error occurs
+<i>129</i>&nbsp;   * @see #setMaxCPUTime(long)
+<i>130</i>&nbsp;   */
+<i>131</i>&nbsp;  Object eval(String js,Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;  /**
+<i>134</i>&nbsp;   * Evaluates the JavaScript string for a given script context
+<i>135</i>&nbsp;   *
+<i>136</i>&nbsp;   * @param js the JavaScript script to be evaluated
+<i>137</i>&nbsp;   * @param scriptContext the ScriptContext exposing sets of attributes in different scopes.
+<i>138</i>&nbsp;   * @throws ScriptCPUAbuseException when execution time exceeded (when greater
+<i>139</i>&nbsp;   *      than 0 is set
+<i>140</i>&nbsp;   * @throws ScriptException when script syntax error occurs
+<i>141</i>&nbsp;   * @see #setMaxCPUTime(long)
+<i>142</i>&nbsp;   */
+<i>143</i>&nbsp;  Object eval(String js, ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException;
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;
+<i>146</i>&nbsp;  /**
+<i>147</i>&nbsp;   * Evaluates the JavaScript string for a given script context
+<i>148</i>&nbsp;   * 
+<i>149</i>&nbsp;   * @param js the JavaScript script to be evaluated
+<i>150</i>&nbsp;   * @param bindings the Bindings to use for evaluation
+<i>151</i>&nbsp;   * @param scriptContext the ScriptContext exposing sets of attributes in different scopes. 
+<i>152</i>&nbsp;   * @throws ScriptCPUAbuseException when execution time exceeded (when greater
+<i>153</i>&nbsp;   *      than 0 is set
+<i>154</i>&nbsp;   * @throws ScriptException when script syntax error occurs
+<i>155</i>&nbsp;   * @see #setMaxCPUTime(long)
+<i>156</i>&nbsp;   */
+<i>157</i>&nbsp;  Object eval(String js, ScriptContext scriptContext,Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
+<i>158</i>&nbsp;  
+<i>159</i>&nbsp;  /**
+<i>160</i>&nbsp;   * Obtains the value of the specified JavaScript variable.
+<i>161</i>&nbsp;   */
+<i>162</i>&nbsp;  Object get(String variableName);
+<i>163</i>&nbsp;  
+<i>164</i>&nbsp;  /**
+<i>165</i>&nbsp;   * Allow Nashorn print and echo functions.
+<i>166</i>&nbsp;   * &lt;p&gt;
+<i>167</i>&nbsp;   *   Only before first {@link #eval(String)} call cause effect.
+<i>168</i>&nbsp;   * &lt;/p&gt;
+<i>169</i>&nbsp;   */
+<i>170</i>&nbsp;  void allowPrintFunctions(boolean v);
+<i>171</i>&nbsp;  
+<i>172</i>&nbsp;  /**
+<i>173</i>&nbsp;   * Allow Nashorn readLine and readFully functions.
+<i>174</i>&nbsp;   * &lt;p&gt;
+<i>175</i>&nbsp;   *   Only before first {@link #eval(String)} call cause effect.
+<i>176</i>&nbsp;   * &lt;/p&gt;
+<i>177</i>&nbsp;   */
+<i>178</i>&nbsp;  void allowReadFunctions(boolean v);
+<i>179</i>&nbsp;  
+<i>180</i>&nbsp;  /**
+<i>181</i>&nbsp;   * Allow Nashorn load and loadWithNewGlobal functions.
+<i>182</i>&nbsp;   * &lt;p&gt;
+<i>183</i>&nbsp;   *   Only before first {@link #eval(String)} call cause effect.
+<i>184</i>&nbsp;   * &lt;/p&gt;
+<i>185</i>&nbsp;   */
+<i>186</i>&nbsp;  void allowLoadFunctions(boolean v);
+<i>187</i>&nbsp;  
+<i>188</i>&nbsp;  /**
+<i>189</i>&nbsp;   * Allow Nashorn quit and exit functions.
+<i>190</i>&nbsp;   * &lt;p&gt;
+<i>191</i>&nbsp;   *   Only before first {@link #eval(String)} call cause efect.
+<i>192</i>&nbsp;   * &lt;/p&gt;
+<i>193</i>&nbsp;   */
+<i>194</i>&nbsp;  void allowExitFunctions(boolean v);
+<i>195</i>&nbsp;  
+<i>196</i>&nbsp;  /**
+<i>197</i>&nbsp;   * Allow Nashorn globals object $ARG, $ENV, $EXEC, $OPTIONS, $OUT, $ERR and $EXIT.
+<i>198</i>&nbsp;   * &lt;p&gt;
+<i>199</i>&nbsp;   *   Only before first {@link #eval(String)} call cause effect.
+<i>200</i>&nbsp;   * &lt;/p&gt;
+<i>201</i>&nbsp;   */
+<i>202</i>&nbsp;  void allowGlobalsObjects(boolean v);
+<i>203</i>&nbsp;
+<i>204</i>&nbsp;  /**
+<i>205</i>&nbsp;   * Force, to check if all blocks are enclosed with curly braces &quot;{}&quot;.
+<i>206</i>&nbsp;   * &lt;p&gt;
+<i>207</i>&nbsp;   *   Explanation: all loops (for, do-while, while, and if-else, and functions
+<i>208</i>&nbsp;   *   should use braces, because poison_pill() function will be inserted after
+<i>209</i>&nbsp;   *   each open brace &quot;{&quot;, to ensure interruption checking. Otherwise simple
+<i>210</i>&nbsp;   *   code like:
+<i>211</i>&nbsp;   *   &lt;pre&gt;
+<i>212</i>&nbsp;   *     while(true) while(true) {
+<i>213</i>&nbsp;   *       // do nothing
+<i>214</i>&nbsp;   *     }
+<i>215</i>&nbsp;   *   &lt;/pre&gt;
+<i>216</i>&nbsp;   *   or even:
+<i>217</i>&nbsp;   *   &lt;pre&gt;
+<i>218</i>&nbsp;   *     while(true)
+<i>219</i>&nbsp;   *   &lt;/pre&gt;
+<i>220</i>&nbsp;   *   cause unbreakable loop, which force this sandbox to use {@link Thread#stop()}
+<i>221</i>&nbsp;   *   which make JVM unstable.
+<i>222</i>&nbsp;   * &lt;/p&gt;
+<i>223</i>&nbsp;   * &lt;p&gt;
+<i>224</i>&nbsp;   *   Properly writen code (even in bad intention) like:
+<i>225</i>&nbsp;   *   &lt;pre&gt;
+<i>226</i>&nbsp;   *     while(true) { while(true) {
+<i>227</i>&nbsp;   *       // do nothing
+<i>228</i>&nbsp;   *     }}
+<i>229</i>&nbsp;   *   &lt;/pre&gt;
+<i>230</i>&nbsp;   *   will be changed into:
+<i>231</i>&nbsp;   *   &lt;pre&gt;
+<i>232</i>&nbsp;   *     while(true) {poison_pill(); 
+<i>233</i>&nbsp;   *       while(true) {poison_pill();
+<i>234</i>&nbsp;   *         // do nothing
+<i>235</i>&nbsp;   *       }
+<i>236</i>&nbsp;   *     }
+<i>237</i>&nbsp;   *   &lt;/pre&gt;
+<i>238</i>&nbsp;   *   which finish nicely when interrupted.
+<i>239</i>&nbsp;   * &lt;p&gt;
+<i>240</i>&nbsp;   *   For legacy code, this check can be turned off, but with no guarantee, the
+<i>241</i>&nbsp;   *   JS thread will gracefully finish when interrupted.
+<i>242</i>&nbsp;   * &lt;/p&gt;
+<i>243</i>&nbsp;   * 
+<i>244</i>&nbsp;   * @param v &lt;code&gt;true&lt;/code&gt; when sandbox should check if all required braces 
+<i>245</i>&nbsp;   *      are placed into JS code, &lt;code&gt;false&lt;/code&gt; when no check should be 
+<i>246</i>&nbsp;   *      performed
+<i>247</i>&nbsp;   */
+<i>248</i>&nbsp;  void allowNoBraces(boolean v);
+<i>249</i>&nbsp;  
+<i>250</i>&nbsp;  /**
+<i>251</i>&nbsp;   * The size of prepared statements LRU cache. Default 0 (disabled).
+<i>252</i>&nbsp;   * &lt;p&gt;
+<i>253</i>&nbsp;   *   Each statements when {@link #setMaxCPUTime(long)} is set is prepared to
+<i>254</i>&nbsp;   *   quit itself when time exceeded. To execute only once this procedure per
+<i>255</i>&nbsp;   *   statment set this value.
+<i>256</i>&nbsp;   * &lt;/p&gt;
+<i>257</i>&nbsp;   * &lt;p&gt;
+<i>258</i>&nbsp;   *   When {@link #setMaxCPUTime(long)} is set 0, this value is ignored.
+<i>259</i>&nbsp;   * &lt;/p&gt;
+<i>260</i>&nbsp;   * 
+<i>261</i>&nbsp;   * @param max the maximum number of statements in the LRU cache
+<i>262</i>&nbsp;   */
+<i>263</i>&nbsp;  void setMaxPreparedStatements(int max);
+<i>264</i>&nbsp;  
+<i>265</i>&nbsp;  /**
+<i>266</i>&nbsp;   * Create new bindings used to replace the state of the current script engine
+<i>267</i>&nbsp;   * &lt;p&gt;
+<i>268</i>&nbsp;   * 	This can be typically used to override ECMAScript &quot;global&quot; properties
+<i>269</i>&nbsp;   * &lt;/p&gt;
+<i>270</i>&nbsp;   * 
+<i>271</i>&nbsp;   * @return
+<i>272</i>&nbsp;   */
+<i>273</i>&nbsp;  Bindings createBindings();
+<i>274</i>&nbsp;
+<i>275</i>&nbsp;  /**
+<i>276</i>&nbsp;   * Returns an {@link Invocable} instance, so that method invocations are also sandboxed.
+<i>277</i>&nbsp;   * @return
+<i>278</i>&nbsp;   */
+<i>279</i>&nbsp;  Invocable getSandboxedInvocable();
+<i>280</i>&nbsp;
+<i>281</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2018-03-23 16:22</div>
+</div>
+</body>
+</html>

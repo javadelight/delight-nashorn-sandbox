@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SandboxClassFilter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">delight.nashornsandbox.internal</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SandboxClassFilter (delight.nashornsandbox.internal)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SandboxClassFilter</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (15/ 15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package delight.nashornsandbox.internal;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.HashSet;
+<i>4</i>&nbsp;import java.util.Set;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import jdk.nashorn.api.scripting.ClassFilter;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;/**
+<i>9</i>&nbsp; * The class Filter.
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; * &lt;p&gt;Created on 2015-08-07&lt;/p&gt;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp; * @author &lt;a href=&quot;mailto:mxro@nowhere.com&gt;mxro&lt;/a&gt;
+<i>14</i>&nbsp; * @author &lt;a href=&quot;mailto:eduveks@gmail.com&quot;&gt;Eduardo Velasques&lt;/a&gt;
+<i>15</i>&nbsp; * @author &lt;a href=&quot;mailto:marcin.golebski@verbis.pl&quot;&gt;Marcin Golebski&lt;/a&gt;
+<i>16</i>&nbsp; * @version $Id$
+<i>17</i>&nbsp; */
+<i>18</i>&nbsp;@SuppressWarnings(&quot;restriction&quot;)
+<i>19</i>&nbsp;class SandboxClassFilter implements ClassFilter {
+<i>20</i>&nbsp;  private final Set&lt;Class&lt;?&gt;&gt; allowed;
+<i>21</i>&nbsp;  private final Set&lt;String&gt; stringCache;
+<i>22</i>&nbsp;  
+<i>23</i>&nbsp;  @Override
+<i>24</i>&nbsp;  public boolean exposeToScripts(final String className) {
+<b class="fc"><i>25</i>&nbsp;    return stringCache.contains(className);</b>
+<i>26</i>&nbsp;  }
+<i>27</i>&nbsp;  
+<i>28</i>&nbsp;  public void add(final Class&lt;?&gt; clazz) {
+<b class="fc"><i>29</i>&nbsp;    allowed.add(clazz);</b>
+<b class="fc"><i>30</i>&nbsp;    stringCache.add(clazz.getName());</b>
+<b class="fc"><i>31</i>&nbsp;  }</b>
+<i>32</i>&nbsp;  
+<i>33</i>&nbsp;  public void remove(final Class&lt;?&gt; clazz) {
+<b class="fc"><i>34</i>&nbsp;    allowed.remove(clazz);</b>
+<b class="fc"><i>35</i>&nbsp;    stringCache.remove(clazz.getName());</b>
+<b class="fc"><i>36</i>&nbsp;  }</b>
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;  public void clear() {
+<b class="fc"><i>39</i>&nbsp;    allowed.clear();</b>
+<b class="fc"><i>40</i>&nbsp;    stringCache.clear();</b>
+<b class="fc"><i>41</i>&nbsp;  }</b>
+<i>42</i>&nbsp;  
+<i>43</i>&nbsp;  public boolean contains(final Class&lt;?&gt; clazz) {
+<b class="fc"><i>44</i>&nbsp;    return allowed.contains(clazz);</b>
+<i>45</i>&nbsp;  }
+<i>46</i>&nbsp;  
+<b class="fc"><i>47</i>&nbsp;  public SandboxClassFilter() {</b>
+<b class="fc"><i>48</i>&nbsp;    allowed = new HashSet&lt;&gt;();</b>
+<b class="fc"><i>49</i>&nbsp;    stringCache = new HashSet&lt;&gt;();</b>
+<b class="fc"><i>50</i>&nbsp;  }</b>
+<i>51</i>&nbsp;  
+<i>52</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2018-03-23 16:22</div>
+</div>
+</body>
+</html>
