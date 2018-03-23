@@ -1,17 +1,16 @@
 package delight.nashornsandbox.internal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import org.junit.Before;
-import org.junit.Test;
 
 import delight.nashornsandbox.exceptions.BracesException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * JUnit test for {@link JsSanitizer}.
@@ -29,7 +28,7 @@ public class JsSanitizerTest {
     scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
   }
     
-  @Before
+  @BeforeEach
   public void setUp()
   {
     jsSanitizer = new JsSanitizer(scriptEngine, 0, false);
@@ -89,7 +88,7 @@ public class JsSanitizerTest {
     final String js2 = "while(true) {sum(a) + avg(b);}";
     assertFalse(js2.equals(jsSanitizer.secureJs(js2)));
   }
-  
+
   @Test
   public void testCheckBracess() throws Exception {
     badBracesTest("while(true) a = 1;");

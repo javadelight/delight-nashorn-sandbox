@@ -5,10 +5,12 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import org.junit.Assert;
-import org.junit.Test;
 
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestEvalWithScriptContextWithNewBindings {
 	@Test
@@ -21,7 +23,7 @@ public class TestEvalWithScriptContextWithNewBindings {
 		newContext.setBindings(newBinding, ScriptContext.ENGINE_SCOPE);
 
 		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newContext);
-		Assert.assertEquals(2112018.0, res);
+		assertEquals(2112018.0, res);
 	}
 
 	@Test
@@ -34,6 +36,6 @@ public class TestEvalWithScriptContextWithNewBindings {
 		newBinding.put("Date", "2112018");
 
 		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newContext);
-		Assert.assertTrue(Double.isNaN((Double)res));
+		assertTrue(Double.isNaN((Double)res));
 	}
 }

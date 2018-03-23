@@ -1,24 +1,29 @@
 package delight.nashornsandbox;
 
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.Test;
+
 import javax.script.ScriptException;
 
-import org.junit.Test;
-
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
-import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SuppressWarnings("all")
 public class TestInaccessible {
-  @Test(expected = Exception.class)
-  public void test_system_exit() throws ScriptCPUAbuseException, ScriptException {
-    final NashornSandbox sandbox = NashornSandboxes.create();
-    sandbox.eval("java.lang.System.exit(0);");
-  }
-  
-  @Test(expected = Exception.class)
-  public void test_file() throws ScriptCPUAbuseException, ScriptException {
-    final NashornSandbox sandbox = NashornSandboxes.create();
-    sandbox.eval("var File = Java.type(\"java.io.File\"); File;");
-  }
+    @Test()
+    public void test_system_exit() throws ScriptCPUAbuseException, ScriptException {
+        final NashornSandbox sandbox = NashornSandboxes.create();
+        assertThrows(Exception.class, () -> {
+            sandbox.eval("java.lang.System.exit(0);");
+        });
+
+    }
+
+    @Test()
+    public void test_file() throws ScriptCPUAbuseException, ScriptException {
+        final NashornSandbox sandbox = NashornSandboxes.create();
+        assertThrows(Exception.class, () -> {
+
+            sandbox.eval("var File = Java.type(\"java.io.File\"); File;");
+        });
+    }
 }

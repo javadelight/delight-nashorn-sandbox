@@ -1,23 +1,21 @@
 package delight.nashornsandbox;
 
-import org.junit.Test;
-
 import delight.nashornsandbox.internal.RemoveComments;
-import junit.framework.Assert;
+import delight.nashornsandbox.providers.CommentedProvider;
+import delight.nashornsandbox.providers.Pair;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestRemoveComments {
 
-	@Test
-	public void test() {
-		
-		Assert.assertEquals("var url = 'http://hello.com'", RemoveComments.perform("var url = 'http://hello.com'"));
-		
-		Assert.assertEquals("var url = \"http://hello.com\"", RemoveComments.perform("var url = \"http://hello.com\""));
-		
-		Assert.assertEquals("var url = 'http://hello.com';", RemoveComments.perform("var url = 'http://hello.com';// mycomment"));
-		
-		Assert.assertEquals("var url = 'http://hello.com'", RemoveComments.perform("/* whatisthis */var url = 'http://hello.com'"));
-		
-	}
-	
+    @Test
+    @RepeatedTest(CommentedProvider.testCount)
+    @ExtendWith(CommentedProvider.class)
+    public void test(Pair<String, String> values) {
+        assertEquals(values.getFirst(), RemoveComments.perform(values.getSecond()));
+    }
+
 }

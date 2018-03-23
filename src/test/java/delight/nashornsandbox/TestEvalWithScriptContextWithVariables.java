@@ -2,15 +2,15 @@ package delight.nashornsandbox;
 
 import java.util.concurrent.Executors;
 
-import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import org.junit.Assert;
-import org.junit.Test;
-
+import com.sun.tools.javac.util.Assert;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("all")
 public class TestEvalWithScriptContextWithVariables {
@@ -24,10 +24,10 @@ public class TestEvalWithScriptContextWithVariables {
     sandbox.eval("function cal() {var x = 2; return x;}", newContext2);
     
     final Object res1 = sandbox.eval("cal();", newContext1);
-    Assert.assertEquals(1, res1);
+    assertEquals(1, res1);
     
     final Object res2 = sandbox.eval("cal();", newContext2);
-    Assert.assertEquals(2, res2);
+    assertEquals(2, res2);
     
   }
   
@@ -44,10 +44,10 @@ public class TestEvalWithScriptContextWithVariables {
     sandbox.eval("function cal() {var x = 2; return x;}", newContext2);
     
     final Object res1 = sandbox.eval("cal();", newContext1);
-    Assert.assertEquals(1, res1);
+    assertEquals(1, res1);
     
     final Object res2 = sandbox.eval("cal();", newContext2);
-    Assert.assertEquals(2, res2);
+    assertEquals(2, res2);
     
   }
 }

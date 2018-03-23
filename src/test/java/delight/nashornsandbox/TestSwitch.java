@@ -4,11 +4,8 @@ import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
 
-import org.junit.Test;
-
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("all")
 public class TestSwitch {

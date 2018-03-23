@@ -1,19 +1,18 @@
 package delight.nashornsandbox;
 
+import delight.nashornsandbox.exceptions.BracesException;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-import javax.script.ScriptException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import delight.nashornsandbox.exceptions.BracesException;
-import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
-import junit.framework.Assert;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestIssue34 {
 
@@ -33,7 +32,7 @@ public class TestIssue34 {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(100); // in millis
@@ -59,7 +58,7 @@ public class TestIssue34 {
 
 		sandbox.eval(js);
 
-		Assert.assertTrue(logger.getOutput().contains("loop cnt-0"));
+		assertTrue(logger.getOutput().contains("loop cnt-0"));
 
 	}
 
@@ -78,7 +77,7 @@ public class TestIssue34 {
 			ex = t;
 		}
 
-		Assert.assertTrue(ex instanceof BracesException);
+		assertTrue(ex instanceof BracesException);
 
 	}
 
@@ -90,7 +89,7 @@ public class TestIssue34 {
 
 		sandbox.eval(js);
 
-		Assert.assertTrue(logger.getOutput().contains("loop cnt=6"));
+		assertTrue(logger.getOutput().contains("loop cnt=6"));
 
 	}
 	
@@ -107,7 +106,7 @@ public class TestIssue34 {
 		
 		sandbox.eval(js);
 
-		Assert.assertTrue(logger.getOutput().contains("loop cnt=6"));
+		assertTrue(logger.getOutput().contains("loop cnt=6"));
 
 	}
 	
@@ -124,7 +123,7 @@ public class TestIssue34 {
 			ex = t;
 		}
 
-		Assert.assertTrue(ex instanceof IllegalArgumentException);
+		assertTrue(ex instanceof IllegalArgumentException);
 
 	}
 
@@ -146,11 +145,11 @@ public class TestIssue34 {
 			ex = t;
 		}
 		
-		Assert.assertTrue(ex instanceof ScriptCPUAbuseException);
+		assertTrue(ex instanceof ScriptCPUAbuseException);
 
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		sandbox.getExecutor().shutdown();
 	}

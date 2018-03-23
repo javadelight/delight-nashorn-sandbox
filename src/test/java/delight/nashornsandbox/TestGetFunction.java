@@ -5,10 +5,10 @@ import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
 
-import org.junit.Test;
-
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
-import junit.framework.Assert;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestGetFunction {
 	
@@ -26,7 +26,7 @@ public class TestGetFunction {
 		sandbox.eval("function callMe() { return 42; };");
 		final Object _get = sandbox.get("callMe");
 		
-		Assert.assertTrue(_get != null);
+		assertTrue(_get != null);
 		
 		executor.shutdown();
 	}

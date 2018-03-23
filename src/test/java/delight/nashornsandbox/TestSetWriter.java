@@ -1,15 +1,12 @@
 package delight.nashornsandbox;
 
-import java.io.StringWriter;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.Test;
 
 import javax.script.ScriptException;
+import java.io.StringWriter;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
-import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("all")
 public class TestSetWriter {
@@ -22,6 +19,6 @@ public class TestSetWriter {
     sandbox.eval("print(\"Hi there!\");");
     // \n at the end of the string is not enough.
     // javascript adds an extra carrige return.
-    Assert.assertEquals("Hi there!\r\n", writer.toString());
+    assertEquals("Hi there!\r\n", writer.toString());
   }
 }

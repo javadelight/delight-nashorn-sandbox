@@ -1,15 +1,12 @@
 package delight.nashornsandbox;
 
-import java.util.concurrent.Executors;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.Test;
 
 import javax.script.ScriptException;
+import java.util.concurrent.Executors;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
-import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("all")
 public class TestManyEvalsAndInjections {
@@ -18,19 +15,19 @@ public class TestManyEvalsAndInjections {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.inject("num", Integer.valueOf(10));
     sandbox.eval("res = num + 1;");
-    Assert.assertEquals(Double.valueOf(11.0), sandbox.get("res"));
+    assertEquals(Double.valueOf(11.0), sandbox.get("res"));
     sandbox.inject("str", "20");
     sandbox.eval("res = num + str;");
-    Assert.assertEquals("1020", sandbox.get("res"));
+    assertEquals("1020", sandbox.get("res"));
     final NashornSandbox sandboxInterruption = NashornSandboxes.create();
     sandboxInterruption.setMaxCPUTime(50);
     sandboxInterruption.setExecutor(Executors.newSingleThreadExecutor());
     sandboxInterruption.eval("res = 1;");
     sandboxInterruption.inject("num", Integer.valueOf(10));
     sandboxInterruption.eval("res = num + 1;");
-    Assert.assertEquals(Double.valueOf(11.0), sandboxInterruption.get("res"));
+    assertEquals(Double.valueOf(11.0), sandboxInterruption.get("res"));
     sandboxInterruption.inject("str", "20");
     sandboxInterruption.eval("res = num + str;");
-    Assert.assertEquals("1020", sandboxInterruption.get("res"));
+    assertEquals("1020", sandboxInterruption.get("res"));
   }
 }

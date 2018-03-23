@@ -1,13 +1,11 @@
 package delight.nashornsandbox;
 
-import static org.junit.Assert.assertEquals;
-
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.Test;
 import javax.script.Invocable;
 import javax.script.ScriptException;
 
-import org.junit.Test;
-
-import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestInvocable {
 

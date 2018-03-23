@@ -3,18 +3,21 @@ package delight.nashornsandbox;
 import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings("all")
 public class TestExceptions {
-  @Test(expected = Exception.class)
+  @Test()
   public void test() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
-    sandbox.eval("blah_blah_blah();");
+    assertThrows(Exception.class,()->{
+      sandbox.eval("blah_blah_blah();");
+    });
   }
   
   @Test
@@ -30,7 +33,7 @@ public class TestExceptions {
         throw new RuntimeException(_t);
       }
     }
-    Assert.fail("Exception not thrown!");
+    fail("Exception not thrown!");
   }
   
   @Test
@@ -48,7 +51,7 @@ public class TestExceptions {
         throw new RuntimeException(_t);
       }
     }
-    Assert.fail("Exception not thrown!");
+    fail("Exception not thrown!");
   }
   
   @Test
@@ -71,12 +74,12 @@ public class TestExceptions {
       if (_t instanceof Throwable) {
         final Throwable t = _t;
         sandbox.getExecutor().shutdown();
-        Assert.assertTrue(t.getMessage().contains("4"));
+        assertTrue(t.getMessage().contains("4"));
         return;
       } else {
         throw new RuntimeException(_t);
       }
     }
-    Assert.fail("Exception not thrown!");
+    fail("Exception not thrown!");
   }
 }

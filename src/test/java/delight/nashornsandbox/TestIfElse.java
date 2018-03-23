@@ -1,15 +1,12 @@
 package delight.nashornsandbox;
 
-import java.util.concurrent.Executors;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.Test;
 
 import javax.script.ScriptException;
+import java.util.concurrent.Executors;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
-import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("all")
 public class TestIfElse {
@@ -24,7 +21,7 @@ public class TestIfElse {
     _builder.append("else\n");
     _builder.append("var y=2;\t\t\n");
     sandbox.eval(_builder.toString());
-    Assert.assertEquals(Integer.valueOf(1), sandbox.eval("x"));
+    assertEquals(Integer.valueOf(1), sandbox.eval("x"));
     final StringBuilder _builder_1 = new StringBuilder();
     _builder_1.append("for (var i=0;i<10;i++) {\n");
     _builder_1.append("    ");
@@ -37,7 +34,7 @@ public class TestIfElse {
     _builder_1.append("var y=4;\t\n");
     _builder_1.append("}\n");
     sandbox.eval(_builder_1.toString());
-    Assert.assertEquals(Integer.valueOf(4), sandbox.eval("y"));
+    assertEquals(Integer.valueOf(4), sandbox.eval("y"));
     sandbox.getExecutor().shutdown();
   }
 }

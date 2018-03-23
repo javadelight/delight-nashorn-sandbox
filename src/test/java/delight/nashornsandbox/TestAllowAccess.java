@@ -4,9 +4,8 @@ import java.io.File;
 
 import javax.script.ScriptException;
 
-import org.junit.Test;
-
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("all")
 public class TestAllowAccess {

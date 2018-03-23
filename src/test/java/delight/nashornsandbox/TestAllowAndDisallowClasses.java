@@ -5,10 +5,10 @@ import java.util.Objects;
 
 import javax.script.ScriptException;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings("all")
 public class TestAllowAndDisallowClasses {
@@ -19,12 +19,12 @@ public class TestAllowAndDisallowClasses {
     sandbox.allow(File.class);
     sandbox.eval(testClassScript);
     if (!sandbox.isAllowed(File.class)) {
-      Assert.fail("Expected class File is allowed.");
+      fail("Expected class File is allowed.");
     }
     sandbox.disallow(File.class);
     try {
       sandbox.eval(testClassScript);
-      Assert.fail("When disallow the File class expected a ClassNotFoundException!");
+      fail("When disallow the File class expected a ClassNotFoundException!");
     } 
     catch (final RuntimeException e) {
       if (((!(e.getCause() instanceof ClassNotFoundException)) || (!Objects.equals(e.getCause().getMessage(), "java.io.File")))) {
@@ -36,7 +36,7 @@ public class TestAllowAndDisallowClasses {
     sandbox.disallowAllClasses();
     try {
       sandbox.eval(testClassScript);
-      Assert.fail("When disallow all classes expected a ClassNotFoundException!");
+      fail("When disallow all classes expected a ClassNotFoundException!");
     } catch (final RuntimeException e) {
       if (((!(e.getCause() instanceof ClassNotFoundException)) || (!Objects.equals(e.getCause().getMessage(), "java.io.File")))) {
         throw e;

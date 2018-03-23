@@ -2,13 +2,11 @@ package delight.nashornsandbox;
 
 import javax.script.ScriptException;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("all")
 public class TestAccessFunction {
@@ -17,8 +15,8 @@ public class TestAccessFunction {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.eval("function callMe() { return 42; };");
     final Object _get = sandbox.get("callMe");
-    Assert.assertEquals(Integer.valueOf(42), ((ScriptObjectMirror) _get).call(this));
+    assertEquals(Integer.valueOf(42), ((ScriptObjectMirror) _get).call(this));
     final Object _eval = sandbox.eval("callMe");
-    Assert.assertEquals(Integer.valueOf(42), ((ScriptObjectMirror) _eval).call(this));
+    assertEquals(Integer.valueOf(42), ((ScriptObjectMirror) _eval).call(this));
   }
 }
