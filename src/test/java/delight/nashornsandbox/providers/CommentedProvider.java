@@ -15,7 +15,7 @@ public class CommentedProvider implements ParameterResolver {
     private Pair<String,String>[] scripts = new Pair[]{
             new Pair<>("var url = 'http://hello.com'", "var url = 'http://hello.com'"),
             new Pair<>("var url = \"http://hello.com\"", "var url = \"http://hello.com\""),
-            new Pair<>("var url = 'http://hello.com'", "var url = 'http://hello.com';// mycomment"),
+            new Pair<>("var url = 'http://hello.com';", "var url = 'http://hello.com';// mycomment"),
             new Pair<>("var url = 'http://hello.com'", "/* whatisthis */var url = 'http://hello.com'"),
     };
     //testCount is the count of scripts-1
