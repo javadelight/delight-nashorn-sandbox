@@ -1,5 +1,6 @@
-package delight.nashornsandbox;
+package delight.nashornsandbox.internal;
 
+import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,30 +12,20 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DisplayName("Java class access")
 public class JavaClassAccess {
     NashornSandbox sandbox;
     private final String testClassScript = "var File = Java.type('java.io.File'); File;";
     final String testDisallowedClassScript = "var List = Java.type('java.util.ArrayList'); List;";
+    SandboxClassFilter filter;
 
     @BeforeEach()
     void beforeEach() {
-        sandbox = NashornSandboxes.create();
+        filter = spy(SandboxClassFilter.class);
+        sandbox = new NashornSandboxImpl(filter);
         sandbox.allow(File.class);
-    }
-
-    @Test
-    @DisplayName("Injected java objects work properly")
-    void injection() throws ScriptException {
-        final Object _object = mock(Object.class);
-        when(_object.toString()).thenReturn("java Object");
-        sandbox.inject("fromJava", _object);
-        sandbox.allow(String.class);
-        sandbox.allow(Class.class);
-        assertEquals("java Object", sandbox.eval("fromJava.toString();"));
     }
 
     @Test()
@@ -80,6 +71,39 @@ public class JavaClassAccess {
         void checkDisAllowedClass() {
             assertFalse(sandbox.isAllowed(ArrayList.class));
         }
+    }
+
+    @Nested
+    @DisplayName("Injecting variables")
+    class Injecting {
+        MockObject _object;
+
+        private class MockObject {
+            @Override
+            public String toString() {
+                return "java Object";
+            }
+        }
+
+        @BeforeEach
+        void beforeEach() {
+            _object = mock(MockObject.class);
+            when(_object.toString()).thenReturn("java Object");
+            sandbox.inject("fromJava", _object);
+        }
+
+        @Test
+        @DisplayName("Injected java objects work properly")
+        void injection() throws ScriptException {
+            assertEquals("java Object", sandbox.eval("fromJava.toString();"));
+        }
+
+        @Test
+        @DisplayName("Type of injected variable is added to the filter")
+        void typeadded() {
+            verify(filter,times(1)).add(_object.getClass());
+        }
+
     }
 
 }
