@@ -11,9 +11,10 @@ import java.util.Iterator;
 public class CpuAbuseBracelessScriptProvider implements ParameterResolver {
     private final Iterator<String> iterator;
     //put any script here
-    private String[] scripts = {"var x;\n while(true) { } ",
+    private String[] scripts = {
             "var x; \n while(true);",
-            "var x=0;\nwhile (true) x++;\n"};
+            "var x=0;\nwhile (true) x++;\n",
+            "while (true) {};"};
     //testCount is the count of scripts-1
     public static final int testCount = 2;
 

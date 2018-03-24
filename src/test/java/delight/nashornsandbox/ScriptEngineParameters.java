@@ -4,7 +4,6 @@ import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import javax.script.ScriptException;
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,12 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Test for <a href='https://github.com/javadelight/delight-nashorn-sandbox/issues/40'>issue 40</a>.
  *
- * @author Max Rohde
+ * @author Max Rohde, András Kis
  */
-@DisplayName(" Ability to provide arguments to getScriptEngine")
-public class TestIssue40_ScriptEngineParameters {
+@DisplayName("Script engine creation with parameters")
+public class ScriptEngineParameters {
 
     @Test()
+    @DisplayName("--no-java")
     public void test() throws ScriptCPUAbuseException {
         final NashornSandbox sandbox = NashornSandboxes.create("--no-java");
         sandbox.allow(File.class);
@@ -26,5 +26,4 @@ public class TestIssue40_ScriptEngineParameters {
             sandbox.eval("var File = Java.type('java.io.File'); File;");
         });
     }
-
 }

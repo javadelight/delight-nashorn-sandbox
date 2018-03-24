@@ -8,26 +8,14 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class NiceCPUAbuseScriptProvider implements ParameterResolver {
-    private final Iterator<String> iterator;
+public class MemoryAbuseScriptProvider implements ParameterResolver {
+    private final Iterator<Pair<String, Integer>> iterator;
     //put any script here
-    private String[] scripts = {
-            "var i = 0; \nwhile (true); {i=1;}",
-            "var x = 0\n" +
-                    ";for (var i=0;i<=100000000000;i++) {\n" +
-                    "\t" +
-                    "x = x + i;\n" +
-                    "}\n",
-            "var x = 0;\n" +
-                    "for (var i=0;i<=100000000000;i++) {\n" +
-                    "\t" +
-                    "x = x + i;\n" +
-                    "}\n",
-            "var x = 0;\ndo{x++;\n}while(true);\n"};
+    private Pair<String,Integer>[] scripts = new Pair[]{new Pair<>("\"var o={},i=0; while (true) {o[i++] = 'abc'}\"", 700 * 1024)};
     //testCount is the count of scripts-1
-    public static final int testCount = 3;
+    public static final int testCount = 0;
 
-    NiceCPUAbuseScriptProvider() {
+    MemoryAbuseScriptProvider() {
         iterator = Arrays.stream(scripts).iterator();
     }
 
