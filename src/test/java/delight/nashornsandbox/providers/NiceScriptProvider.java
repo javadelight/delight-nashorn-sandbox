@@ -12,12 +12,19 @@ public class NiceScriptProvider implements ParameterResolver {
     private final Iterator<String> iterator;
     //put any script here
     private String[] scripts = {"var x = 1;\n",
-            "for (var i=0;i<=1000;i++) {\n" +
+            "var x = 1 + 1;" +
+                    "for (var i=0;i<=1000;i++) {\n" +
                     "\t" +
                     "x = x + i\n" +
-                    "}\n"};
-    //testCount is the count of scripts-1
-    public static final int testCount = 1;
+                    "}\n",
+            " x;",
+            "function preProcessor()\n" +
+                    "{\n" +
+                    "var map =  { \"inputparam\": \" for \" };\n"
+                    + "}\n"
+                    + "preProcessor();",
+            "done = false;"};
+    public static final int testCount = 3;
 
     NiceScriptProvider() {
         iterator = Arrays.stream(scripts).iterator();

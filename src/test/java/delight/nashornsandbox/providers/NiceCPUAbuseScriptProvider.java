@@ -24,8 +24,8 @@ public class NiceCPUAbuseScriptProvider implements ParameterResolver {
                     "x = x + i;\n" +
                     "}\n",
             "var x = 0;\ndo{x++;\n}while(true);\n"};
-    //testCount is the count of scripts-1
-    public static final int testCount = 3;
+
+    public static final int testCount = 4;
 
     NiceCPUAbuseScriptProvider() {
         iterator = Arrays.stream(scripts).iterator();

@@ -14,8 +14,11 @@ public class CpuAbuseBracelessScriptProvider implements ParameterResolver {
     private String[] scripts = {
             "var x; \n while(true);",
             "var x=0;\nwhile (true) x++;\n",
-            "while (true) {};"};
-    //testCount is the count of scripts-1
+            //Todo check the validity of this script.
+            //according to the old tests, it looks like it should be filtered.
+            //"while (true) {};"
+    };
+
     public static final int testCount = 2;
 
     CpuAbuseBracelessScriptProvider() {

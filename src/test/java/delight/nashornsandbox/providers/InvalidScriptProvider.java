@@ -8,25 +8,26 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class CommentedProvider implements ParameterResolver {
-    private Iterator<Pair<String,String>> iterator;
-    //put any script here
-    @SuppressWarnings("unchecked")
-    private Pair<String,String>[] scripts = new Pair[]{
-            new Pair<>("var url = 'http://hello.com'", "var url = 'http://hello.com'"),
-            new Pair<>("var url = \"http://hello.com\"", "var url = \"http://hello.com\""),
-            new Pair<>("var url = 'http://hello.com';", "var url = 'http://hello.com';// mycomment"),
-            new Pair<>("var url = 'http://hello.com'", "/* whatisthis */var url = 'http://hello.com'"),
-    };
-    public static final int testCount = 4;
 
-    CommentedProvider() {
+public class InvalidScriptProvider implements ParameterResolver {
+    private final Iterator<String> iterator;
+    //put any script here
+    private String[] scripts = {
+            "function preProcessor()\n"+
+                    "{\n"+
+                    "var map =  { \"inputparam\": \"l\" }; for (;;); \n"+
+                    "}\n"+
+                    "preProcessor();","val x = 0"
+           };
+    public static final int testCount = 2;
+
+    InvalidScriptProvider() {
         iterator = Arrays.stream(scripts).iterator();
     }
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return parameterContext.getParameter().getType().isInstance(scripts[0]);
+        return parameterContext.getParameter().getType().isInstance("asd");
     }
 
     @Override

@@ -11,9 +11,9 @@ import java.util.Iterator;
 public class MemoryAbuseScriptProvider implements ParameterResolver {
     private final Iterator<Pair<String, Integer>> iterator;
     //put any script here
-    private Pair<String,Integer>[] scripts = new Pair[]{new Pair<>("\"var o={},i=0; while (true) {o[i++] = 'abc'}\"", 700 * 1024)};
+    private Pair<String,Integer>[] scripts = new Pair[]{new Pair<>("\"var o={},var i=0; while (true) {o[i++] = 'abc'}\"", 700 * 1024)};
     //testCount is the count of scripts-1
-    public static final int testCount = 0;
+    public static final int testCount = 1;
 
     MemoryAbuseScriptProvider() {
         iterator = Arrays.stream(scripts).iterator();
@@ -21,7 +21,7 @@ public class MemoryAbuseScriptProvider implements ParameterResolver {
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return parameterContext.getParameter().getType().isInstance("asd");
+        return parameterContext.getParameter().getType().isInstance(scripts[0]);
     }
 
     @Override
