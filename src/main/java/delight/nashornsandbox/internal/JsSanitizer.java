@@ -178,7 +178,22 @@ class JsSanitizer {
 			final Matcher matcher = pattern.matcher(RemoveComments.perform(beautifiedJs));
 			if (matcher.find()) {
 				
-				throw new BracesException("No block braces after function|for|while|do. Found ["+matcher.group()+"]");
+				String line = "";
+				int index = matcher.start();
+				while (index >= 0 && beautifiedJs.charAt(index) != '\n' ) {
+					line = beautifiedJs.charAt(index)+line;
+					index--;
+				}
+				
+				int singleParaCount = line.length() - line.replace("'", "").length();
+				int doubleParaCount = line.length() - line.replace("\"", "").length();
+				
+				if (singleParaCount % 2 != 0 || doubleParaCount % 2 != 0) {
+					// for in string
+					
+				} else {
+					throw new BracesException("No block braces after function|for|while|do. Found ["+matcher.group()+"]");
+				}
 			}
 		}
 	}
