@@ -78,7 +78,7 @@ public class ThreadMonitor {
 		threadToMonitor = null;
 	}
 
-	@SuppressWarnings("deprecation")
+	//@SuppressWarnings("deprecation")
 	void run() {
 		try {
 			// wait, for threadToMonitor to be set in JS evaluator thread
@@ -107,14 +107,14 @@ public class ThreadMonitor {
 					}
 					if (!scriptFinished.get()) {
 						LOG.error(this.getClass().getSimpleName() + ": Thread hard shutdown!");
-						threadToMonitor.stop();
+						//threadToMonitor.stop();
+                        //interrupt instead of the depracated stop() method
+						threadToMonitor.interrupt();
 						scriptKilled.set(true);
 					}
 					return;
-				} else {
-					
 				}
-				synchronized (monitor) {
+                synchronized (monitor) {
 					long waitTime = getCheckInterval(runtime);
 					
 					if (waitTime == 0) {
