@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-//Todo add actual descriptions to the nature of these scenarios
+//Todo add actual descriptions to the nature of these scenarios. If we know exactly what they were about, than we can merge the scripts into the correct resolvers, because this test looks pretty redundant.
 @DisplayName("Failed to restrict the cpu and memory utilization")
 public class TestIssue34 {
 

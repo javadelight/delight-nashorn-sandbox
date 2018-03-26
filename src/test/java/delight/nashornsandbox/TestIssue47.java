@@ -10,6 +10,8 @@ import org.junit.Test;
 import delight.nashornsandbox.exceptions.BracesException;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
+
+//Todo Needs description on what exactly happens here
 public class TestIssue47 {
 
 	@Test
