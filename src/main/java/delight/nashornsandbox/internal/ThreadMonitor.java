@@ -83,7 +83,9 @@ public class ThreadMonitor {
 		try {
 			// wait, for threadToMonitor to be set in JS evaluator thread
 			synchronized (monitor) {
-				monitor.wait(maxCPUTime / MILI_TO_NANO);
+				if (threadToMonitor == null) {
+					monitor.wait(maxCPUTime / MILI_TO_NANO);
+				}
 			}
 			if (threadToMonitor == null) {
 				throw new IllegalStateException("Executor thread not set after " + maxCPUTime / MILI_TO_NANO + " ms");
