@@ -17,7 +17,7 @@ public class TestIssue57 {
 	@Test
 	public void testMapReduce() throws ScriptException {
 		String script = "[1,2,3,4].map(function(n){return n+1}).reduce(function(prev,cur){return prev+cur}, 0)";
-		String[] NASHORN_ARGS = { "--no-java", "--no-syntax-extensions" };
+		String[] NASHORN_ARGS = { "--no-syntax-extensions" };
 
 		Double nashornResult = (Double) new NashornScriptEngineFactory().getScriptEngine(NASHORN_ARGS).eval(script);
 		assertEquals(14, nashornResult.intValue());
