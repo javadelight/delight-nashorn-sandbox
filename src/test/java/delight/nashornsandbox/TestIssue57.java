@@ -12,7 +12,7 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
  * @author Max
  *
  */
-public class TestIssue56 {
+public class TestIssue57 {
 
 	@Test
 	public void testMapReduce() throws ScriptException {
