@@ -1,0 +1,133 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EvaluateOperation</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">delight.nashornsandbox.internal</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EvaluateOperation (delight.nashornsandbox.internal)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EvaluateOperation</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (2/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    64,7%
+  </span>
+  <span class="absValue">
+    (11/ 17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package delight.nashornsandbox.internal;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javax.script.Bindings;
+<i>4</i>&nbsp;import javax.script.ScriptContext;
+<i>5</i>&nbsp;import javax.script.ScriptEngine;
+<i>6</i>&nbsp;import javax.script.ScriptException;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import static delight.nashornsandbox.internal.NashornSandboxImpl.LOG;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;public class EvaluateOperation implements ScriptEngineOperation {
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    private final String js;
+<i>13</i>&nbsp;    private final ScriptContext scriptContext;
+<i>14</i>&nbsp;    private final Bindings bindings;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    public String getJs() {
+<b class="nc"><i>17</i>&nbsp;        return js;</b>
+<i>18</i>&nbsp;    }
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    public ScriptContext getScriptContext() {
+<b class="nc"><i>21</i>&nbsp;        return scriptContext;</b>
+<i>22</i>&nbsp;    }
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    public Bindings getBindings() {
+<b class="nc"><i>25</i>&nbsp;        return bindings;</b>
+<i>26</i>&nbsp;    }
+<i>27</i>&nbsp;
+<b class="fc"><i>28</i>&nbsp;    public EvaluateOperation(String js, ScriptContext scriptContext, Bindings bindings) {</b>
+<b class="fc"><i>29</i>&nbsp;        this.js = js;</b>
+<b class="fc"><i>30</i>&nbsp;        this.scriptContext = scriptContext;</b>
+<b class="fc"><i>31</i>&nbsp;        this.bindings = bindings;</b>
+<b class="fc"><i>32</i>&nbsp;    }</b>
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    @Override
+<i>35</i>&nbsp;    public Object executeScriptEngineOperation(ScriptEngine scriptEngine) throws ScriptException {
+<b class="fc"><i>36</i>&nbsp;        if (LOG.isDebugEnabled()) {</b>
+<b class="nc"><i>37</i>&nbsp;            LOG.debug(&quot;--- Running JS ---&quot;);</b>
+<b class="nc"><i>38</i>&nbsp;            LOG.debug(js);</b>
+<b class="nc"><i>39</i>&nbsp;            LOG.debug(&quot;--- JS END ---&quot;);</b>
+<i>40</i>&nbsp;        }
+<i>41</i>&nbsp;
+<b class="fc"><i>42</i>&nbsp;        if (bindings != null) {</b>
+<b class="fc"><i>43</i>&nbsp;            return scriptEngine.eval(js, bindings);</b>
+<b class="fc"><i>44</i>&nbsp;        } else if (scriptContext != null) {</b>
+<b class="fc"><i>45</i>&nbsp;            return scriptEngine.eval(js, scriptContext);</b>
+<i>46</i>&nbsp;        } else {
+<b class="fc"><i>47</i>&nbsp;            return scriptEngine.eval(js);</b>
+<i>48</i>&nbsp;        }
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2018-03-23 17:11</div>
+</div>
+</body>
+</html>

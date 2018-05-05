@@ -1,0 +1,481 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: NashornSandboxImpl</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">delight.nashornsandbox.internal</a> ]
+</div>
+
+<h1>Coverage Summary for Class: NashornSandboxImpl (delight.nashornsandbox.internal)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NashornSandboxImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    88,2%
+  </span>
+  <span class="absValue">
+    (30/ 34)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    84,1%
+  </span>
+  <span class="absValue">
+    (116/ 138)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">NashornSandboxImpl$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (2/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33,3%
+  </span>
+  <span class="absValue">
+    (5/ 15)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    82,1%
+  </span>
+  <span class="absValue">
+    (32/ 39)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    79,1%
+  </span>
+  <span class="absValue">
+    (121/ 153)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package delight.nashornsandbox.internal;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.Writer;
+<i>4</i>&nbsp;import java.util.concurrent.ExecutorService;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import javax.script.Bindings;
+<i>7</i>&nbsp;import javax.script.Invocable;
+<i>8</i>&nbsp;import javax.script.ScriptContext;
+<i>9</i>&nbsp;import javax.script.ScriptEngine;
+<i>10</i>&nbsp;import javax.script.ScriptException;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import org.slf4j.Logger;
+<i>13</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import delight.nashornsandbox.NashornSandbox;
+<i>16</i>&nbsp;import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+<i>17</i>&nbsp;import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
+<i>18</i>&nbsp;import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;/**
+<i>21</i>&nbsp; * Nashorn sandbox implementation.
+<i>22</i>&nbsp; *
+<i>23</i>&nbsp; * &lt;p&gt;
+<i>24</i>&nbsp; * Created on 2015-08-07
+<i>25</i>&nbsp; * &lt;/p&gt;
+<i>26</i>&nbsp; *
+<i>27</i>&nbsp; * @author &lt;a href=&quot;mailto:mxro@nowhere.com&quot;&gt;mxro&lt;/a&gt;
+<i>28</i>&nbsp; * @author &lt;a href=&quot;mailto:mellster2000@yahoo.com&quot;&gt;Marco Ellwanger&lt;/a&gt;
+<i>29</i>&nbsp; * @author &lt;a href=&quot;mailto:dev@youness.org&quot;&gt;Youness SAHOUANE&lt;/a&gt;
+<i>30</i>&nbsp; * @author &lt;a href=&quot;mailto:eduveks@gmail.com&quot;&gt;Eduardo Velasques&lt;/a&gt;
+<i>31</i>&nbsp; * @author &lt;a href=&quot;mailto:philip.borgstrom@gmail.com&quot;&gt;philipborg&lt;/a&gt;
+<i>32</i>&nbsp; * @author &lt;a href=&quot;mailto:marcin.golebski@verbis.pl&quot;&gt;Marcin Golebski&lt;/a&gt;
+<i>33</i>&nbsp; * @version $Id$
+<i>34</i>&nbsp; */
+<i>35</i>&nbsp;@SuppressWarnings(&quot;restriction&quot;)
+<b class="fc"><i>36</i>&nbsp;public class NashornSandboxImpl implements NashornSandbox {</b>
+<i>37</i>&nbsp;
+<b class="fc"><i>38</i>&nbsp;	static final Logger LOG = LoggerFactory.getLogger(NashornSandbox.class);</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;	protected final SandboxClassFilter sandboxClassFilter;
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;	protected final ScriptEngine scriptEngine;
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;	/** Maximum CPU time in milliseconds. */
+<b class="fc"><i>45</i>&nbsp;	protected long maxCPUTime = 0L;</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;	/** Maximum memory of executor thread used. */
+<b class="fc"><i>48</i>&nbsp;	protected long maxMemory = 0L;</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;	protected ExecutorService executor;
+<i>51</i>&nbsp;
+<b class="fc"><i>52</i>&nbsp;	protected boolean allowPrintFunctions = false;</b>
+<i>53</i>&nbsp;
+<b class="fc"><i>54</i>&nbsp;	protected boolean allowReadFunctions = false;</b>
+<i>55</i>&nbsp;
+<b class="fc"><i>56</i>&nbsp;	protected boolean allowLoadFunctions = false;</b>
+<i>57</i>&nbsp;
+<b class="fc"><i>58</i>&nbsp;	protected boolean allowExitFunctions = false;</b>
+<i>59</i>&nbsp;
+<b class="fc"><i>60</i>&nbsp;	protected boolean allowGlobalsObjects = false;</b>
+<i>61</i>&nbsp;
+<b class="fc"><i>62</i>&nbsp;	protected boolean allowNoBraces = false;</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;	protected JsEvaluator evaluator;
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;	protected JsSanitizer sanitizer;
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;	protected boolean engineAsserted;
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;	protected Invocable lazyInvocable;
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;	/** The size of the LRU cache of prepared statemensts. */
+<i>73</i>&nbsp;	protected int maxPreparedStatements;
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;	public NashornSandboxImpl() {
+<b class="fc"><i>76</i>&nbsp;		this(new String[0]);</b>
+<b class="fc"><i>77</i>&nbsp;	}</b>
+<i>78</i>&nbsp;	
+<b class="fc"><i>79</i>&nbsp;	public NashornSandboxImpl(String... params) {</b>
+<b class="fc"><i>80</i>&nbsp;		this.maxPreparedStatements = 0;</b>
+<b class="fc"><i>81</i>&nbsp;		this.sandboxClassFilter = new SandboxClassFilter();</b>
+<b class="fc"><i>82</i>&nbsp;		final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();</b>
+<i>83</i>&nbsp;		
+<b class="fc"><i>84</i>&nbsp;		this.scriptEngine = factory.getScriptEngine(params, this.getClass().getClassLoader(), this.sandboxClassFilter);</b>
+<i>85</i>&nbsp;		
+<b class="fc"><i>86</i>&nbsp;		this.allow(InterruptTest.class);</b>
+<b class="fc"><i>87</i>&nbsp;	}</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;	private void assertScriptEngine() {
+<i>90</i>&nbsp;		try {
+<b class="fc"><i>91</i>&nbsp;			final StringBuilder sb = new StringBuilder();</b>
+<b class="fc"><i>92</i>&nbsp;			Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);</b>
+<b class="fc"><i>93</i>&nbsp;			if (!allowExitFunctions) {</b>
+<i>94</i>&nbsp;				
+<b class="fc"><i>95</i>&nbsp;				bindings.remove(&quot;quit&quot;);</b>
+<b class="fc"><i>96</i>&nbsp;				bindings.remove(&quot;exit&quot;);</b>
+<b class="fc"><i>97</i>&nbsp;				sb.append(&quot;var quit=function(){};var exit=function(){};&quot;);</b>
+<i>98</i>&nbsp;			}
+<b class="fc"><i>99</i>&nbsp;			if (!allowPrintFunctions) {</b>
+<b class="fc"><i>100</i>&nbsp;				bindings.remove(&quot;print&quot;);</b>
+<b class="fc"><i>101</i>&nbsp;				bindings.remove(&quot;echo&quot;);</b>
+<b class="fc"><i>102</i>&nbsp;				sb.append(&quot;var print=function(){};var echo = function(){};&quot;);</b>
+<i>103</i>&nbsp;			}
+<b class="fc"><i>104</i>&nbsp;			if (!allowReadFunctions) {</b>
+<b class="fc"><i>105</i>&nbsp;				bindings.remove(&quot;readFully&quot;);</b>
+<b class="fc"><i>106</i>&nbsp;				bindings.remove(&quot;readLine&quot;);</b>
+<b class="fc"><i>107</i>&nbsp;				sb.append(&quot;var readFully=function(){};&quot;).append(&quot;var readLine=function(){};&quot;);</b>
+<i>108</i>&nbsp;			}
+<b class="fc"><i>109</i>&nbsp;			if (!allowLoadFunctions) {</b>
+<b class="fc"><i>110</i>&nbsp;				bindings.remove(&quot;load&quot;);</b>
+<b class="fc"><i>111</i>&nbsp;				bindings.remove(&quot;loadWithNewGlobal&quot;);</b>
+<b class="fc"><i>112</i>&nbsp;				sb.append(&quot;var load=function(){};var loadWithNewGlobal=function(){};&quot;);</b>
+<i>113</i>&nbsp;			}
+<b class="fc"><i>114</i>&nbsp;			if (!allowGlobalsObjects) {</b>
+<i>115</i>&nbsp;				// Max 22nd of Feb 2018: I don&#39;t think these are strictly necessary since they are only available in scripting mode
+<b class="fc"><i>116</i>&nbsp;				sb.append(&quot;var $ARG=null;var $ENV=null;var $EXEC=null;&quot;);</b>
+<b class="fc"><i>117</i>&nbsp;				sb.append(&quot;var $OPTIONS=null;var $OUT=null;var $ERR=null;var $EXIT=null;&quot;);</b>
+<i>118</i>&nbsp;			}
+<b class="fc"><i>119</i>&nbsp;			scriptEngine.eval(sb.toString());</b>
+<b class="nc"><i>120</i>&nbsp;		} catch (final Exception e) {</b>
+<b class="nc"><i>121</i>&nbsp;			throw new RuntimeException(e);</b>
+<b class="fc"><i>122</i>&nbsp;		}</b>
+<b class="fc"><i>123</i>&nbsp;	}</b>
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;	@Override
+<i>126</i>&nbsp;	public Object eval(final String js) throws ScriptCPUAbuseException, ScriptException {
+<b class="fc"><i>127</i>&nbsp;		return eval(js, null,null);</b>
+<i>128</i>&nbsp;	}
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;	@Override
+<i>131</i>&nbsp;	public Object eval(String js, Bindings bindings) throws ScriptCPUAbuseException, ScriptException {
+<b class="fc"><i>132</i>&nbsp;		return eval(js,null,bindings);</b>
+<i>133</i>&nbsp;	}
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;	@Override
+<i>136</i>&nbsp;	public Object eval(String js, ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException {
+<b class="fc"><i>137</i>&nbsp;		return eval(js, scriptContext,null);</b>
+<i>138</i>&nbsp;	}
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;	@Override
+<i>141</i>&nbsp;	public Object eval(final String js, final ScriptContext scriptContext,final Bindings bindings)
+<i>142</i>&nbsp;			throws ScriptCPUAbuseException, ScriptException {
+<b class="fc"><i>143</i>&nbsp;		final JsSanitizer sanitizer = getSanitizer();</b>
+<b class="fc"><i>144</i>&nbsp;		final String securedJs = sanitizer.secureJs(js);</b>
+<b class="fc"><i>145</i>&nbsp;		EvaluateOperation op = new EvaluateOperation(securedJs, scriptContext,bindings);</b>
+<b class="fc"><i>146</i>&nbsp;		return executeSandboxedOperation(op);</b>
+<i>147</i>&nbsp;	}
+<i>148</i>&nbsp;
+<i>149</i>&nbsp;	private Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
+<b class="fc"><i>150</i>&nbsp;		if (!engineAsserted) {</b>
+<b class="fc"><i>151</i>&nbsp;			engineAsserted = true;</b>
+<b class="fc"><i>152</i>&nbsp;			assertScriptEngine();</b>
+<i>153</i>&nbsp;		}
+<i>154</i>&nbsp;		try {
+<b class="fc"><i>155</i>&nbsp;			if (maxCPUTime == 0 &amp;&amp; maxMemory == 0) {</b>
+<b class="fc"><i>156</i>&nbsp;				return op.executeScriptEngineOperation(scriptEngine);</b>
+<i>157</i>&nbsp;			}
+<b class="fc"><i>158</i>&nbsp;			checkExecutorPresence();</b>
+<b class="fc"><i>159</i>&nbsp;			final JsEvaluator evaluator = getEvaluator(op);</b>
+<b class="fc"><i>160</i>&nbsp;			executor.execute(evaluator);</b>
+<b class="fc"><i>161</i>&nbsp;			evaluator.runMonitor();</b>
+<b class="fc"><i>162</i>&nbsp;			if (evaluator.isCPULimitExceeded()) {</b>
+<b class="fc"><i>163</i>&nbsp;				throw new ScriptCPUAbuseException(</b>
+<i>164</i>&nbsp;						&quot;Script used more than the allowed [&quot; + maxCPUTime + &quot; ms] of CPU time.&quot;,
+<b class="fc"><i>165</i>&nbsp;						evaluator.isScriptKilled(), evaluator.getException());</b>
+<b class="fc"><i>166</i>&nbsp;			} else if (evaluator.isMemoryLimitExceeded()) {</b>
+<b class="fc"><i>167</i>&nbsp;				throw new ScriptMemoryAbuseException(</b>
+<i>168</i>&nbsp;						&quot;Script used more than the allowed [&quot; + maxMemory + &quot; B] of memory.&quot;,
+<b class="fc"><i>169</i>&nbsp;						evaluator.isScriptKilled(), evaluator.getException());</b>
+<i>170</i>&nbsp;			}
+<b class="fc"><i>171</i>&nbsp;			if (evaluator.getException() != null) {</b>
+<b class="fc"><i>172</i>&nbsp;				throw evaluator.getException();</b>
+<i>173</i>&nbsp;			}
+<b class="fc"><i>174</i>&nbsp;			return evaluator.getResult();</b>
+<b class="fc"><i>175</i>&nbsp;		} catch (RuntimeException | ScriptException e) {</b>
+<b class="fc"><i>176</i>&nbsp;			throw e;</b>
+<b class="nc"><i>177</i>&nbsp;		} catch (final Exception e) {</b>
+<b class="nc"><i>178</i>&nbsp;			throw new RuntimeException(e);</b>
+<i>179</i>&nbsp;		}
+<i>180</i>&nbsp;	}
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;	private JsEvaluator getEvaluator(ScriptEngineOperation op) {
+<b class="fc"><i>183</i>&nbsp;		return new JsEvaluator(scriptEngine, maxCPUTime, maxMemory, op);</b>
+<i>184</i>&nbsp;	}
+<i>185</i>&nbsp;
+<i>186</i>&nbsp;	private void checkExecutorPresence() {
+<b class="fc"><i>187</i>&nbsp;		if (executor == null) {</b>
+<b class="nc"><i>188</i>&nbsp;			throw new IllegalStateException(&quot;When a CPU time or memory limit is set, an executor &quot;</b>
+<i>189</i>&nbsp;					+ &quot;needs to be provided by calling .setExecutor(...)&quot;);
+<i>190</i>&nbsp;		}
+<b class="fc"><i>191</i>&nbsp;	}</b>
+<i>192</i>&nbsp;
+<i>193</i>&nbsp;	@Override
+<i>194</i>&nbsp;	public void setMaxCPUTime(final long limit) {
+<b class="fc"><i>195</i>&nbsp;		maxCPUTime = limit;</b>
+<b class="fc"><i>196</i>&nbsp;	}</b>
+<i>197</i>&nbsp;
+<i>198</i>&nbsp;	@Override
+<i>199</i>&nbsp;	public void setMaxMemory(final long limit) {
+<b class="fc"><i>200</i>&nbsp;		maxMemory = limit;</b>
+<b class="fc"><i>201</i>&nbsp;	}</b>
+<i>202</i>&nbsp;
+<i>203</i>&nbsp;	JsSanitizer getSanitizer() {
+<b class="fc"><i>204</i>&nbsp;		if (sanitizer == null) {</b>
+<b class="fc"><i>205</i>&nbsp;			sanitizer = new JsSanitizer(scriptEngine, maxPreparedStatements, allowNoBraces);</b>
+<i>206</i>&nbsp;		}
+<b class="fc"><i>207</i>&nbsp;		return sanitizer;</b>
+<i>208</i>&nbsp;	}
+<i>209</i>&nbsp;
+<i>210</i>&nbsp;	@Override
+<i>211</i>&nbsp;	public void allow(final Class&lt;?&gt; clazz) {
+<b class="fc"><i>212</i>&nbsp;		sandboxClassFilter.add(clazz);</b>
+<b class="fc"><i>213</i>&nbsp;	}</b>
+<i>214</i>&nbsp;
+<i>215</i>&nbsp;	@Override
+<i>216</i>&nbsp;	public void disallow(final Class&lt;?&gt; clazz) {
+<b class="fc"><i>217</i>&nbsp;		sandboxClassFilter.remove(clazz);</b>
+<b class="fc"><i>218</i>&nbsp;	}</b>
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;	@Override
+<i>221</i>&nbsp;	public boolean isAllowed(final Class&lt;?&gt; clazz) {
+<b class="fc"><i>222</i>&nbsp;		return sandboxClassFilter.contains(clazz);</b>
+<i>223</i>&nbsp;	}
+<i>224</i>&nbsp;
+<i>225</i>&nbsp;	@Override
+<i>226</i>&nbsp;	public void disallowAllClasses() {
+<b class="fc"><i>227</i>&nbsp;		sandboxClassFilter.clear();</b>
+<b class="fc"><i>228</i>&nbsp;	}</b>
+<i>229</i>&nbsp;
+<i>230</i>&nbsp;	@Override
+<i>231</i>&nbsp;	public void inject(final String variableName, final Object object) {
+<b class="fc"><i>232</i>&nbsp;		if (object != null &amp;&amp; !sandboxClassFilter.contains(object.getClass())) {</b>
+<b class="fc"><i>233</i>&nbsp;			allow(object.getClass());</b>
+<i>234</i>&nbsp;		}
+<b class="fc"><i>235</i>&nbsp;		scriptEngine.put(variableName, object);</b>
+<b class="fc"><i>236</i>&nbsp;	}</b>
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;	@Override
+<i>239</i>&nbsp;	public void setExecutor(final ExecutorService executor) {
+<b class="fc"><i>240</i>&nbsp;		this.executor = executor;</b>
+<b class="fc"><i>241</i>&nbsp;	}</b>
+<i>242</i>&nbsp;
+<i>243</i>&nbsp;	@Override
+<i>244</i>&nbsp;	public ExecutorService getExecutor() {
+<b class="fc"><i>245</i>&nbsp;		return executor;</b>
+<i>246</i>&nbsp;	}
+<i>247</i>&nbsp;
+<i>248</i>&nbsp;	@Override
+<i>249</i>&nbsp;	public Object get(final String variableName) {
+<b class="fc"><i>250</i>&nbsp;		return scriptEngine.get(variableName);</b>
+<i>251</i>&nbsp;	}
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;	@Override
+<i>254</i>&nbsp;	public void allowPrintFunctions(final boolean v) {
+<b class="fc"><i>255</i>&nbsp;		if (engineAsserted) {</b>
+<b class="nc"><i>256</i>&nbsp;			throw new IllegalStateException(&quot;Please set this property before calling eval.&quot;);</b>
+<i>257</i>&nbsp;		}
+<b class="fc"><i>258</i>&nbsp;		allowPrintFunctions = v;</b>
+<b class="fc"><i>259</i>&nbsp;	}</b>
+<i>260</i>&nbsp;
+<i>261</i>&nbsp;	@Override
+<i>262</i>&nbsp;	public void allowReadFunctions(final boolean v) {
+<b class="nc"><i>263</i>&nbsp;		if (engineAsserted) {</b>
+<b class="nc"><i>264</i>&nbsp;			throw new IllegalStateException(&quot;Please set this property before calling eval.&quot;);</b>
+<i>265</i>&nbsp;		}
+<b class="nc"><i>266</i>&nbsp;		allowReadFunctions = v;</b>
+<b class="nc"><i>267</i>&nbsp;	}</b>
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;	@Override
+<i>270</i>&nbsp;	public void allowLoadFunctions(final boolean v) {
+<b class="nc"><i>271</i>&nbsp;		if (engineAsserted) {</b>
+<b class="nc"><i>272</i>&nbsp;			throw new IllegalStateException(&quot;Please set this property before calling eval.&quot;);</b>
+<i>273</i>&nbsp;		}
+<b class="nc"><i>274</i>&nbsp;		allowLoadFunctions = v;</b>
+<b class="nc"><i>275</i>&nbsp;	}</b>
+<i>276</i>&nbsp;
+<i>277</i>&nbsp;	@Override
+<i>278</i>&nbsp;	public void allowExitFunctions(final boolean v) {
+<b class="nc"><i>279</i>&nbsp;		if (engineAsserted) {</b>
+<b class="nc"><i>280</i>&nbsp;			throw new IllegalStateException(&quot;Please set this property before calling eval.&quot;);</b>
+<i>281</i>&nbsp;		}
+<b class="nc"><i>282</i>&nbsp;		allowExitFunctions = v;</b>
+<b class="nc"><i>283</i>&nbsp;	}</b>
+<i>284</i>&nbsp;
+<i>285</i>&nbsp;	@Override
+<i>286</i>&nbsp;	public void allowGlobalsObjects(final boolean v) {
+<b class="nc"><i>287</i>&nbsp;		if (engineAsserted) {</b>
+<b class="nc"><i>288</i>&nbsp;			throw new IllegalStateException(&quot;Please set this property before calling eval.&quot;);</b>
+<i>289</i>&nbsp;		}
+<b class="nc"><i>290</i>&nbsp;		allowGlobalsObjects = v;</b>
+<b class="nc"><i>291</i>&nbsp;	}</b>
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;	@Override
+<i>294</i>&nbsp;	public void allowNoBraces(final boolean v) {
+<b class="fc"><i>295</i>&nbsp;		if (allowNoBraces != v) {</b>
+<b class="fc"><i>296</i>&nbsp;			sanitizer = null;</b>
+<i>297</i>&nbsp;		}
+<b class="fc"><i>298</i>&nbsp;		allowNoBraces = v;</b>
+<b class="fc"><i>299</i>&nbsp;	}</b>
+<i>300</i>&nbsp;
+<i>301</i>&nbsp;	@Override
+<i>302</i>&nbsp;	public void setWriter(final Writer writer) {
+<b class="fc"><i>303</i>&nbsp;		scriptEngine.getContext().setWriter(writer);</b>
+<b class="fc"><i>304</i>&nbsp;	}</b>
+<i>305</i>&nbsp;
+<i>306</i>&nbsp;	@Override
+<i>307</i>&nbsp;	public void setMaxPreparedStatements(final int max) {
+<b class="fc"><i>308</i>&nbsp;		if (maxPreparedStatements != max) {</b>
+<b class="fc"><i>309</i>&nbsp;			sanitizer = null;</b>
+<i>310</i>&nbsp;		}
+<b class="fc"><i>311</i>&nbsp;		maxPreparedStatements = max;</b>
+<b class="fc"><i>312</i>&nbsp;	}</b>
+<i>313</i>&nbsp;
+<i>314</i>&nbsp;	@Override
+<i>315</i>&nbsp;	public Bindings createBindings() {
+<b class="fc"><i>316</i>&nbsp;		return scriptEngine.createBindings();</b>
+<i>317</i>&nbsp;	}
+<i>318</i>&nbsp;
+<i>319</i>&nbsp;	@Override
+<i>320</i>&nbsp;	public Invocable getSandboxedInvocable() {
+<b class="fc"><i>321</i>&nbsp;		if (maxMemory == 0 &amp;&amp; maxCPUTime == 0) {</b>
+<b class="fc"><i>322</i>&nbsp;			return (Invocable)scriptEngine;</b>
+<i>323</i>&nbsp;		}
+<b class="fc"><i>324</i>&nbsp;		return getLazySandboxedInvocable();</b>
+<i>325</i>&nbsp;	}
+<i>326</i>&nbsp;
+<i>327</i>&nbsp;	private Invocable getLazySandboxedInvocable() {
+<b class="fc"><i>328</i>&nbsp;		if (lazyInvocable == null) {</b>
+<b class="fc"><i>329</i>&nbsp;			Invocable sandboxInvocable = new Invocable() {</b>
+<i>330</i>&nbsp;
+<i>331</i>&nbsp;				@Override
+<i>332</i>&nbsp;				public Object invokeMethod(Object thiz, String name, Object... args) throws ScriptException, NoSuchMethodException {
+<b class="nc"><i>333</i>&nbsp;					InvokeOperation op = new InvokeOperation(thiz, name, args);</b>
+<i>334</i>&nbsp;					try {
+<b class="nc"><i>335</i>&nbsp;						return executeSandboxedOperation(op);</b>
+<b class="nc"><i>336</i>&nbsp;					} catch (ScriptException e) {</b>
+<b class="nc"><i>337</i>&nbsp;						throw e;</b>
+<b class="nc"><i>338</i>&nbsp;					} catch (Exception e) {</b>
+<b class="nc"><i>339</i>&nbsp;						throw new ScriptException(e);</b>
+<i>340</i>&nbsp;					}
+<i>341</i>&nbsp;				}
+<i>342</i>&nbsp;
+<i>343</i>&nbsp;				@Override
+<i>344</i>&nbsp;				public Object invokeFunction(String name, Object... args) throws ScriptException, NoSuchMethodException {
+<b class="fc"><i>345</i>&nbsp;					InvokeOperation op = new InvokeOperation(null, name, args);</b>
+<i>346</i>&nbsp;					try {
+<b class="fc"><i>347</i>&nbsp;						return executeSandboxedOperation(op);</b>
+<b class="nc"><i>348</i>&nbsp;					} catch (ScriptException e) {</b>
+<b class="nc"><i>349</i>&nbsp;						throw e;</b>
+<b class="fc"><i>350</i>&nbsp;					} catch (Exception e) {</b>
+<b class="fc"><i>351</i>&nbsp;						throw new ScriptException(e);</b>
+<i>352</i>&nbsp;					}
+<i>353</i>&nbsp;				}
+<i>354</i>&nbsp;
+<i>355</i>&nbsp;				@Override
+<i>356</i>&nbsp;				public &lt;T&gt; T getInterface(Object thiz, Class&lt;T&gt; clasz) {
+<i>357</i>&nbsp;					// TODO add proxy wrapper for proper sandboxing
+<b class="nc"><i>358</i>&nbsp;					throw new IllegalStateException(&quot;Not yet implemented&quot;);</b>
+<i>359</i>&nbsp;				}
+<i>360</i>&nbsp;
+<i>361</i>&nbsp;				@Override
+<i>362</i>&nbsp;				public &lt;T&gt; T getInterface(Class&lt;T&gt; clasz) {
+<i>363</i>&nbsp;					// TODO add proxy wrapper for proper sandboxing
+<b class="nc"><i>364</i>&nbsp;					throw new IllegalStateException(&quot;Not yet implemented&quot;);</b>
+<i>365</i>&nbsp;				}
+<i>366</i>&nbsp;			};
+<b class="fc"><i>367</i>&nbsp;			lazyInvocable = sandboxInvocable;</b>
+<i>368</i>&nbsp;		}
+<b class="fc"><i>369</i>&nbsp;		return lazyInvocable;</b>
+<i>370</i>&nbsp;	}
+<i>371</i>&nbsp;
+<i>372</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2018-03-23 17:11</div>
+</div>
+</body>
+</html>

@@ -19,7 +19,18 @@ import jdk.nashorn.api.scripting.ClassFilter;
 class SandboxClassFilter implements ClassFilter {
   private final Set<Class<?>> allowed;
   private final Set<String> stringCache;
-  
+
+  public SandboxClassFilter() {
+    allowed = new HashSet<>();
+    stringCache = new HashSet<>();
+  }
+
+  //Constructor for testing.
+  SandboxClassFilter(Set<Class<?>> allowed,Set<String> stringCache) {
+    this.allowed = allowed;
+    this.stringCache = stringCache;
+  }
+
   @Override
   public boolean exposeToScripts(final String className) {
     return stringCache.contains(className);
@@ -43,10 +54,5 @@ class SandboxClassFilter implements ClassFilter {
   public boolean contains(final Class<?> clazz) {
     return allowed.contains(clazz);
   }
-  
-  public SandboxClassFilter() {
-    allowed = new HashSet<>();
-    stringCache = new HashSet<>();
-  }
-  
+
 }

@@ -1,20 +1,22 @@
 package delight.nashornsandbox;
 
+import delight.nashornsandbox.exceptions.BracesException;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-import javax.script.ScriptException;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import delight.nashornsandbox.exceptions.BracesException;
-import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
-import junit.framework.Assert;
-
+//Todo add actual descriptions to the nature of these scenarios. If we know exactly what they were about, than we can merge the scripts into the correct resolvers, because this test looks pretty redundant.
+@DisplayName("Failed to restrict the cpu and memory utilization")
 public class TestIssue34 {
 
 	Logger logger;
@@ -33,7 +35,7 @@ public class TestIssue34 {
 		}
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(100); // in millis
@@ -47,6 +49,7 @@ public class TestIssue34 {
 	}
 
 	@Test
+    @DisplayName("Scenario 1")
 	public void testIssue34_Scenario1() throws ScriptCPUAbuseException, ScriptException {
 		String js = "";
 		js += "function main(){\n";
@@ -59,11 +62,12 @@ public class TestIssue34 {
 
 		sandbox.eval(js);
 
-		Assert.assertTrue(logger.getOutput().contains("loop cnt-0"));
+		assertTrue(logger.getOutput().contains("loop cnt-0"));
 
 	}
 
 	@Test
+    @DisplayName("Scenario 2")
 	public void testIssue34_Scenario2() throws ScriptCPUAbuseException, ScriptException {
 		String js = "";
 		js += "function main(){\n" + "logger.debug(\"... In fun1()....\");\n" + "for(var i=0;i<2;i++)//{\n"
@@ -78,11 +82,12 @@ public class TestIssue34 {
 			ex = t;
 		}
 
-		Assert.assertTrue(ex instanceof BracesException);
+		assertTrue(ex instanceof BracesException);
 
 	}
 
 	@Test
+    @DisplayName("Scenario 3")
 	public void testIssue34_Scenario3() throws ScriptCPUAbuseException, ScriptException {
 		String js = "";
 		js += "function loopTest(){\n" + "var i=0;\n" + "do{\n" + "logger.debug(\"loop cnt=\"+(++i));\n"
@@ -90,11 +95,12 @@ public class TestIssue34 {
 
 		sandbox.eval(js);
 
-		Assert.assertTrue(logger.getOutput().contains("loop cnt=6"));
+		assertTrue(logger.getOutput().contains("loop cnt=6"));
 
 	}
 	
 	@Test
+    @DisplayName("Scenario 3.2")
 	public void testIssue34_Scenario3_2() throws ScriptCPUAbuseException, ScriptException {
     String js = "//simple do-while loop for demo\n";
 		js += "function loopTest(){\n" +
@@ -107,11 +113,12 @@ public class TestIssue34 {
 		
 		sandbox.eval(js);
 
-		Assert.assertTrue(logger.getOutput().contains("loop cnt=6"));
+		assertTrue(logger.getOutput().contains("loop cnt=6"));
 
 	}
 	
 	@Test
+    @DisplayName("Scenario 4")
 	public void testIssue34_Scenario4()  {
 		String js = "";
 		js += "if(srctable.length) srctable.length = 0;__if();\n" + "else {\n" + "for(var key in srctable) {__if();\n"
@@ -124,11 +131,12 @@ public class TestIssue34 {
 			ex = t;
 		}
 
-		Assert.assertTrue(ex instanceof IllegalArgumentException);
+		assertTrue(ex instanceof IllegalArgumentException);
 
 	}
 
 	@Test
+    @DisplayName("Scenario 5")
 	public void testIssue34_Scenario5() {
 		String js = "";
 		js += "function loopTest(){\n" + 
@@ -146,11 +154,11 @@ public class TestIssue34 {
 			ex = t;
 		}
 		
-		Assert.assertTrue(ex instanceof ScriptCPUAbuseException);
+		assertTrue(ex instanceof ScriptCPUAbuseException);
 
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		sandbox.getExecutor().shutdown();
 	}
