@@ -5,9 +5,11 @@ import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import delight.nashornsandbox.internal.InterruptTest;
 
 public class TestIssue54 {
 
@@ -21,11 +23,17 @@ public class TestIssue54 {
 		sandbox.setMaxMemory(1000 * 1000);
 		sandbox.allowNoBraces(false);
 		sandbox.disallowAllClasses();
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		sandbox.setExecutor(executor);
-		sandbox.eval(js);
+		sandbox.allow(InterruptTest.class);
 
-		sandbox.getExecutor().shutdown();
+		try {
+		    ExecutorService executor = Executors.newSingleThreadExecutor();
+		    sandbox.setExecutor(executor);
+		    sandbox.eval(js);
+		    sandbox.getExecutor().shutdown();
+		} catch (final Exception e) {
+		    Assert.assertEquals(e.getClass(), ScriptCPUAbuseException.class);
+		}
+
 
 	}
 	
