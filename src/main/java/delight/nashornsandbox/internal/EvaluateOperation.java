@@ -38,7 +38,7 @@ public class EvaluateOperation implements ScriptEngineOperation {
             LOG.debug(js);
             LOG.debug("--- JS END ---");
         }
-
+       
         if (bindings != null) {
             return scriptEngine.eval(js, bindings);
         } else if (scriptContext != null) {

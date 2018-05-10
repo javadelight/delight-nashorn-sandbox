@@ -19,11 +19,11 @@ public class TestIssue40_ScriptEngineParameters {
 	@Test(expected=ScriptException.class)
 	public void test() throws ScriptCPUAbuseException, ScriptException {
 		
-		final NashornSandbox sandbox = NashornSandboxes.create("--no-java");
+		final NashornSandbox sandbox = NashornSandboxes.create("-strict");
 	    sandbox.allow(File.class);
 	    
 	    // should throw an exception since 'Java' is not allowed. 
-	    sandbox.eval("var File = Java.type('java.io.File'); File;");
+	    sandbox.eval("idontexist = 1;");
 		
 	}
 	

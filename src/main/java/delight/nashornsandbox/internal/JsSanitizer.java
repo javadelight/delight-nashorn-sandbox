@@ -161,7 +161,7 @@ class JsSanitizer {
 	}
 
 	/**
-	 * After beautifyier every braces should be in plece, if not, or to many w need
+	 * After beautifyier every braces should be in place, if not, or too many we need
 	 * to prevent script execution.
 	 *
 	 * @param beautifiedJs

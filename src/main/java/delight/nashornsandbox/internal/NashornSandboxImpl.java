@@ -81,6 +81,12 @@ public class NashornSandboxImpl implements NashornSandbox {
 		this.sandboxClassFilter = new SandboxClassFilter();
 		final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
 		
+		for (String param : params) {
+			if (param.equals("--no-java")) {
+				throw new IllegalArgumentException("The engine parameter --no-java is not supported. Using it would interfere with the injected code to test for infinite loops.");
+			}
+		}
+		
 		this.scriptEngine = factory.getScriptEngine(params, this.getClass().getClassLoader(), this.sandboxClassFilter);
 		
 		this.allow(InterruptTest.class);
