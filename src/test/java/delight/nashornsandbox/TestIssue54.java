@@ -23,7 +23,6 @@ public class TestIssue54 {
 		sandbox.setMaxMemory(1000 * 1000);
 		sandbox.allowNoBraces(false);
 		sandbox.disallowAllClasses();
-		sandbox.allow(InterruptTest.class);
 
 		try {
 		    ExecutorService executor = Executors.newSingleThreadExecutor();

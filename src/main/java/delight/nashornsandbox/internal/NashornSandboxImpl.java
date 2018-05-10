@@ -225,6 +225,8 @@ public class NashornSandboxImpl implements NashornSandbox {
 	@Override
 	public void disallowAllClasses() {
 		sandboxClassFilter.clear();
+		// this class must always be allowed, see issue 54 https://github.com/javadelight/delight-nashorn-sandbox/issues/54
+		allow(InterruptTest.class);
 	}
 
 	@Override
