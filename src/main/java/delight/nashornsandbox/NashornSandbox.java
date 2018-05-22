@@ -278,4 +278,10 @@ public interface NashornSandbox {
    */
   Invocable getSandboxedInvocable();
 
+  /**
+   * Overwrites the cache for pre-processed javascript. Must be called before the first invocation of {@link #eval(String)}
+   * and its overloads.
+   * @param cache the new cache to use
+   */
+  void setScriptCache(SecuredJsCache cache);
 }

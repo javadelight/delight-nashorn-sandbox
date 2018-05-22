@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import delight.nashornsandbox.NashornSandbox;
+import delight.nashornsandbox.SecuredJsCache;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
@@ -71,6 +72,8 @@ public class NashornSandboxImpl implements NashornSandbox {
 
 	/** The size of the LRU cache of prepared statemensts. */
 	protected int maxPreparedStatements;
+
+	protected SecuredJsCache suppliedCache;
 
 	public NashornSandboxImpl() {
 		this(new String[0]);
@@ -208,7 +211,11 @@ public class NashornSandboxImpl implements NashornSandbox {
 
 	JsSanitizer getSanitizer() {
 		if (sanitizer == null) {
-			sanitizer = new JsSanitizer(scriptEngine, maxPreparedStatements, allowNoBraces);
+			if (suppliedCache == null) {
+				sanitizer = new JsSanitizer(scriptEngine, maxPreparedStatements, allowNoBraces);
+			} else {
+				sanitizer = new JsSanitizer(scriptEngine, allowNoBraces, suppliedCache);
+			}
 		}
 		return sanitizer;
 	}
@@ -375,6 +382,11 @@ public class NashornSandboxImpl implements NashornSandbox {
 			lazyInvocable = sandboxInvocable;
 		}
 		return lazyInvocable;
+	}
+
+	@Override
+	public void setScriptCache(SecuredJsCache cache) {
+		this.suppliedCache = cache;
 	}
 
 }
