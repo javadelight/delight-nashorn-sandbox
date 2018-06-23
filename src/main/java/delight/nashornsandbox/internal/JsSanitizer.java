@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
+import delight.nashornsandbox.SecuredJsCache;
 import delight.nashornsandbox.exceptions.BracesException;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
@@ -105,7 +106,7 @@ class JsSanitizer {
 	/** JS beutify() function reference. */
 	private final ScriptObjectMirror jsBeautify;
 
-	private final Map<String, String> securedJsCache;
+	private final SecuredJsCache securedJsCache;
 
 	/** <code>true</code> when lack of braces is allowed. */
 	private final boolean allowNoBraces;
@@ -114,6 +115,14 @@ class JsSanitizer {
 		this.scriptEngine = scriptEngine;
 		this.allowNoBraces = allowBraces;
 		this.securedJsCache = createSecuredJsCache(maxPreparedStatements);
+		assertScriptEngine();
+		this.jsBeautify = getBeautifHandler(scriptEngine);
+	}
+
+	JsSanitizer(final ScriptEngine scriptEngine, final boolean allowBraces, SecuredJsCache cache) {
+		this.scriptEngine = scriptEngine;
+		this.allowNoBraces = allowBraces;
+		this.securedJsCache = cache;
 		assertScriptEngine();
 		this.jsBeautify = getBeautifHandler(scriptEngine);
 	}
@@ -142,22 +151,26 @@ class JsSanitizer {
 		}
 	}
 
-	private Map<String, String> createSecuredJsCache(final int maxPreparedStatements) {
+	private SecuredJsCache createSecuredJsCache(final int maxPreparedStatements) {
 		// Create cache
 		if (maxPreparedStatements == 0) {
 			return null;
 		} else {
-			return new LinkedHashMap<String, String>(maxPreparedStatements + 1, .75F, true) {
-				private static final long serialVersionUID = 1L;
-
-				// This method is called just after a new entry has been added
-				@Override
-				@SuppressWarnings("unused")
-				public boolean removeEldestEntry(final Map.Entry<String, String> eldest) {
-					return size() > maxPreparedStatements;
-				}
-			};
+			return newSecuredJsCache(maxPreparedStatements);
 		}
+	}
+
+	private SecuredJsCache newSecuredJsCache(final int maxPreparedStatements) {
+		final LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<String, String>(maxPreparedStatements + 1, .75F, true) {
+			private static final long serialVersionUID = 1L;
+
+			// This method is called just after a new entry has been added
+			@Override
+			public boolean removeEldestEntry(final Map.Entry<String, String> eldest) {
+				return size() > maxPreparedStatements;
+			}
+		};
+		return new LinkedHashMapSecuredJsCache(linkedHashMap, allowNoBraces);
 	}
 
 	/**
@@ -229,27 +242,36 @@ class JsSanitizer {
 	}
 
 	String secureJs(final String js) throws ScriptException {
-		String securedJs = null;
-		if (securedJsCache != null) {
-			securedJs = securedJsCache.get(js);
+		if (securedJsCache == null) {
+			return secureJsImpl(js);
 		}
-		if (securedJs == null) {
-			checkJs(js);
-			final String beautifiedJs = beautifyJs(js);
-			checkBraces(beautifiedJs);
-			final String injectedJs = injectInterruptionCalls(beautifiedJs);
-			// if no injection, no need to add preamble
-			if (beautifiedJs.equals(injectedJs)) {
-				securedJs = beautifiedJs;
-			} else {
-				final String preamble = getPreamble();
-				securedJs = preamble + injectedJs;
+		ScriptException[] ex = new ScriptException[1];
+		String securedJs = securedJsCache.getOrCreate(js, allowNoBraces, ()->{
+			try {
+				return secureJsImpl(js);
+			} catch (BracesException e) {
+				ex[0] = e;
+				return null;
 			}
-			if (securedJsCache != null) {
-				securedJsCache.put(js, securedJs);
-			}
+		});
+		if (ex[0] != null) {
+			throw ex[0];
 		}
 		return securedJs;
+	}
+
+	private String secureJsImpl(final String js) throws BracesException {
+		checkJs(js);
+		final String beautifiedJs = beautifyJs(js);
+		checkBraces(beautifiedJs);
+		final String injectedJs = injectInterruptionCalls(beautifiedJs);
+		// if no injection, no need to add preamble
+		if (beautifiedJs.equals(injectedJs)) {
+			return beautifiedJs;
+		} else {
+			final String preamble = getPreamble();
+			return preamble + injectedJs;
+		}
 	}
 
 	String beautifyJs(final String js) {
