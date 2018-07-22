@@ -94,6 +94,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.1.16: Removing tools.jar dependency (see issue [# 62](https://github.com/javadelight/delight-nashorn-sandbox/issues/62))
 - 0.1.15: Allowing to inject custom cache for secure JS (see [PR #59](https://github.com/javadelight/delight-nashorn-sandbox/pull/59)); Preventing the use of `--no-java` engine parameter (see [issue #57](https://github.com/javadelight/delight-nashorn-sandbox/issues/57))
 - 0.1.14: Fixed bug that ThreadMonitor waits for too long sometimes (see [PR #56](https://github.com/javadelight/delight-nashorn-sandbox/pull/56) by [cmorris](https://github.com/cmorriss))
 - 0.1.13: Added support for providing Bindings for evaluating scrips (see [PR #44](https://github.com/javadelight/delight-nashorn-sandbox/pull/44) by [Frontrider](https://github.com/Frontrider)); Improving way access to global functions such as `exit` is blocked; Allowing for|while|do when they are given in quoted strings in JavaScript (see [issue #47](https://github.com/javadelight/delight-nashorn-sandbox/issues/47)).
