@@ -95,12 +95,46 @@ public class NashornSandboxImpl implements NashornSandbox {
 		this.allow(InterruptTest.class);
 	}
 
-	private void assertScriptEngine() {
+    private void assertScriptEngine() {
+        try {
+            final StringBuilder sb = new StringBuilder();
+            Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+            if (!allowExitFunctions) {
+
+                bindings.remove("quit");
+                bindings.remove("exit");
+                sb.append("var quit=function(){};var exit=function(){};");
+            }
+            if (!allowPrintFunctions) {
+                bindings.remove("print");
+                bindings.remove("echo");
+                sb.append("var print=function(){};var echo = function(){};");
+            }
+            if (!allowReadFunctions) {
+                bindings.remove("readFully");
+                bindings.remove("readLine");
+                sb.append("var readFully=function(){};").append("var readLine=function(){};");
+            }
+            if (!allowLoadFunctions) {
+                bindings.remove("load");
+                bindings.remove("loadWithNewGlobal");
+                sb.append("var load=function(){};var loadWithNewGlobal=function(){};");
+            }
+            if (!allowGlobalsObjects) {
+                // Max 22nd of Feb 2018: I don't think these are strictly necessary since they are only available in scripting mode
+                sb.append("var $ARG=null;var $ENV=null;var $EXEC=null;");
+                sb.append("var $OPTIONS=null;var $OUT=null;var $ERR=null;var $EXIT=null;");
+            }
+            scriptEngine.eval(sb.toString());
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+	private void assertScriptEngine(Bindings bindings) {
 		try {
 			final StringBuilder sb = new StringBuilder();
-			Bindings bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
 			if (!allowExitFunctions) {
-				
 				bindings.remove("quit");
 				bindings.remove("exit");
 				sb.append("var quit=function(){};var exit=function(){};");
@@ -125,7 +159,7 @@ public class NashornSandboxImpl implements NashornSandbox {
 				sb.append("var $ARG=null;var $ENV=null;var $EXEC=null;");
 				sb.append("var $OPTIONS=null;var $OUT=null;var $ERR=null;var $EXIT=null;");
 			}
-			scriptEngine.eval(sb.toString());
+            scriptEngine.eval(sb.toString(), bindings);
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -152,14 +186,21 @@ public class NashornSandboxImpl implements NashornSandbox {
 		final JsSanitizer sanitizer = getSanitizer();
 		final String securedJs = sanitizer.secureJs(js);
 		EvaluateOperation op = new EvaluateOperation(securedJs, scriptContext,bindings);
-		return executeSandboxedOperation(op);
+		return executeSandboxedOperation(op, bindings);
 	}
 
-	private Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
+    private Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
+	    return executeSandboxedOperation(op, null);
+    }
+
+	private Object executeSandboxedOperation(ScriptEngineOperation op, Bindings bindings) throws ScriptCPUAbuseException, ScriptException {
 		if (!engineAsserted) {
 			engineAsserted = true;
 			assertScriptEngine();
 		}
+		if (bindings != null) {
+            assertScriptEngine(bindings);
+        }
 		try {
 			if (maxCPUTime == 0 && maxMemory == 0) {
 				return op.executeScriptEngineOperation(scriptEngine);
