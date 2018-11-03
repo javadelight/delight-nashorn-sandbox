@@ -1,18 +1,29 @@
 package delight.nashornsandbox;
 
-import javax.script.ScriptException;
-
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import org.junit.Test;
 
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.NashornSandboxes;
-import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import javax.script.Bindings;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings;
 
 @SuppressWarnings("all")
 public class TestExit {
   @Test
-  public void test() throws ScriptCPUAbuseException, ScriptException {
+  public void testExit() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.eval("exit();");
   }
+
+  @Test
+  public void testQuit() throws ScriptCPUAbuseException, ScriptException {
+    final NashornSandbox sandbox = NashornSandboxes.create();
+    sandbox.eval("quit();");
+  }
+
+    @Test
+    public void testQuitWithBindings() throws ScriptCPUAbuseException, ScriptException {
+        final NashornSandbox sandbox = NashornSandboxes.create();
+        sandbox.eval("quit();", new SimpleBindings());
+    }
 }
