@@ -70,24 +70,25 @@ class JsSanitizer {
 	final static String JS_INTERRUPTED_TEST = "__it";
 
 	private final static List<PoisonPil> POISON_PILLS = Arrays.asList(
-			// every 10th statments ended with semicolon put intterupt checking function
+			// every 10th statements ended with semicolon put interrupt checking function
 			new PoisonPil(Pattern.compile("(([^;]+;){9}[^;]+(?<!break|continue);)\\n"),
 					JS_INTERRUPTED_FUNCTION + "();\n"),
-			// every (except switch) block start brace put intterupt checking function
+			// every (except switch) block start brace put interrupt checking function
 			new PoisonPil(Pattern.compile("(\\s*for\\s*\\([^\\{]+\\)\\s*\\{)"), JS_INTERRUPTED_FUNCTION + "();"), // for
 																													// with
 																													// block
 			new PoisonPil(Pattern.compile("(\\s*for\\s*\\([^\\{]+\\)\\s*[^\\{]+;)"), JS_INTERRUPTED_FUNCTION + "();"), // for
 																														// without
-																														// block
-			new PoisonPil(Pattern.compile("(\\s*([^\"]?function[^\"])\\s*[^\\{]+\\{)"),
+																						// block
+			//
+			new PoisonPil(Pattern.compile("(\\s*([^\"]?function)\\s*[^\"}]*\\([^\\{]*\\)\\s*\\{)"),
 					JS_INTERRUPTED_FUNCTION + "();"), // function except when enclosed in quotes
 			new PoisonPil(Pattern.compile("(\\s*while\\s*\\([^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION + "();"),
 			new PoisonPil(Pattern.compile("(\\s*do\\s*\\{)"), JS_INTERRUPTED_FUNCTION + "();"));
 
 	/**
 	 * The beautifier options. Don't change if you are not know what you are doing,
-	 * becouse regexps are dependend on it.
+	 * because regexps are depended on it.
 	 */
 	private final static Map<String, Object> BEAUTIFY_OPTIONS = new HashMap<>();
 
@@ -103,7 +104,7 @@ class JsSanitizer {
 
 	private final ScriptEngine scriptEngine;
 
-	/** JS beutify() function reference. */
+	/** JS beautify() function reference. */
 	private final ScriptObjectMirror jsBeautify;
 
 	private final SecuredJsCache securedJsCache;
