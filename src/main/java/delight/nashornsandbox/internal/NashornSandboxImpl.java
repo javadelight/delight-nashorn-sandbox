@@ -18,6 +18,9 @@ import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Nashorn sandbox implementation.
  *
@@ -75,6 +78,8 @@ public class NashornSandboxImpl implements NashornSandbox {
 
 	protected SecuredJsCache suppliedCache;
 
+	protected Bindings cached;
+
 	public NashornSandboxImpl() {
 		this(new String[0]);
 	}
@@ -96,40 +101,73 @@ public class NashornSandboxImpl implements NashornSandbox {
 	}
 
     private void assertScriptEngine() {
-        assertScriptEngine(scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE));
+        try {
+            if (!engineAsserted) {
+                produceSecureBindings();
+            }
+            else if (!engineBindingsSafe()) {
+                resetEngineBindings();
+            }
+        }
+        catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-	private void assertScriptEngine(Bindings bindings) {
-		try {
-            scriptEngine.eval(preScript(), sanitizeBindings(bindings));
-		} catch (final Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private String preScript() {
-        final StringBuilder sb = new StringBuilder();
-        if (!allowExitFunctions) {
-            sb.append("var quit=function(){};var exit=function(){};");
+    // This will detect whether the current engine bindings match the cached protected bindings
+    private boolean engineBindingsSafe() {
+        final Bindings current = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+        for (Map.Entry<String, Object> e : cached.entrySet()) {
+            if (!current.containsKey(e.getKey()) || !Objects.equals(current.get(e.getKey()), e.getValue())) {
+                return false;
+            }
         }
-        if (!allowPrintFunctions) {
-            sb.append("var print=function(){};var echo = function(){};");
-        }
-        if (!allowReadFunctions) {
-            sb.append("var readFully=function(){};").append("var readLine=function(){};");
-        }
-        if (!allowLoadFunctions) {
-            sb.append("var load=function(){};var loadWithNewGlobal=function(){};");
-        }
-        if (!allowGlobalsObjects) {
-            // Max 22nd of Feb 2018: I don't think these are strictly necessary since they are only available in scripting mode
-            sb.append("var $ARG=null;var $ENV=null;var $EXEC=null;");
-            sb.append("var $OPTIONS=null;var $OUT=null;var $ERR=null;var $EXIT=null;");
-        }
-        return sb.toString();
+        return true;
     }
 
-	private Bindings sanitizeBindings(Bindings bindings) {
+    private void produceSecureBindings() {
+        try {
+            if (!engineAsserted) {
+                final StringBuilder sb = new StringBuilder();
+                cached = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+                sanitizeBindings(cached);
+                if (!allowExitFunctions) {
+                    sb.append("var quit=function(){};var exit=function(){};");
+                }
+                if (!allowPrintFunctions) {
+                    sb.append("var print=function(){};var echo = function(){};");
+                }
+                if (!allowReadFunctions) {
+                    sb.append("var readFully=function(){};").append("var readLine=function(){};");
+                }
+                if (!allowLoadFunctions) {
+                    sb.append("var load=function(){};var loadWithNewGlobal=function(){};");
+                }
+                if (!allowGlobalsObjects) {
+                    // Max 22nd of Feb 2018: I don't think these are strictly necessary since they are only available in scripting mode
+                    sb.append("var $ARG=null;var $ENV=null;var $EXEC=null;");
+                    sb.append("var $OPTIONS=null;var $OUT=null;var $ERR=null;var $EXIT=null;");
+                }
+                scriptEngine.eval(sb.toString());
+
+                resetEngineBindings();
+
+                engineAsserted = true;
+            }
+        }
+        catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void resetEngineBindings() {
+        final Bindings bindings = createBindings();
+        sanitizeBindings(bindings);
+        bindings.putAll(cached);
+        scriptEngine.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
+    }
+
+    private void sanitizeBindings(Bindings bindings) {
         if (!allowExitFunctions) {
             bindings.remove("quit");
             bindings.remove("exit");
@@ -146,7 +184,6 @@ public class NashornSandboxImpl implements NashornSandbox {
             bindings.remove("load");
             bindings.remove("loadWithNewGlobal");
         }
-        return bindings;
     }
 
 	@Override
@@ -165,26 +202,27 @@ public class NashornSandboxImpl implements NashornSandbox {
 	}
 
 	@Override
-	public Object eval(final String js, final ScriptContext scriptContext,final Bindings bindings)
+	public Object eval(final String js, final ScriptContext scriptContext, final Bindings bindings)
 			throws ScriptCPUAbuseException, ScriptException {
+	    produceSecureBindings(); // We need this here for bindings
 		final JsSanitizer sanitizer = getSanitizer();
 		final String securedJs = sanitizer.secureJs(js);
-		EvaluateOperation op = new EvaluateOperation(securedJs, scriptContext,bindings);
-		return executeSandboxedOperation(op, bindings);
+        final Bindings securedBindings = secureBindings(bindings);
+        EvaluateOperation op = new EvaluateOperation(securedJs, scriptContext, securedBindings);
+        return executeSandboxedOperation(op);
 	}
 
-    private Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
-	    return executeSandboxedOperation(op, null);
+	private Bindings secureBindings(Bindings bindings) {
+        if (bindings == null)
+            return null;
+
+        bindings.putAll(cached);
+
+        return bindings;
     }
 
-	private Object executeSandboxedOperation(ScriptEngineOperation op, Bindings bindings) throws ScriptCPUAbuseException, ScriptException {
-		if (!engineAsserted) {
-			engineAsserted = true;
-			assertScriptEngine();
-		}
-		if (bindings != null) {
-            assertScriptEngine(bindings);
-        }
+	private Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
+        assertScriptEngine();
 		try {
 			if (maxCPUTime == 0 && maxMemory == 0) {
 				return op.executeScriptEngineOperation(scriptEngine);
