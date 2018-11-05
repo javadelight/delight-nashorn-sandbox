@@ -94,6 +94,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.1.17: Improved way bindings are handled (see [PR #68](https://github.com/javadelight/delight-nashorn-sandbox/pull/68) by [everestbt](https://github.com/everestbt)); Fixing [issue #66](https://github.com/javadelight/delight-nashorn-sandbox/issues/66)
 - 0.1.16: Removing tools.jar dependency (see issue [# 62](https://github.com/javadelight/delight-nashorn-sandbox/issues/62))
 - 0.1.15: Allowing to inject custom cache for secure JS (see [PR #59](https://github.com/javadelight/delight-nashorn-sandbox/pull/59)); Preventing the use of `--no-java` engine parameter (see [issue #57](https://github.com/javadelight/delight-nashorn-sandbox/issues/57))
 - 0.1.14: Fixed bug that ThreadMonitor waits for too long sometimes (see [PR #56](https://github.com/javadelight/delight-nashorn-sandbox/pull/56) by [cmorris](https://github.com/cmorriss))
@@ -104,7 +105,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 - 0.1.9: Fixed [bug #36](https://github.com/javadelight/delight-nashorn-sandbox/issues/36)
 - 0.1.8: Fixed that `do`, `while` and `for` in comments might cause BracesExceptions (see [bug #34](https://github.com/javadelight/delight-nashorn-sandbox/issues/34))
 - 0.1.7: Used webjar dependency for BeautifyJS and slf4j as logging dependency ([PR #35](https://github.com/javadelight/delight-nashorn-sandbox/issues/32) by [thjaeckle](https://github.com/thjaeckle)); Updated license (see [bug #32](https://github.com/javadelight/delight-nashorn-sandbox/issues/32))
-- 0.1.6: Fixing bug that monitor checking for CPU abuses would hang when it encountered `monitor.wait(0)` (see [issue 30](https://github.com/javadelight/delight-nashorn-sandbox/issues/30))
+- 0.1.6: Fixing bug that monitor checking for CPU abuses would hang when it encountered `monitor.wait(0)` (see [issue 30](https://github.com/javadelight/delight-nashorn-sandbox/issueks/30))
 - 0.1.5: Fixing [bug #28](https://github.com/javadelight/delight-nashorn-sandbox/issues/28) with [PR 29](https://github.com/javadelight/delight-nashorn-sandbox/pull/29) by [srinivasarajuch](https://github.com/srinivasarajuch) - added support for evaluation JS with specific ScriptContext 
 - 0.1.4: Fixing [bug #27](https://github.com/javadelight/delight-nashorn-sandbox/issues/27)
 - 0.1.3: Improving regex for interrupt injections ([PR 26](https://github.com/javadelight/delight-nashorn-sandbox/pull/26)), cleaning up code for obtaining JSBeautifier instance ([PR 25](https://github.com/javadelight/delight-nashorn-sandbox/pull/25)) 
