@@ -105,7 +105,7 @@ public class NashornSandboxImpl implements NashornSandbox {
             if (!engineAsserted) {
                 produceSecureBindings();
             }
-            else if (!engineBindingsSafe()) {
+            else if (!engineBindingUnchanged()) {
                 resetEngineBindings();
             }
         }
@@ -115,7 +115,7 @@ public class NashornSandboxImpl implements NashornSandbox {
     }
 
     // This will detect whether the current engine bindings match the cached protected bindings
-    private boolean engineBindingsSafe() {
+    private boolean engineBindingUnchanged() {
         final Bindings current = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
         for (Map.Entry<String, Object> e : cached.entrySet()) {
             if (!current.containsKey(e.getKey()) || !Objects.equals(current.get(e.getKey()), e.getValue())) {
