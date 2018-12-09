@@ -156,7 +156,7 @@ public class ThreadMonitor {
 	}
 
 	/**
-	 * Obtain current evaluation thread memoy usage.
+	 * Obtain current evaluation thread memory usage.
 	 * 
 	 * @return current memory usage
 	 */

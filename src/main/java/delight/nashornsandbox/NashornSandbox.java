@@ -1,5 +1,6 @@
 package delight.nashornsandbox;
 
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.concurrent.ExecutorService;
 
@@ -59,7 +60,7 @@ public interface NashornSandbox {
    *   than 0.
    * </p>
    *
-   * @param limit time limit in miliseconds
+   * @param limit time limit in milliseconds
    * @see #setExecutor(ExecutorService)
    */
   void setMaxCPUTime(long limit);
@@ -84,10 +85,10 @@ public interface NashornSandbox {
   void setMaxMemory(long limit);
   
   /**
-   * Sets the writer, whem want to have output from writer function called in
+   * Sets the writer, when want to have output from writer function called in
    * JS script
    * 
-   * @param writer the writer, eg. {@ling StringWriter}
+   * @param writer the writer, eg. {@link StringWriter}
    */
   void setWriter(Writer writer);
   
@@ -188,7 +189,7 @@ public interface NashornSandbox {
   /**
    * Allow Nashorn quit and exit functions.
    * <p>
-   *   Only before first {@link #eval(String)} call cause efect.
+   *   Only before first {@link #eval(String)} call cause effect.
    * </p>
    */
   void allowExitFunctions(boolean v);
@@ -221,7 +222,7 @@ public interface NashornSandbox {
    *   which make JVM unstable.
    * </p>
    * <p>
-   *   Properly writen code (even in bad intention) like:
+   *   Properly written code (even in bad intention) like:
    *   <pre>
    *     while(true) { while(true) {
    *       // do nothing
@@ -252,7 +253,7 @@ public interface NashornSandbox {
    * <p>
    *   Each statements when {@link #setMaxCPUTime(long)} is set is prepared to
    *   quit itself when time exceeded. To execute only once this procedure per
-   *   statment set this value.
+   *   statement set this value.
    * </p>
    * <p>
    *   When {@link #setMaxCPUTime(long)} is set 0, this value is ignored.
