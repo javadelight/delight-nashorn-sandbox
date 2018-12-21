@@ -25,6 +25,10 @@ public class TestEngine {
 		
 		NashornSandbox sandbox = NashornSandboxes.create();
 		
+		sandbox.eval("delete this.engine; this.engine.factory;");
+		// should fail but doesn't
+		sandbox.eval("delete this.engine; this.engine.factory.scriptEngine.compile('var File = Java.type(\"java.io.File\"); File;').eval()");
+		
 		Assert.assertEquals(null, sandbox.eval("delete this.engine; this.engine.factory;"));
 		
 	}
