@@ -149,6 +149,7 @@ public class NashornSandboxImpl implements NashornSandbox {
                     sb.append("var $OPTIONS=null;var $OUT=null;var $ERR=null;var $EXIT=null;");
                 }
                 sb.append("this.engine = null;");
+                sb.append("delete this.__noSuchProperty__;");
                 scriptEngine.eval(sb.toString());
 
                 resetEngineBindings();
