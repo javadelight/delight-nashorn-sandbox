@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.SoftReference;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -59,13 +60,13 @@ class JsSanitizer {
 
 	/**
 	 * The name of the JS function to be inserted into user script. To prevent
-	 * collisions random sufix is added.
+	 * collisions random suffix is added.
 	 */
 	final static String JS_INTERRUPTED_FUNCTION = "__if";
 
 	/**
 	 * The name of the variable which holds reference to interruption checking
-	 * class. To prevent collisions random sufix is added.
+	 * class. To prevent collisions random suffix is added.
 	 */
 	final static String JS_INTERRUPTED_TEST = "__it";
 
@@ -181,7 +182,7 @@ class JsSanitizer {
 	 * @param beautifiedJs
 	 *            evaluated script
 	 * @throws BracesException
-	 *             when baces are incorrect
+	 *             when braces are incorrect
 	 */
 	void checkBraces(final String beautifiedJs) throws BracesException {
 		if (allowNoBraces) {
@@ -198,7 +199,7 @@ class JsSanitizer {
 					line = beautifiedJs.charAt(index)+line;
 					index--;
 				}
-				
+
 				int singleParaCount = line.length() - line.replace("'", "").length();
 				int doubleParaCount = line.length() - line.replace("\"", "").length();
 				
@@ -283,7 +284,7 @@ class JsSanitizer {
 		String script = beautifysScript.get();
 		if (script == null) {
 			try (final BufferedReader reader = new BufferedReader(new InputStreamReader(
-					new BufferedInputStream(JsSanitizer.class.getResourceAsStream(BEAUTIFY_JS)), "UTF-8"))) {
+					new BufferedInputStream(JsSanitizer.class.getResourceAsStream(BEAUTIFY_JS)), StandardCharsets.UTF_8))) {
 				final StringBuilder sb = new StringBuilder();
 				String line;
 				while ((line = reader.readLine()) != null) {

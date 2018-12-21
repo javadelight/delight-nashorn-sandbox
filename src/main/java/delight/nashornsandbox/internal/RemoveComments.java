@@ -16,7 +16,7 @@ public class RemoveComments {
 	public static final int MULTI_LINE = 5;
 
 	public static String perform(String s) {
-		String out = "";
+		StringBuilder out = new StringBuilder();
 		int mod = DEFAULT;
 		for (int i = 0; i < s.length(); i++) {
 			String substring = s.substring(i, Math.min(i + 2, s.length()));
@@ -40,10 +40,11 @@ public class RemoveComments {
 				i += mod == DEFAULT ? 1 : 0;
 				continue;
 			}
-			out += mod < 4 ? c : "";
+			if (mod < 4)
+				out.append(c);
 		}
 
-		return out;
+		return out.toString();
 	}
 
 }

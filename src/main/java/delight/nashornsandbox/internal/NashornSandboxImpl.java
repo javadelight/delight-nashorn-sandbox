@@ -73,7 +73,7 @@ public class NashornSandboxImpl implements NashornSandbox {
 
 	protected Invocable lazyInvocable;
 
-	/** The size of the LRU cache of prepared statemensts. */
+	/** The size of the LRU cache of prepared statements. */
 	protected int maxPreparedStatements;
 
 	protected SecuredJsCache suppliedCache;
