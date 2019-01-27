@@ -148,8 +148,6 @@ public class NashornSandboxImpl implements NashornSandbox {
                     sb.append("var $ARG=null;var $ENV=null;var $EXEC=null;");
                     sb.append("var $OPTIONS=null;var $OUT=null;var $ERR=null;var $EXIT=null;");
                 }
-                sb.append("this.engine = null;");
-                sb.append("delete this.__noSuchProperty__;");
                 scriptEngine.eval(sb.toString());
 
                 resetEngineBindings();
@@ -208,7 +206,17 @@ public class NashornSandboxImpl implements NashornSandbox {
 			throws ScriptCPUAbuseException, ScriptException {
 	    produceSecureBindings(); // We need this here for bindings
 		final JsSanitizer sanitizer = getSanitizer();
-		final String securedJs = sanitizer.secureJs(js);
+		// see https://github.com/javadelight/delight-nashorn-sandbox/issues/73
+		final String blockAccessToEngine = "Object.defineProperty(this, 'engine', {});" + 
+        		"Object.defineProperty(this, 'context', {});delete this.__noSuchProperty__;";
+		final String securedJs;
+		if (scriptContext == null) {
+			securedJs = blockAccessToEngine+sanitizer.secureJs(js);
+		} else {
+			// Unfortunately, blocking access to the engine property inteferes with setting a script context
+			// needs further investigation
+			securedJs = sanitizer.secureJs(js);
+		}
         final Bindings securedBindings = secureBindings(bindings);
         EvaluateOperation op = new EvaluateOperation(securedJs, scriptContext, securedBindings);
         return executeSandboxedOperation(op);
