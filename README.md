@@ -96,6 +96,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.1.21: Fixing executor thread not set after <some value> ms - intermittent issue [# 75](https://github.com/javadelight/delight-nashorn-sandbox/issues/75) by [pradeepKaatnam](https://github.com/pradeepKaatnam) 
 - 0.1.20: Implementing protection for security issue [# 73](https://github.com/javadelight/delight-nashorn-sandbox/issues/73) as suggested by [amlweems](https://github.com/amlweems)
 - 0.1.19: Performance improvement for beautification [PR #71](https://github.com/javadelight/delight-nashorn-sandbox/pull/71) by [turbanoff](https://github.com/turbanoff)
 - 0.1.18: Fixing [issue #66](https://github.com/javadelight/delight-nashorn-sandbox/issues/67) with [PR #69](https://github.com/javadelight/delight-nashorn-sandbox/pull/69) by [everestbt](https://github.com/everestbt)

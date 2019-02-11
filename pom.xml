@@ -4,7 +4,7 @@
 
 	<groupId>org.javadelight</groupId>
 	<artifactId>delight-nashorn-sandbox</artifactId>
-	<version>0.1.21-SNAPSHOT</version>
+	<version>0.1.21</version>
 	<description>A safe sandbox to execute JavaScript code from Nashorn.</description>
 	<url>https://github.com/javadelight/delight-nashorn-sandbox</url>
 
