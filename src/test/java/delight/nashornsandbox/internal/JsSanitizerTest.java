@@ -66,11 +66,11 @@ public class JsSanitizerTest {
 		final String js1 = "var i=0;\nvar i=0;\nvar i=0;\nvar i=0;\nvar i=0;\n"
 				+ "var i=0;\nvar i=0;\nvar i=0;\nvar i=0;\nvar i=10;\nvar i=11;";
 		final String bjs1 = jsSanitizer.secureJs(js1);
-		assertTrue(bjs1.contains("var i = 10;" + JsSanitizer.JS_INTERRUPTED_FUNCTION));
+		assertTrue(bjs1.contains("var i = 10;\n" + JsSanitizer.JS_INTERRUPTED_FUNCTION));
 		final String js2 = "var i=0;\nvar i=0;\nvar i=0;\nvar i=0;\nvar i=0;\n"
 				+ "var i=0;\nvar i=0;\nvar i=0;\nvar i=0;\n" + "for(var i=0; i<10; i++) {i--}" + "var i=10;\nvar i=11;";
 		final String bjs2 = jsSanitizer.secureJs(js2);
-		assertTrue(bjs2.contains("var i = 10;" + JsSanitizer.JS_INTERRUPTED_FUNCTION));
+		assertTrue(bjs2.contains("var i = 10;\n" + JsSanitizer.JS_INTERRUPTED_FUNCTION));
 	}
 
 	@Test
@@ -78,13 +78,41 @@ public class JsSanitizerTest {
 		final String js1 = "var i=0;\nvar i=0;\nvar i=0;\nvar i=0;\nvar i=0;\n"
 				+ "var i=0;\nvar i=0;\nvar i=0;\nvar i=0;\nvar i=10;\nvar i=11;";
 		final String bjs1 = jsSanitizer.secureJs(js1);
-		assertTrue(bjs1.contains("var i = 10;" + JsSanitizer.JS_INTERRUPTED_FUNCTION));
+		assertTrue(bjs1.contains("var i = 10;\n" + JsSanitizer.JS_INTERRUPTED_FUNCTION));
 		final String js2 = "var i=0;\nvar i=0;\nvar i=0;\nvar i=0;\nvar i=0;\n"
 				+ "var i=0;\nvar i=0;\nvar i=0;\nvar i=0;\n" + "for(var i=0; i<10; i++) {break; continue; i--}\n"
 				+ "var i=10;\nvar i=11;";
 		final String bjs2 = jsSanitizer.secureJs(js2);
 		assertFalse(bjs2.contains("break;" + JsSanitizer.JS_INTERRUPTED_FUNCTION));
 		assertFalse(bjs2.contains("continue;" + JsSanitizer.JS_INTERRUPTED_FUNCTION));
+	}
+
+	@Test
+	public void testSecureJs_10statment_elseif_comments() throws Exception {
+		final String js1 = "function FindProxyForURL(url, host)\n{\nvar i=1;\nvar i=2;\nvar i=3;\n"
+				+ "var i=4;\nvar i=5;\nvar i=6;\nvar i=7;\nif (dnsDomainIs(host, \"proxy8.com.net\"))\n"
+				+ "return \"PROXY http://proxy8.acme.com:8080\";\nelse if  (dnsDomainIs(host, \"acme1.com.net\"))\n"
+				+ "return \"PROXY http://proxy9.acme.com:8080\";\nelse if (dnsDomainIs(host, \"initech.acme.com\"))\n"
+				+ "// would break if inserted interrupt function\nreturn \"PROXY http://acme10.com:8080\";\n"
+				+ "else if (dnsDomainIs(host, \"whymper.net\"))\nreturn \"PROXY http://acme2.com:8080\";\n"
+				+ "else if (dnsDomainIs(host, \"enough.acme.com\"))\nreturn \"PROXY http://one.proxy.acme.com:8080\";\n"
+				+ "else\nreturn \"DIRECT\";\n}"
+		;
+		final String bjs = jsSanitizer.secureJs(js1);
+		assertFalse(bjs.contains("\"PROXY http://acme10.com:8080\";\n" + JsSanitizer.JS_INTERRUPTED_FUNCTION));
+		assertTrue(bjs.contains("\"DIRECT\";\n" + JsSanitizer.JS_INTERRUPTED_FUNCTION));
+		final String js12 = "function FindProxyForURL(url, host)\n{\nvar i=1;\nvar i=2;\nvar i=3;\n"
+				+ "var i=4;\nvar i=5;\nvar i=6;\nvar i=7;\nif (dnsDomainIs(host, \"proxy8.com.net\"))\n"
+				+ "return \"PROXY http://proxy8.acme.com:8080\";\nelse if  (dnsDomainIs(host, \"acme1.com.net\"))\n"
+				+ "return \"PROXY http://proxy9.acme.com:8080\";\nelse if (dnsDomainIs(host, \"skynet.acme.com\"))\n"
+				+ "     // would break if inserted interrupt function\n     return \"PROXY http://acme10.com:8080\";\n"
+				+ "else if (dnsDomainIs(host, \"whymper.net\"))\nreturn \"PROXY http://acme2.com:8080\";\n"
+				+ "else if (dnsDomainIs(host, \"enough.acme.com\"))\nreturn \"PROXY http://one.proxy.acme.com:8080\";\n"
+				+ "else\nreturn \"DIRECT\";\n}"
+		;
+		final String bjs2 = jsSanitizer.secureJs(js12);
+		assertFalse(bjs2.contains("\"PROXY http://acme10.com:8080\";\n" + JsSanitizer.JS_INTERRUPTED_FUNCTION));
+		assertTrue(bjs2.contains("\"DIRECT\";\n" + JsSanitizer.JS_INTERRUPTED_FUNCTION));
 	}
 
 	@Test
