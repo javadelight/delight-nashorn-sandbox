@@ -42,9 +42,9 @@ public class ThreadMonitor {
 
 	private Thread threadToMonitor;
 
-	private final ThreadMXBean threadBean;
+	private ThreadMXBean threadBean;
 
-	private final com.sun.management.ThreadMXBean memoryCouter;
+	private final com.sun.management.ThreadMXBean memoryCounter;
 
 	ThreadMonitor(final long maxCPUTime, final long maxMemory) {
 		this.maxMemory = maxMemory;
@@ -55,18 +55,27 @@ public class ThreadMonitor {
 		cpuLimitExceeded = new AtomicBoolean(false);
 		memoryLimitExceeded = new AtomicBoolean(false);
 		monitor = new Object();
-		threadBean = ManagementFactory.getThreadMXBean();
-		// ensure this feature is enabled
-		threadBean.setThreadCpuTimeEnabled(true);
-		if (threadBean instanceof com.sun.management.ThreadMXBean) {
-			memoryCouter = (com.sun.management.ThreadMXBean) threadBean;
+		
+		// ensure the ThreadMXBean is supported in the JVM
+		try {
+			threadBean = ManagementFactory.getThreadMXBean();
+			// ensure the ThreadMXBean is enabled for CPU time measurement
+			threadBean.setThreadCpuTimeEnabled(true);
+		} catch (UnsupportedOperationException ex) {
+			if(maxCPUTime > 0) {
+				throw new UnsupportedOperationException("JVM does not support thread CPU time measurement");
+			}
+		}
+		
+		if ((threadBean != null) && (threadBean instanceof com.sun.management.ThreadMXBean)) {
+			memoryCounter = (com.sun.management.ThreadMXBean) threadBean;
 			// ensure this feature is enabled
-			memoryCouter.setThreadAllocatedMemoryEnabled(true);
+			memoryCounter.setThreadAllocatedMemoryEnabled(true);
 		} else {
 			if (maxMemory > 0) {
 				throw new UnsupportedOperationException("JVM does not support thread memory counting");
 			}
-			memoryCouter = null;
+			memoryCounter = null;
 		}
 	}
 
@@ -161,14 +170,18 @@ public class ThreadMonitor {
 	 * @return current memory usage
 	 */
 	private long getCurrentMemory() {
-		if (maxMemory == 0 || memoryCouter != null) {
-			return memoryCouter.getThreadAllocatedBytes(threadToMonitor.getId());
+		if ((maxMemory > 0) && (memoryCounter != null)) {
+			return memoryCounter.getThreadAllocatedBytes(threadToMonitor.getId());
 		}
 		return 0L;
 	}
 
 	private long getCPUTime() {
-		return threadBean.getThreadCpuTime(threadToMonitor.getId());
+		if ((maxCPUTime > 0) && (threadBean != null)) {
+			return threadBean.getThreadCpuTime(threadToMonitor.getId());
+		} else {
+			return 0L;
+		}
 	}
 
 	public void stopMonitor() {
