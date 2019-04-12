@@ -72,7 +72,7 @@ class JsSanitizer {
 
 	private final static List<PoisonPil> POISON_PILLS = Arrays.asList(
 			// every 10th statements ended with semicolon put interrupt checking function
-			new PoisonPil(Pattern.compile("(([^;]+;){9}[^;]+(?<!break|continue);)\\n"),
+			new PoisonPil(Pattern.compile("(([^;]+;){9}[^;]+(?<!break|continue);\\n(?![\\W]*(\\/\\/.+[\\W]+)*else))"),
 					JS_INTERRUPTED_FUNCTION + "();\n"),
 			// every (except switch) block start brace put interrupt checking function
 			new PoisonPil(Pattern.compile("(\\s*for\\s*\\([^\\{]+\\)\\s*\\{)"), JS_INTERRUPTED_FUNCTION + "();"), // for
