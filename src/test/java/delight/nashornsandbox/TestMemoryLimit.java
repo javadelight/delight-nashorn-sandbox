@@ -87,7 +87,7 @@ public class TestMemoryLimit {
         sandbox.eval(js);
       }
       catch(final Exception e){
-        fail("No exception should be thrown");
+        throw new RuntimeException("No exception should be thrown", e);
       }
       finally {
         sandbox.getExecutor().shutdown();
