@@ -14,10 +14,22 @@ public class TestExit {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.eval("exit();");
   }
+  
+  @Test
+  public void testExit_graal() throws ScriptCPUAbuseException, ScriptException {
+    final NashornSandbox sandbox = GraalSandboxes.create();
+    sandbox.eval("exit();");
+  }
 
   @Test
   public void testQuit() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
+    sandbox.eval("quit();");
+  }
+  
+  @Test
+  public void testQuit_graal() throws ScriptCPUAbuseException, ScriptException {
+    final NashornSandbox sandbox = GraalSandboxes.create();
     sandbox.eval("quit();");
   }
 
@@ -26,11 +38,24 @@ public class TestExit {
     final NashornSandbox sandbox = NashornSandboxes.create();
     sandbox.eval("quit();", sandbox.createBindings());
   }
+  
+  @Test
+  public void testQuitWithBindings_graal() throws ScriptCPUAbuseException, ScriptException {
+    final NashornSandbox sandbox = GraalSandboxes.create();
+    sandbox.eval("quit();", sandbox.createBindings());
+  }
 
   @Test
   @Ignore("This will fail as there is no confirmation on Script Contexts")
   public void testQuitWithScriptContext() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
+    sandbox.eval("quit();", new SimpleScriptContext());
+  }
+  
+  @Test
+  @Ignore("This will fail as there is no confirmation on Script Contexts")
+  public void testQuitWithScriptContext_graal() throws ScriptCPUAbuseException, ScriptException {
+    final NashornSandbox sandbox = GraalSandboxes.create();
     sandbox.eval("quit();", new SimpleScriptContext());
   }
 }

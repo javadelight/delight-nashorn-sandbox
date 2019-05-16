@@ -125,7 +125,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return true;
     }
 
-    private void produceSecureBindings() {
+    protected void produceSecureBindings() {
         try {
             if (!engineAsserted) {
                 final StringBuilder sb = new StringBuilder();
@@ -167,7 +167,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         scriptEngine.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
     }
 
-    private void sanitizeBindings(Bindings bindings) {
+    protected void sanitizeBindings(Bindings bindings) {
         if (!allowExitFunctions) {
             bindings.remove("quit");
             bindings.remove("exit");
@@ -222,7 +222,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return executeSandboxedOperation(op);
 	}
 
-	private Bindings secureBindings(Bindings bindings) {
+	protected Bindings secureBindings(Bindings bindings) {
         if (bindings == null)
             return null;
 
@@ -231,7 +231,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return bindings;
     }
 
-	private Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
+	protected Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
         assertScriptEngine();
 		try {
 			if (maxCPUTime == 0 && maxMemory == 0) {

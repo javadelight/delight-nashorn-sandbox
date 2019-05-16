@@ -42,10 +42,43 @@ public class TestMemoryLimit {
         sandbox.getExecutor().shutdown();
       }
     }
+
+    @Test
+    public void test_graal() throws ScriptCPUAbuseException, ScriptException {
+      final NashornSandbox sandbox = GraalSandboxes.create();
+      try {
+        sandbox.setMaxMemory(MEMORY_LIMIT);
+        sandbox.setExecutor(Executors.newSingleThreadExecutor());
+        final String js = "var o={},i=0; while (true) {o[i++] = 'abc'}";
+        sandbox.eval(js);
+        fail("Exception should be thrown");
+      }
+      catch(final ScriptMemoryAbuseException e){
+        assertFalse(e.isScriptKilled());
+      }
+      finally {
+        sandbox.getExecutor().shutdown();
+      }
+    }
     
     @Test(expected=BracesException.class)
     public void test_noexpectedbraces() throws ScriptCPUAbuseException, ScriptException {
       final NashornSandbox sandbox = NashornSandboxes.create();
+      try {
+        sandbox.setMaxMemory(MEMORY_LIMIT);
+        sandbox.setExecutor(Executors.newSingleThreadExecutor());
+        final String js = "var o={},i=0; while (true) o[i++] = 'abc'";
+        sandbox.eval(js);
+        fail("Exception should be thrown");
+      }
+      finally {
+        sandbox.getExecutor().shutdown();
+      }
+    }
+    
+    @Test(expected=BracesException.class)
+    public void test_noexpectedbraces_graal() throws ScriptCPUAbuseException, ScriptException {
+      final NashornSandbox sandbox = GraalSandboxes.create();
       try {
         sandbox.setMaxMemory(MEMORY_LIMIT);
         sandbox.setExecutor(Executors.newSingleThreadExecutor());
@@ -76,6 +109,25 @@ public class TestMemoryLimit {
         sandbox.getExecutor().shutdown();
       }
     }
+    
+    @Test
+    public void test_killed_graal() throws ScriptCPUAbuseException, ScriptException {
+      final NashornSandbox sandbox = GraalSandboxes.create();
+      try {
+        sandbox.setMaxMemory(MEMORY_LIMIT);
+        sandbox.setExecutor(Executors.newSingleThreadExecutor());
+        sandbox.allowNoBraces(true);
+        final String js = "var o={},i=0; while (true) o[i++] = 'abc'";
+        sandbox.eval(js);
+        fail("Exception should be thrown");
+      }
+      catch(final ScriptMemoryAbuseException e){
+        assertFalse(e.isScriptKilled()); // thread.interrupt() works on GraalVM, no forceful script kill needed - see https://www.graalvm.org/docs/reference-manual/embed/
+      }
+      finally {
+        sandbox.getExecutor().shutdown();
+      }
+    }
 
     @Test
     public void test_no_abuse() throws ScriptCPUAbuseException, ScriptException {
@@ -94,4 +146,20 @@ public class TestMemoryLimit {
       }
     }
     
+    @Test
+    public void test_no_abuse_graal() throws ScriptCPUAbuseException, ScriptException {
+      final NashornSandbox sandbox = GraalSandboxes.create();
+      try {
+        sandbox.setMaxMemory(MEMORY_LIMIT);
+        sandbox.setExecutor(Executors.newSingleThreadExecutor());
+        final String js = "var o={},i=0; while(i<10) {o[i++] = 'abc';}";
+        sandbox.eval(js);
+      }
+      catch(final Exception e){
+        throw new RuntimeException("No exception should be thrown", e);
+      }
+      finally {
+        sandbox.getExecutor().shutdown();
+      }
+    }
 }
