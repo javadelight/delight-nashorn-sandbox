@@ -21,6 +21,8 @@ import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
 /**
  * Nashorn sandbox implementation for GraalJS
+ * Due to the active development nature of GraalJS many of these provisions may be temporary.
+ * 
  * @author marcoellwanger
  */
 public class GraalSandboxImpl extends NashornSandboxImpl {
@@ -32,25 +34,38 @@ public class GraalSandboxImpl extends NashornSandboxImpl {
 	public GraalSandboxImpl() {
 		this(new String[0]);
 	}
-	
+
 	public GraalSandboxImpl(String... params) {
+		// HostAccess and PolyglotAccess is necessary to access Java classes
 		super(GraalJSScriptEngine.create(null, Context.newBuilder().allowExperimentalOptions(true).allowPolyglotAccess(PolyglotAccess.ALL).allowHostAccess(HostAccess.ALL)), params);
 		isStrict = Arrays.asList(params).contains("-strict");
 		Bindings bindings = this.scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+		// allow the lookup of Java classes via the (deprecated) ClassFilter
 		bindings.put("polyglot.js.allowHostClassLookup", (Predicate<String>) s -> this.sandboxClassFilter.getStringCache().contains(s));
 	}
 	
+	/**
+	 * Temporary: GraalJS currently does not support resetting of bindings
+	 * @see https://github.com/oracle/graal/issues/631
+	 * @see https://github.com/graalvm/graaljs/issues/47
+	 * @see https://github.com/graalvm/graaljs/issues/146
+	 */
 	@Override
-	protected void resetEngineBindings() {
+	void resetEngineBindings() {
 		
     }
 	
+	/**
+	 * Temporary: GraalJS currently does not support sharing objects across bindings/contexts
+	 * @see https://github.com/oracle/graal/issues/631
+	 */
 	@Override
 	public Bindings createBindings() {
 		return scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
 	}
 	
-    protected void produceSecureBindings() {
+	@Override
+    void produceSecureBindings() {
         try {
             final StringBuilder sb = new StringBuilder();
             cached = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
@@ -80,8 +95,15 @@ public class GraalSandboxImpl extends NashornSandboxImpl {
         }
     }
     
+	/**
+	 * Temporary: GraalJS currently does not support sharing objects across bindings/contexts and has slightly different behavior for engine vs global context
+	 * @see https://github.com/oracle/graal/issues/631
+	 * @see https://github.com/graalvm/graaljs/issues/47
+	 * @see https://github.com/graalvm/graaljs/issues/146
+	 * Merges new bindings into existing engine bindings while preserving existing globals
+	 */	
     @Override
-	protected Bindings secureBindings(Bindings bindings) {
+	Bindings secureBindings(Bindings bindings) {
         if (bindings == null)
             return null;
 
@@ -95,6 +117,12 @@ public class GraalSandboxImpl extends NashornSandboxImpl {
         return cached;
     }
     
+    /**
+     * If a script context is provided, its bindings will be evaluated inside the script engine itself and merged into the engine bindings.
+     * Nashorn checks against globals but Graal seems to override global entries if the same key is present in the script context's bindings.
+     *
+     * For strict mode for GraalJS we need to prefix the sanitized code with 'use strict;' 
+     */
 	@Override
 	public Object eval(final String js, final ScriptContext scriptContext, final Bindings bindings)
 			throws ScriptCPUAbuseException, ScriptException {

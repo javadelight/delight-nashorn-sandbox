@@ -2,7 +2,6 @@ package delight.nashornsandbox.internal;
 
 import java.io.Writer;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Supplier;
 
 import javax.script.Bindings;
 import javax.script.Invocable;
@@ -125,7 +124,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return true;
     }
 
-    protected void produceSecureBindings() {
+    void produceSecureBindings() {
         try {
             if (!engineAsserted) {
                 final StringBuilder sb = new StringBuilder();
@@ -160,14 +159,14 @@ public class NashornSandboxImpl implements NashornSandbox {
         }
     }
 
-    protected void resetEngineBindings() {
+    void resetEngineBindings() {
         final Bindings bindings = createBindings();
         sanitizeBindings(bindings);
         bindings.putAll(cached);
         scriptEngine.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
     }
 
-    protected void sanitizeBindings(Bindings bindings) {
+    void sanitizeBindings(Bindings bindings) {
         if (!allowExitFunctions) {
             bindings.remove("quit");
             bindings.remove("exit");
@@ -222,7 +221,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return executeSandboxedOperation(op);
 	}
 
-	protected Bindings secureBindings(Bindings bindings) {
+	Bindings secureBindings(Bindings bindings) {
         if (bindings == null)
             return null;
 
@@ -231,7 +230,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return bindings;
     }
 
-	protected Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
+	Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
         assertScriptEngine();
 		try {
 			if (maxCPUTime == 0 && maxMemory == 0) {
