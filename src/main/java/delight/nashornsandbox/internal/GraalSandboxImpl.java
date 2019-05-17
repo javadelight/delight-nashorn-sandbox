@@ -1,7 +1,9 @@
 package delight.nashornsandbox.internal;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.script.Bindings;
@@ -104,16 +106,14 @@ public class GraalSandboxImpl extends NashornSandboxImpl {
 	 */	
     @Override
 	Bindings secureBindings(Bindings bindings) {
-        if (bindings == null)
-            return null;
-
+        if (bindings == null) return null;
+        Set<String> toRemove = new HashSet<String>();
         if (bindings != cached) {
         	for (Map.Entry<String, Object> entry : bindings.entrySet()) {
-        	  cached.putIfAbsent(entry.getKey(), entry.getValue());
+        	  if (cached.putIfAbsent(entry.getKey(), entry.getValue()) != null) toRemove.add(entry.getKey());
         	}
-        } else { 
-        	cached.putAll(bindings);
         }
+        for (String key : toRemove) bindings.remove(key);
         return cached;
     }
     
@@ -126,12 +126,14 @@ public class GraalSandboxImpl extends NashornSandboxImpl {
 	@Override
 	public Object eval(final String js, final ScriptContext scriptContext, final Bindings bindings)
 			throws ScriptCPUAbuseException, ScriptException {
+		Set<String> addedKeys = new HashSet<>();
 		if (scriptContext != null) {
 			Bindings engineBindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
 			Bindings contextBindings = scriptContext.getBindings(ScriptContext.ENGINE_SCOPE);
 			if (contextBindings != null) {
 				for (String key : contextBindings.keySet()) {
 					if (engineBindings.get(key) != null) contextBindings.remove(key);
+					else addedKeys.add(key);
 				}			
 			}
 		}
@@ -149,7 +151,12 @@ public class GraalSandboxImpl extends NashornSandboxImpl {
 			securedJs = sanitizer.secureJs(js);
 		}
         final Bindings securedBindings = secureBindings(bindings);
+        if (bindings != null) addedKeys.addAll(bindings.keySet());
         EvaluateOperation op = new EvaluateOperation(isStrict ? "'use strict';" + securedJs : securedJs, scriptContext, securedBindings);
-        return executeSandboxedOperation(op);
+        try {
+        	return executeSandboxedOperation(op);
+        } finally {
+        	for (String key: addedKeys) cached.remove(key);
+        }
 	}
 }
