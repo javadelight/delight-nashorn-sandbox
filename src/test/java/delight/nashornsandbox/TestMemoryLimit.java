@@ -6,6 +6,7 @@ import static junit.framework.Assert.fail;
 
 import java.util.concurrent.Executors;
 
+import javax.script.Bindings;
 import javax.script.ScriptException;
 
 import org.junit.Test;
@@ -92,6 +93,33 @@ public class TestMemoryLimit {
       finally {
         sandbox.getExecutor().shutdown();
       }
+    }
+    
+    /**
+     * <p>Asserting engine will not leak memory when defining bindings multiple times
+     * <p>See <a href='https://github.com/javadelight/delight-nashorn-sandbox/issues/86'>Issue 86</a>
+     * @throws Exception
+     */
+    @Test
+    public void test_issue_86_continued_use() throws Exception {
+        final NashornSandbox sandbox = NashornSandboxes.create();
+        sandbox.setMaxMemory(1024 * 3000);
+        sandbox.setExecutor(Executors.newSingleThreadExecutor());
+        try {
+            final String js = "var o={},i=0; while (i < 10000) {o[i++] = 'abc'}";
+            
+            for (int i=1;i<=1000;i++) {
+            	Bindings bindings = sandbox.createBindings();
+                bindings.put("a", "b");
+                sandbox.eval(js, bindings);
+            }
+        }
+        catch(final ScriptMemoryAbuseException e){
+            fail();
+        }
+        finally {
+            sandbox.getExecutor().shutdown();
+        }
     }
     
 }
