@@ -66,14 +66,18 @@ public interface NashornSandbox {
   void setMaxCPUTime(long limit);
   
   /**
-   * Sets the maximum memory in Bytes which JS executor thread can allocate.
+   * <p>
+   *   Sets the maximum memory in Bytes which JS executor thread can allocate.
+   * </p>
    * <p>
    *   Note, thread memory usage is only approximation.
    * </p>
    * <p>
    *   Note, {@link ExecutorService} should be also set when memory limit is set
    *   greater than 0. Nashorn takes some memory at start, be generous and give
-   *   at least 1MB.
+   *   at least 1MB. If bindings are used, Nashorn allocates additional memory 
+   *   for the bindings which might be a multiple of the memory theoretically
+   *   required by the data types used. For details, see <a href='https://github.com/javadelight/delight-nashorn-sandbox/issues/86'>issue 86</a>.
    * </p>
    * <p>
    *   Current implementation of this limit works only on Sun/Oracle JVM.
