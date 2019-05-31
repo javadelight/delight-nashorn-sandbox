@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,7 +107,7 @@ class JsSanitizer {
 	private final ScriptEngine scriptEngine;
 
 	/** JS beautify() function reference. */
-	private final ScriptObjectMirror jsBeautify;
+	private final Object jsBeautify;
 
 	private final SecuredJsCache securedJsCache;
 
@@ -138,12 +139,12 @@ class JsSanitizer {
 		}
 	}
 
-	private static ScriptObjectMirror getBeautifHandler(final ScriptEngine scriptEngine) {
+	private static Object getBeautifHandler(final ScriptEngine scriptEngine) {
 		try {
 			for (final String name : BEAUTIFY_FUNCTIONS) {
 				final Object somWindow = scriptEngine.eval(name);
 				if (somWindow != null) {
-					return (ScriptObjectMirror) somWindow;
+					return somWindow;
 				}
 			}
 			throw new RuntimeException("Cannot find function 'js_beautify' in: window, exports, global");
@@ -276,8 +277,11 @@ class JsSanitizer {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	String beautifyJs(final String js) {
-		return (String) jsBeautify.call("beautify", js, BEAUTIFY_OPTIONS);
+		if (jsBeautify instanceof ScriptObjectMirror) return (String) ((ScriptObjectMirror) jsBeautify).call("beautify", js, BEAUTIFY_OPTIONS);
+		else if (jsBeautify instanceof Function<?, ?>) return (String) ((Function<Object[], Object>) jsBeautify).apply(new Object[] { js, BEAUTIFY_OPTIONS });
+		else throw new RuntimeException("Unsupported handler type for jsBeautify: " + jsBeautify.getClass().getName());
 	}
 
 	private static String getBeautifyJs() {

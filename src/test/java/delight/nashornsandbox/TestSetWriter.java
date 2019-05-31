@@ -24,4 +24,16 @@ public class TestSetWriter {
     // javascript adds an extra carrige return.
     Assert.assertTrue("Hi there!\r\n".equals(writer.toString()) ||  "Hi there!\n".equals(writer.toString()));
   }
+  
+  @Test
+  public void test_graal() throws ScriptCPUAbuseException, ScriptException {
+    final NashornSandbox sandbox = GraalSandboxes.create();
+    sandbox.allowPrintFunctions(true);
+    final StringWriter writer = new StringWriter();
+    sandbox.setWriter(writer);
+    sandbox.eval("print(\"Hi there!\");");
+    // \n at the end of the string is not enough.
+    // javascript adds an extra carrige return.
+    Assert.assertTrue("Hi there!\r\n".equals(writer.toString()) ||  "Hi there!\n".equals(writer.toString()));
+  }
 }

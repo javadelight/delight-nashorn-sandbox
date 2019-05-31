@@ -41,7 +41,7 @@ public class NashornSandboxImpl implements NashornSandbox {
 
 	static final Logger LOG = LoggerFactory.getLogger(NashornSandbox.class);
 
-	protected final SandboxClassFilter sandboxClassFilter;
+	protected final SandboxClassFilter sandboxClassFilter = new SandboxClassFilter();
 
 	protected final ScriptEngine scriptEngine;
 
@@ -83,20 +83,19 @@ public class NashornSandboxImpl implements NashornSandbox {
 	public NashornSandboxImpl() {
 		this(new String[0]);
 	}
-	
+
 	public NashornSandboxImpl(String... params) {
-		this.maxPreparedStatements = 0;
-		this.sandboxClassFilter = new SandboxClassFilter();
-		final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
-		
+		this(null, params);
+	}
+
+	public NashornSandboxImpl(ScriptEngine engine, String... params) {
 		for (String param : params) {
 			if (param.equals("--no-java")) {
 				throw new IllegalArgumentException("The engine parameter --no-java is not supported. Using it would interfere with the injected code to test for infinite loops.");
 			}
 		}
-		
-		this.scriptEngine = factory.getScriptEngine(params, this.getClass().getClassLoader(), this.sandboxClassFilter);
-		
+		this.scriptEngine = engine == null ? new NashornScriptEngineFactory().getScriptEngine(params, this.getClass().getClassLoader(), this.sandboxClassFilter) : engine;
+		this.maxPreparedStatements = 0;
 		this.allow(InterruptTest.class);
 	}
 
@@ -125,7 +124,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return true;
     }
 
-    private void produceSecureBindings() {
+    void produceSecureBindings() {
         try {
             if (!engineAsserted) {
                 final StringBuilder sb = new StringBuilder();
@@ -160,14 +159,14 @@ public class NashornSandboxImpl implements NashornSandbox {
         }
     }
 
-    private void resetEngineBindings() {
+    void resetEngineBindings() {
         final Bindings bindings = createBindings();
         sanitizeBindings(bindings);
         bindings.putAll(cached);
         scriptEngine.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
     }
 
-    private void sanitizeBindings(Bindings bindings) {
+    void sanitizeBindings(Bindings bindings) {
         if (!allowExitFunctions) {
             bindings.remove("quit");
             bindings.remove("exit");
@@ -222,7 +221,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return executeSandboxedOperation(op);
 	}
 
-	private Bindings secureBindings(Bindings bindings) {
+	Bindings secureBindings(Bindings bindings) {
         if (bindings == null)
             return null;
 
@@ -231,7 +230,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return bindings;
     }
 
-	private Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
+	Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
         assertScriptEngine();
 		try {
 			if (maxCPUTime == 0 && maxMemory == 0) {
@@ -461,5 +460,4 @@ public class NashornSandboxImpl implements NashornSandbox {
 	public void setScriptCache(SecuredJsCache cache) {
 		this.suppliedCache = cache;
 	}
-
 }
