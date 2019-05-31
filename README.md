@@ -2,6 +2,8 @@
 
 A secure sandbox for executing JavaScript in Java apps using the [Nashorn](https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/) engine.
 
+Initial support for Graal JS is also provided (see [PR #87](https://github.com/javadelight/delight-nashorn-sandbox/pull/87/)).
+
 Also see [Rhino Sandbox](https://github.com/javadelight/delight-rhino-sandbox).
 
 Part of the [Java Delight Suite](https://github.com/javadelight/delight-main#java-delight-suite).
@@ -94,8 +96,11 @@ If you are looking for a JAR with all dependencies, you can also download it fro
 [Marcin Gołębski](https://github.com/mgolebsk): Major refactoring and performance improvements. Among other things improved the performance
 for JS evaluation and better handling of monitoring for threads for possible CPU abuse ([#23](https://github.com/javadelight/delight-nashorn-sandbox/pull/23)).
 
+[Marco Ellwanger](https://github.com/mellster2012): Initial support for GraalJS engine by implementing sandbox implementation backed by GraalJS.
+
 ## Version History
 
+- 0.1.23: Initial support for Graal JS ([PR #87](https://github.com/javadelight/delight-nashorn-sandbox/pull/87/) by [mellster2012](https://github.com/mellster2012)) 
 - 0.1.22: Fixing issue with injection of if statement in certain situations ([PR #82](https://github.com/javadelight/delight-nashorn-sandbox/pull/82) by [foxep2001](https://github.com/foxep2001)); Support for JVMs that do not support ThreadMXBean ([PR #84](https://github.com/javadelight/delight-nashorn-sandbox/pull/84) by [amoravec](https://github.com/amoravec))
 - 0.1.21: Fixing executor thread not set after <some value> ms - intermittent issue [# 75](https://github.com/javadelight/delight-nashorn-sandbox/issues/75) by [pradeepKaatnam](https://github.com/pradeepKaatnam) 
 - 0.1.20: Implementing protection for security issue [# 73](https://github.com/javadelight/delight-nashorn-sandbox/issues/73) as suggested by [amlweems](https://github.com/amlweems)
