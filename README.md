@@ -2,7 +2,7 @@
 
 A secure sandbox for executing JavaScript in Java apps using the [Nashorn](https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/) engine.
 
-Initial support for Graal JS is also provided (see [PR #87](https://github.com/javadelight/delight-nashorn-sandbox/pull/87/)).
+Initial support for Graal JS is also provided (see [PR #87](https://github.com/javadelight/delight-nashorn-sandbox/pull/87/)). Please note that this support is experimental and the API for Graal JS access may change.
 
 Also see [Rhino Sandbox](https://github.com/javadelight/delight-rhino-sandbox).
 

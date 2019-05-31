@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<groupId>org.javadelight</groupId>
 	<artifactId>delight-nashorn-sandbox</artifactId>
-	<version>0.1.23</version>
+	<version>0.1.24-SNAPSHOT</version>
 	<description>A safe sandbox to execute JavaScript code from Nashorn.</description>
 	<url>https://github.com/javadelight/delight-nashorn-sandbox</url>
 
@@ -31,34 +32,32 @@
 			<artifactId>js-beautify</artifactId>
 			<version>1.6.12</version>
 		</dependency>
-
-                <dependency>
-                    <groupId>org.graalvm.js</groupId>
-                    <artifactId>js-scriptengine</artifactId>
-                    <version>1.0.0-rc15</version>
-                </dependency>
-<dependency>
-    <groupId>org.graalvm.truffle</groupId>
-    <artifactId>truffle-api</artifactId>
-    <version>1.0.0-rc15</version> <!-- or any later version -->
-</dependency>
-                <dependency>
-                    <groupId>org.graalvm.sdk</groupId>
-                    <artifactId>graal-sdk</artifactId>
-                    <version>1.0.0-rc15</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.graalvm.js</groupId>
-                    <artifactId>js</artifactId>
-                    <version>1.0.0-rc15</version>
-                </dependency>
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js-scriptengine</artifactId>
+			<version>1.0.0-rc15</version>
+		</dependency>
+		<dependency>
+			<groupId>org.graalvm.truffle</groupId>
+			<artifactId>truffle-api</artifactId>
+			<version>1.0.0-rc15</version> <!-- or any later version -->
+		</dependency>
+		<dependency>
+			<groupId>org.graalvm.sdk</groupId>
+			<artifactId>graal-sdk</artifactId>
+			<version>1.0.0-rc15</version>
+		</dependency>
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js</artifactId>
+			<version>1.0.0-rc15</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.7</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
@@ -159,7 +158,8 @@
 						<configuration>
 							<tasks>
 								<delete file="${basedir}/META-INF/MANIFEST.MF" />
-								<copy file="target/classes/META-INF/MANIFEST.MF" tofile="${basedir}/META-INF/MANIFEST.MF" />
+								<copy file="target/classes/META-INF/MANIFEST.MF"
+									tofile="${basedir}/META-INF/MANIFEST.MF" />
 							</tasks>
 						</configuration>
 					</execution>
