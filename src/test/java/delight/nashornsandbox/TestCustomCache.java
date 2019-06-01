@@ -48,22 +48,5 @@ public class TestCustomCache {
 		assertEquals("5;", cache.produced);
 	}
 
-	@Test
-	public void testCustomCacheUsage_graal() throws ScriptCPUAbuseException, ScriptException {
-		NashornSandbox sb = GraalSandboxes.create();
-		final CustomCache cache = new CustomCache();
-		sb.setScriptCache(cache);
-		Object result = sb.eval("5 ;");
-
-		assertTrue(cache.consulted);
-		assertNull(result);
-		assertEquals("5 ;", cache.source);
-
-		// In case this fails because of changes to the beautify-routine:
-		// The actual value is not that important, this is just
-		// a plausibility check to determine whether "producer"
-		// has been passed correctly to the cache's getOrCreate()
-		// method.
-		assertEquals("5;", cache.produced);
-	}
+	
 }

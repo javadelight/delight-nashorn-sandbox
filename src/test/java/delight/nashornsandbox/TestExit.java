@@ -1,11 +1,12 @@
 package delight.nashornsandbox;
 
-import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
 @SuppressWarnings("all")
 public class TestExit {
@@ -15,11 +16,7 @@ public class TestExit {
     sandbox.eval("exit();");
   }
   
-  @Test
-  public void testExit_graal() throws ScriptCPUAbuseException, ScriptException {
-    final NashornSandbox sandbox = GraalSandboxes.create();
-    sandbox.eval("exit();");
-  }
+  
 
   @Test
   public void testQuit() throws ScriptCPUAbuseException, ScriptException {
@@ -27,11 +24,7 @@ public class TestExit {
     sandbox.eval("quit();");
   }
   
-  @Test
-  public void testQuit_graal() throws ScriptCPUAbuseException, ScriptException {
-    final NashornSandbox sandbox = GraalSandboxes.create();
-    sandbox.eval("quit();");
-  }
+  
 
   @Test
   public void testQuitWithBindings() throws ScriptCPUAbuseException, ScriptException {
@@ -39,11 +32,7 @@ public class TestExit {
     sandbox.eval("quit();", sandbox.createBindings());
   }
   
-  @Test
-  public void testQuitWithBindings_graal() throws ScriptCPUAbuseException, ScriptException {
-    final NashornSandbox sandbox = GraalSandboxes.create();
-    sandbox.eval("quit();", sandbox.createBindings());
-  }
+  
 
   @Test
   @Ignore("This will fail as there is no confirmation on Script Contexts")
@@ -52,10 +41,5 @@ public class TestExit {
     sandbox.eval("quit();", new SimpleScriptContext());
   }
   
-  @Test
-  @Ignore("This will fail as there is no confirmation on Script Contexts")
-  public void testQuitWithScriptContext_graal() throws ScriptCPUAbuseException, ScriptException {
-    final NashornSandbox sandbox = GraalSandboxes.create();
-    sandbox.eval("quit();", new SimpleScriptContext());
-  }
+ 
 }

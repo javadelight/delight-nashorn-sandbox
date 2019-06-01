@@ -35,7 +35,7 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
  * @version $Id$
  */
 @SuppressWarnings("restriction")
-class JsSanitizer {
+public class JsSanitizer {
 	private static class PoisonPil {
 		Pattern pattern;
 		String replacement;
@@ -244,7 +244,7 @@ class JsSanitizer {
 		}
 	}
 
-	String secureJs(final String js) throws ScriptException {
+	public String secureJs(final String js) throws ScriptException {
 		if (securedJsCache == null) {
 			return secureJsImpl(js);
 		}

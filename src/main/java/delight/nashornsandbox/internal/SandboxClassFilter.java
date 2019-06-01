@@ -17,7 +17,7 @@ import jdk.nashorn.api.scripting.ClassFilter;
  * @version $Id$
  */
 @SuppressWarnings("restriction")
-class SandboxClassFilter implements ClassFilter {
+public class SandboxClassFilter implements ClassFilter {
   private final Set<Class<?>> allowed;
   private final Set<String> stringCache;
   

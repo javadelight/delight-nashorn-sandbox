@@ -124,7 +124,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return true;
     }
 
-    void produceSecureBindings() {
+    protected void produceSecureBindings() {
         try {
             if (!engineAsserted) {
                 final StringBuilder sb = new StringBuilder();
@@ -159,14 +159,14 @@ public class NashornSandboxImpl implements NashornSandbox {
         }
     }
 
-    void resetEngineBindings() {
+    protected void resetEngineBindings() {
         final Bindings bindings = createBindings();
         sanitizeBindings(bindings);
         bindings.putAll(cached);
         scriptEngine.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
     }
 
-    void sanitizeBindings(Bindings bindings) {
+    protected void sanitizeBindings(Bindings bindings) {
         if (!allowExitFunctions) {
             bindings.remove("quit");
             bindings.remove("exit");
@@ -221,7 +221,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return executeSandboxedOperation(op);
 	}
 
-	Bindings secureBindings(Bindings bindings) {
+	protected Bindings secureBindings(Bindings bindings) {
         if (bindings == null)
             return null;
 
@@ -230,7 +230,7 @@ public class NashornSandboxImpl implements NashornSandbox {
         return bindings;
     }
 
-	Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
+	protected Object executeSandboxedOperation(ScriptEngineOperation op) throws ScriptCPUAbuseException, ScriptException {
         assertScriptEngine();
 		try {
 			if (maxCPUTime == 0 && maxMemory == 0) {
@@ -281,7 +281,7 @@ public class NashornSandboxImpl implements NashornSandbox {
 		maxMemory = limit;
 	}
 
-	JsSanitizer getSanitizer() {
+	protected JsSanitizer getSanitizer() {
 		if (sanitizer == null) {
 			if (suppliedCache == null) {
 				sanitizer = new JsSanitizer(scriptEngine, maxPreparedStatements, allowNoBraces);

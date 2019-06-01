@@ -1,6 +1,10 @@
 package delight.nashornsandbox;
 
-import javax.script.*;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings;
+import javax.script.SimpleScriptContext;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,33 +22,10 @@ public class TestEvalWithScriptContextWithNewBindings {
 		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newBinding);
 		Assert.assertEquals(2112018.0, res);
 	}
-	
-	@Test
-	public void testWithNewBindings_graal() throws ScriptCPUAbuseException, ScriptException {
-		final NashornSandbox sandbox = GraalSandboxes.create();
-		// Create new binding to override the ECMAScript Global properties
-		Bindings newBinding = sandbox.createBindings();
-		Object obj = newBinding.get("Date");
-		newBinding.put("Date", "2112018");
-
-		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newBinding);
-		Assert.assertEquals(2112018, res);
-	}
 
 	@Test
 	public void testWithNewSimpleBindings() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
-		// Create new binding to override the ECMAScript Global properties
-		Bindings newBinding = new SimpleBindings();
-		newBinding.put("Date", "2112018");
-
-		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newBinding);
-		Assert.assertTrue(Double.isNaN((Double)res));
-	}
-	
-	@Test
-	public void testWithNewSimpleBindings_graal() throws ScriptCPUAbuseException, ScriptException {
-		final NashornSandbox sandbox = GraalSandboxes.create();
 		// Create new binding to override the ECMAScript Global properties
 		Bindings newBinding = new SimpleBindings();
 		newBinding.put("Date", "2112018");
@@ -65,19 +46,6 @@ public class TestEvalWithScriptContextWithNewBindings {
 		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newContext);
 		Assert.assertEquals(2112018.0, res);
 	}
-	
-	@Test
-	public void testWithNewBindingsScriptContext_graal() throws ScriptCPUAbuseException, ScriptException {
-		final NashornSandbox sandbox = GraalSandboxes.create();
-		ScriptContext newContext = new SimpleScriptContext();
-		// Create new binding to override the ECMAScript Global properties 
-		Bindings newBinding = sandbox.createBindings();
-		newBinding.put("Date", "2112018");
-		newContext.setBindings(newBinding, ScriptContext.ENGINE_SCOPE);
-
-		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newContext);
-		Assert.assertEquals(2112018, res);
-	}
 
 	@Test
 	public void testWithExistingBindings() throws ScriptCPUAbuseException, ScriptException {
@@ -92,16 +60,5 @@ public class TestEvalWithScriptContextWithNewBindings {
 		Assert.assertTrue(Double.isNaN((Double)res));
 	}
 	
-	@Test
-	public void testWithExistingBindings_graal() throws ScriptCPUAbuseException, ScriptException {
-		final NashornSandbox sandbox = GraalSandboxes.create();
-		ScriptContext newContext = new SimpleScriptContext();
-		Bindings newBinding = newContext.getBindings(ScriptContext.ENGINE_SCOPE);
-		// This will not be updated by using existing bindings, since Date is a 
-		// ECMAScript "global" properties and it is being in ENGINE_SCOPE
-		newBinding.put("Date", "2112018");
-
-		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newContext);
-		Assert.assertTrue(Double.isNaN((Double)res));
-	}
+	
 }

@@ -27,14 +27,6 @@ public class TestIssue40_ScriptEngineParameters {
 		
 	}
 	
-	@Test(expected=ScriptException.class)
-	public void test_graal() throws ScriptCPUAbuseException, ScriptException {
-
-		final NashornSandbox sandbox = GraalSandboxes.create("-strict");
-	    sandbox.allow(File.class);
-
-	    // should throw an exception since 'Java' is not allowed.
-	    sandbox.eval("idontexist = 1;");
-	}
+	
 
 }
