@@ -93,7 +93,7 @@ public class ThreadMonitor {
 			// wait, for threadToMonitor to be set in JS evaluator thread
 			synchronized (monitor) {
 				if (threadToMonitor == null) {
-					monitor.wait((maxCPUTime + 100) / MILI_TO_NANO);
+					monitor.wait((maxCPUTime + 500) / MILI_TO_NANO);
 				}
 			}
 			if (threadToMonitor == null) {
