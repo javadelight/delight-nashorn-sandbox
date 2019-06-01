@@ -102,7 +102,6 @@ public class TestMemoryLimit {
 	 * @throws Exception
 	 */
 	@Test
-	@Ignore("Test results in intermittent failures")
 	public void test_issue_86_continued_use() throws Exception {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.setMaxMemory(1024 * 8000);
