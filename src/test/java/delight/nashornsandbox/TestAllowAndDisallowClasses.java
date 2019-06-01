@@ -5,8 +5,6 @@ import java.util.Objects;
 
 import javax.script.ScriptException;
 
-import org.graalvm.polyglot.PolyglotException;
-
 import org.junit.Assert;
 import org.junit.Test;
 

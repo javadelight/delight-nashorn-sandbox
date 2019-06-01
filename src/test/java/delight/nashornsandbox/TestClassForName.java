@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import javax.script.ScriptException;
 
-import org.graalvm.polyglot.PolyglotException;
-
 import org.junit.Test;
 
 import junit.framework.Assert;
