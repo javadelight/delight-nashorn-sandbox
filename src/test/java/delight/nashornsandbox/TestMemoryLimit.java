@@ -103,7 +103,7 @@ public class TestMemoryLimit {
 	@Test
 	public void test_issue_86_continued_use() throws Exception {
 		final NashornSandbox sandbox = NashornSandboxes.create();
-		sandbox.setMaxMemory(1024 * 4000);
+		sandbox.setMaxMemory(1024 * 8000);
 		sandbox.setExecutor(Executors.newSingleThreadExecutor());
 		try {
 			final String js = "var o={},i=0; while (i < 10000) {o[i++] = 'abc'}";
