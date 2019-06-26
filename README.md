@@ -27,7 +27,7 @@ sandbox.eval("var File = Java.type('java.io.File'); File;")
 Or you can inject your Java object as a JS global variable
 
 ```java
-NashornSandboxes sandbox = NashornSandboxes.create();
+NashornSandbox sandbox = NashornSandboxes.create();
 
 sandbox.inject("fromJava", new Object());
 
