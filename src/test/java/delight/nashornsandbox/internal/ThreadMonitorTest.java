@@ -16,7 +16,7 @@ public class ThreadMonitorTest {
 	public void when_run_and_threadToMonitor_set_then_do_not_wait() {
 		final ThreadMonitor threadMonitor = new ThreadMonitor(1000, 0);
 		Thread threadToMonitor = new Thread();
-		threadMonitor.setThreadToMonitor(threadToMonitor);
+		threadMonitor.registerThreadToMonitor(threadToMonitor);
 		threadMonitor.stopMonitor();
 
 		long startTime = System.currentTimeMillis();

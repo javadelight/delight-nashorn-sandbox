@@ -42,6 +42,8 @@ public class ThreadMonitor {
 
 	private Thread threadToMonitor;
 
+	private boolean timedOutWaitingForThreadToMonitor = false;
+
 	private ThreadMXBean threadBean;
 
 	private final com.sun.management.ThreadMXBean memoryCounter;
@@ -95,9 +97,10 @@ public class ThreadMonitor {
 				if (threadToMonitor == null) {
 					monitor.wait((maxCPUTime + 500) / MILI_TO_NANO);
 				}
-			}
-			if (threadToMonitor == null) {
-				throw new IllegalStateException("Executor thread not set after " + maxCPUTime / MILI_TO_NANO + " ms");
+				if (threadToMonitor == null) {
+					timedOutWaitingForThreadToMonitor = true;
+					throw new IllegalStateException("Executor thread not set after " + maxCPUTime / MILI_TO_NANO + " ms");
+				}
 			}
 			final long startCPUTime = getCPUTime();
 			final long startMemory = getCurrentMemory();
@@ -185,14 +188,22 @@ public class ThreadMonitor {
 	}
 
 	public void stopMonitor() {
-		stop.set(true);
-		notifyMonitorThread();
+		synchronized (monitor) {
+			stop.set(true);
+			monitor.notifyAll();
+		}
 	}
 
-	public void setThreadToMonitor(final Thread t) {
-		reset();
-		threadToMonitor = t;
-		notifyMonitorThread();
+	public boolean registerThreadToMonitor(final Thread t) {
+		synchronized (monitor) {
+			if (timedOutWaitingForThreadToMonitor) {
+				return false;
+			}
+			reset();
+			threadToMonitor = t;
+			monitor.notifyAll();
+			return true;
+		}
 	}
 
 	public void scriptFinished() {
@@ -209,12 +220,6 @@ public class ThreadMonitor {
 
 	public boolean isScriptKilled() {
 		return scriptKilled.get();
-	}
-
-	private void notifyMonitorThread() {
-		synchronized (monitor) {
-			monitor.notifyAll();
-		}
 	}
 
 }
