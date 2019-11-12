@@ -98,6 +98,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.1.27: Fix bug that Nashorn Sandbox does not guarantee that scripts will be stopped if they consume too much memory or CPU time ([PR #96](https://github.com/javadelight/delight-nashorn-sandbox/pull/96) by [jerome-baudoux](https://github.com/jerome-baudoux))
 - 0.1.25: Graal JS sandbox capabilities have been moved to [delight-graaljs-sandbox](https://github.com/javadelight/delight-graaljs-sandbox) repository. 
 - 0.1.23: Initial support for Graal JS ([PR #87](https://github.com/javadelight/delight-nashorn-sandbox/pull/87/) by [mellster2012](https://github.com/mellster2012)) 
 - 0.1.22: Fixing issue with injection of if statement in certain situations ([PR #82](https://github.com/javadelight/delight-nashorn-sandbox/pull/82) by [foxep2001](https://github.com/foxep2001)); Support for JVMs that do not support ThreadMXBean ([PR #84](https://github.com/javadelight/delight-nashorn-sandbox/pull/84) by [amoravec](https://github.com/amoravec))
