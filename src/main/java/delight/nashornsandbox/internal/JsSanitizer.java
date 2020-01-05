@@ -47,10 +47,10 @@ public class JsSanitizer {
 	}
 
 	/** The resource name of beautify.min.js script. */
-	private final static String BEAUTIFY_JS = "/META-INF/resources/webjars/js-beautify/1.6.12/js/lib/beautify.js";
+	private final static String BEAUTIFY_JS = "/META-INF/resources/webjars/js-beautify/1.9.0/js/lib/beautifier.js";
 
 	/** The beautify function search list. */
-	private static final List<String> BEAUTIFY_FUNCTIONS = Arrays.asList("window.js_beautify;", "exports.js_beautify;",
+	private static final List<String> BEAUTIFY_FUNCTIONS = Arrays.asList("exports.beautifier.js;", "window.js_beautify;", "exports.js_beautify;",
 			"global.js_beautify;");
 
 	/** Pattern for back braces. */
@@ -133,6 +133,10 @@ public class JsSanitizer {
 	private void assertScriptEngine() {
 		try {
 			scriptEngine.eval("var window = {};");
+			scriptEngine.eval("var exports = {};");
+			scriptEngine.eval("var global = {};");
+			// Object.assign polyfill
+			scriptEngine.eval("\"function\"!=typeof Object.assign&&Object.defineProperty(Object,\"assign\",{value:function(e,t){\"use strict\";if(null==e)throw new TypeError(\"Cannot convert undefined or null to object\");for(var n=Object(e),r=1;r<arguments.length;r++){var o=arguments[r];if(null!=o)for(var c in o)Object.prototype.hasOwnProperty.call(o,c)&&(n[c]=o[c])}return n},writable:!0,configurable:!0});");
 			scriptEngine.eval(getBeautifyJs());
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
@@ -177,7 +181,7 @@ public class JsSanitizer {
 	}
 
 	/**
-	 * After beautifyier every braces should be in place, if not, or too many we need
+	 * After beautifier every braces should be in place, if not, or too many we need
 	 * to prevent script execution.
 	 *
 	 * @param beautifiedJs

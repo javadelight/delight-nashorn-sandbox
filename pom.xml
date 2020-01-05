@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>org.webjars.bower</groupId>
 			<artifactId>js-beautify</artifactId>
-			<version>1.6.12</version>
+			<version>1.9.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

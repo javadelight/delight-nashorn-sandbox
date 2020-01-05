@@ -19,8 +19,8 @@ public class TestSetWriter {
 		sandbox.setWriter(writer);
 		sandbox.eval("print(\"Hi there!\");");
 		// \n at the end of the string is not enough.
-		// javascript adds an extra carrige return.
-		Assert.assertTrue("Hi there!\r\n".equals(writer.toString()) || "Hi there!\n".equals(writer.toString()));
+		// JavaScript adds an extra carriage return.
+		Assert.assertTrue("Hi there!\r\n".equals(writer.toString()) || "Hi there!\n".equals(writer.toString()) || "Hi there! \n".equals(writer.toString()));
 	}
 
 }
