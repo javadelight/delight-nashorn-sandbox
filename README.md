@@ -72,7 +72,7 @@ while(true) {__if();
 
 Just add the following dependency to your projects.
 
-```
+```xml
 <dependency>
     <groupId>org.javadelight</groupId>
     <artifactId>delight-nashorn-sandbox</artifactId>
