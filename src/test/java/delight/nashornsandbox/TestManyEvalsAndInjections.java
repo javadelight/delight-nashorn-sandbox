@@ -16,7 +16,7 @@ public class TestManyEvalsAndInjections {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.inject("num", Integer.valueOf(10));
 		sandbox.eval("res = num + 1;");
-		Assert.assertEquals(Double.valueOf(11.0), sandbox.get("res"));
+    Assert.assertTrue(sandbox.get("res").equals(Double.valueOf("11.0")) || sandbox.get("res").equals(new Integer(11)));
 		sandbox.inject("str", "20");
 		sandbox.eval("res = num + str;");
 		Assert.assertEquals("1020", sandbox.get("res"));
@@ -26,7 +26,7 @@ public class TestManyEvalsAndInjections {
 		sandboxInterruption.eval("res = 1;");
 		sandboxInterruption.inject("num", Integer.valueOf(10));
 		sandboxInterruption.eval("res = num + 1;");
-		Assert.assertEquals(Double.valueOf(11.0), sandboxInterruption.get("res"));
+    Assert.assertTrue(sandboxInterruption.get("res").equals(Double.valueOf("11.0")) || sandboxInterruption.get("res").equals(new Integer(11)));
 		sandboxInterruption.inject("str", "20");
 		sandboxInterruption.eval("res = num + str;");
 		Assert.assertEquals("1020", sandboxInterruption.get("res"));

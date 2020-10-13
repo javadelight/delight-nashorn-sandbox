@@ -26,11 +26,10 @@ public class TestEvalWithScriptContext {
     engineScope2.put("y", 4);
     
     final Object res1 = sandbox.eval("function cal() {var x = y + 1; return x;} cal();", newContext1);
-    Assert.assertEquals(3.0, res1);
+    Assert.assertTrue(res1.equals(Double.valueOf("3.0")) || res1.equals(new Integer(3)));
     
     final Object res2 = sandbox.eval("function cal() {var x = y + 1; return x;} cal();", newContext2);
-    Assert.assertEquals(5.0, res2);
-    
+    Assert.assertTrue(res2.equals(Double.valueOf("5.0")) || res2.equals(new Integer(5)));
   }
   
   
@@ -49,10 +48,10 @@ public class TestEvalWithScriptContext {
     engineScope2.put("y", 4);
     
     final Object res1 = sandbox.eval("function cal() {var x = y + 1; return x;} cal();", newContext1);
-    Assert.assertEquals(3.0, res1);
+    Assert.assertTrue(res1.equals(Double.valueOf("3.0")) || res1.equals(new Integer(3))); 
     
     final Object res2 = sandbox.eval("function cal() {var x = y + 1; return x;} cal();", newContext2);
-    Assert.assertEquals(5.0, res2);
+    Assert.assertTrue(res2.equals(Double.valueOf("5.0")) || res2.equals(new Integer(5)));
     
   }
   
