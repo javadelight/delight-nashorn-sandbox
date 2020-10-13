@@ -194,25 +194,27 @@ public class JsSanitizer {
 			return;
 		}
 		
+		String withoutComments = RemoveComments.perform(beautifiedJs);
 		for (final Pattern pattern : LACK_EXPECTED_BRACES) {
-			final Matcher matcher = pattern.matcher(RemoveComments.perform(beautifiedJs));
+			final Matcher matcher = pattern.matcher(withoutComments);
 			if (matcher.find()) {
 				
 				String line = "";
 				int index = matcher.start();
-				while (index >= 0 && beautifiedJs.charAt(index) != '\n' ) {
-					line = beautifiedJs.charAt(index)+line;
+				while (index >= 0 && withoutComments.charAt(index) != '\n' ) {
+					line = withoutComments.charAt(index)+line;
 					index--;
 				}
 
 				int singleParaCount = line.length() - line.replace("'", "").length();
 				int doubleParaCount = line.length() - line.replace("\"", "").length();
-				
-				if (singleParaCount % 2 != 0 || doubleParaCount % 2 != 0) {
+				int commentParaCount = line.length() - line.replace("//", "").length();
+				if (singleParaCount % 2 != 0 || doubleParaCount % 2 != 0 || commentParaCount > 0) {
 					// for in string
 					
 				} else {
-					throw new BracesException("No block braces after function|for|while|do. Found ["+matcher.group()+"]");
+					throw new BracesException("No block braces after function|for|while|do. Found ["+matcher.group()+"]. "+
+					"If this exception is reported in error, please set the option `allowNoBraces(true)`");
 				}
 			}
 		}
