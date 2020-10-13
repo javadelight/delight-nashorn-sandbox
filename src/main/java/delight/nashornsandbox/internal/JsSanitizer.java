@@ -53,11 +53,7 @@ public class JsSanitizer {
 	private static final List<String> BEAUTIFY_FUNCTIONS = Arrays.asList("exports.beautifier.js;", "window.js_beautify;", "exports.js_beautify;",
 			"global.js_beautify;");
 
-	/** Pattern for back braces. */
-	private final static List<Pattern> LACK_EXPECTED_BRACES = Arrays.asList(
-			Pattern.compile("for [^\\{]+$"),
-			Pattern.compile("^\\s*do [^\\{]*$", Pattern.MULTILINE),
-			Pattern.compile("^[^\\}]*while [^\\{]+$", Pattern.MULTILINE));
+
 
 	/**
 	 * The name of the JS function to be inserted into user script. To prevent
@@ -180,7 +176,13 @@ public class JsSanitizer {
 		return new LinkedHashMapSecuredJsCache(linkedHashMap, allowNoBraces);
 	}
 
-	/**
+	/** Pattern for back braces. */
+	private final static List<Pattern> LACK_EXPECTED_BRACES = Arrays.asList(
+			Pattern.compile("for [^\\{]+$"),
+			Pattern.compile("^\\s*do [^\\{]*$", Pattern.MULTILINE),
+			Pattern.compile("^[^\\}]*while [^\\{]+$", Pattern.MULTILINE));
+	
+			/**
 	 * After beautifier every braces should be in place, if not, or too many we need
 	 * to prevent script execution.
 	 *
@@ -201,6 +203,7 @@ public class JsSanitizer {
 				
 				String line = "";
 				int index = matcher.start();
+
 				while (index >= 0 && withoutComments.charAt(index) != '\n' ) {
 					line = withoutComments.charAt(index)+line;
 					index--;
@@ -213,8 +216,8 @@ public class JsSanitizer {
 					// for in string
 					
 				} else {
-					throw new BracesException("No block braces after function|for|while|do. Found ["+matcher.group()+"]. "+
-					"If this exception is reported in error, please set the option `allowNoBraces(true)`");
+					throw new BracesException("Potentially no block braces after function|for|while|do. Found ["+matcher.group()+"]. "+
+					"To disable this exception, please set the option `allowNoBraces(true)`");
 				}
 			}
 		}

@@ -63,7 +63,7 @@ public class NashornSandboxImpl implements NashornSandbox {
 
 	protected boolean allowGlobalsObjects = false;
 
-	protected boolean allowNoBraces = false;
+	protected boolean allowNoBraces = true;
 
 	protected JsEvaluator evaluator;
 

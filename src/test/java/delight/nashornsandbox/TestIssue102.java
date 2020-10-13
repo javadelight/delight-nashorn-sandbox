@@ -31,7 +31,6 @@ public class TestIssue102 {
     sandbox.eval(function);
     Invocable invocable = sandbox.getSandboxedInvocable();
     Object result = invocable.invokeFunction("execute");
-    System.out.println(result);
     Assert.assertNotNull(result);
   }
 

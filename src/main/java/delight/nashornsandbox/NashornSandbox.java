@@ -209,6 +209,11 @@ public interface NashornSandbox {
   /**
    * Force, to check if all blocks are enclosed with curly braces "{}".
    * <p>
+   * <b>Warning</b> This option is useful to identify potential abuse but is 
+   * also prone to identify false positives. Please use with caution. Alternatively
+   * you can use <code>setMaxCPUTime</code> to prevent abusive script execution.
+   * </p>
+   * <p>
    *   Explanation: all loops (for, do-while, while, and if-else, and functions
    *   should use braces, because poison_pill() function will be inserted after
    *   each open brace "{", to ensure interruption checking. Otherwise simple
