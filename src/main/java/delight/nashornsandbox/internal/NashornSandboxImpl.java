@@ -1,16 +1,13 @@
 package delight.nashornsandbox.internal;
 
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.script.Bindings;
-import javax.script.Invocable;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
+import javax.script.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +16,6 @@ import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.SecuredJsCache;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 /**
  * Nashorn sandbox implementation.
@@ -39,9 +35,40 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 @SuppressWarnings("restriction")
 public class NashornSandboxImpl implements NashornSandbox {
 
+	private static final Class<?> JDK_NASHORN_NashornScriptEngineFactory_CLASS;
+	private static final Class<?> JDK_NASHORN_ClassFilter_CLASS;
+	private static final Class<?> STANDALONE_NASHORN_NashornScriptEngineFactory_CLASS;
+	private static final Class<?> STANDALONE_NASHORN_ClassFilter_CLASS;
+
+	static {
+		Class<?> tmp_JDK_NASHORN_NashornScriptEngineFactory_CLASS = null;
+		Class<?> tmp_JDK_NASHORN_ClassFilter_CLASS = null;
+		// TODO what behavior do we want here?
+		// TODO move all JDK/standalone code to some dedicated class?
+		try {
+			tmp_JDK_NASHORN_NashornScriptEngineFactory_CLASS = Class.forName("jdk.nashorn.api.scripting.NashornScriptEngineFactory");
+			tmp_JDK_NASHORN_ClassFilter_CLASS = Class.forName("jdk.nashorn.api.scripting.ClassFilter");
+		} catch (ClassNotFoundException e) {
+			System.out.println("JDK Nashorn not found");
+		}
+		JDK_NASHORN_NashornScriptEngineFactory_CLASS = tmp_JDK_NASHORN_NashornScriptEngineFactory_CLASS;
+		JDK_NASHORN_ClassFilter_CLASS = tmp_JDK_NASHORN_ClassFilter_CLASS;
+
+		Class<?> tmp_STANDALONE_NASHORN_NashornScriptEngineFactory_CLASS = null;
+		Class<?> tmp_STANDALONE_NASHORN_ClassFilter_CLASS = null;
+		try {
+			tmp_STANDALONE_NASHORN_NashornScriptEngineFactory_CLASS = Class.forName("org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory");
+			tmp_STANDALONE_NASHORN_ClassFilter_CLASS = Class.forName("org.openjdk.nashorn.api.scripting.ClassFilter");
+		} catch (ClassNotFoundException e) {
+			System.out.println("Standalone Nashorn not found");
+		}
+		STANDALONE_NASHORN_NashornScriptEngineFactory_CLASS = tmp_STANDALONE_NASHORN_NashornScriptEngineFactory_CLASS;
+		STANDALONE_NASHORN_ClassFilter_CLASS = tmp_STANDALONE_NASHORN_ClassFilter_CLASS;
+	}
+
 	static final Logger LOG = LoggerFactory.getLogger(NashornSandbox.class);
 
-	protected final SandboxClassFilter sandboxClassFilter = new SandboxClassFilter();
+	protected final SandboxClassFilter sandboxClassFilter;
 
 	protected final ScriptEngine scriptEngine;
 
@@ -95,13 +122,46 @@ public class NashornSandboxImpl implements NashornSandbox {
 						"The engine parameter --no-java is not supported. Using it would interfere with the injected code to test for infinite loops.");
 			}
 		}
+		sandboxClassFilter = createSandboxClassFilter();
 		this.scriptEngine = engine == null
-				? new NashornScriptEngineFactory().getScriptEngine(params, this.getClass().getClassLoader(),
-						this.sandboxClassFilter)
+				? createNashornScriptEngineFactory(params)
 				: engine;
 		this.maxPreparedStatements = 0;
 		this.allow(InterruptTest.class);
 		this.engineAsserted = new AtomicBoolean(false);
+	}
+
+	private SandboxClassFilter createSandboxClassFilter() {
+		if (JDK_NASHORN_ClassFilter_CLASS != null) {
+			return new JdkNashornClassFilter();
+		}
+		if (STANDALONE_NASHORN_ClassFilter_CLASS != null) {
+			return new StandaloneNashornClassFilter();
+		}
+		throw new IllegalStateException("Neither jdk.nashorn.api.scripting.ClassFilter or org.openjdk.nashorn.api.scripting.ClassFilter is present");
+	}
+
+	public ScriptEngine createNashornScriptEngineFactory(String ... params) {
+        try {
+            Object nashornScriptEngineFactory = null;
+			Class<?> classFilterClass = null;
+			if (JDK_NASHORN_NashornScriptEngineFactory_CLASS != null) {
+				nashornScriptEngineFactory = JDK_NASHORN_NashornScriptEngineFactory_CLASS.getConstructor().newInstance();
+				classFilterClass = JDK_NASHORN_ClassFilter_CLASS;
+			} else if (STANDALONE_NASHORN_NashornScriptEngineFactory_CLASS != null) {
+				nashornScriptEngineFactory = STANDALONE_NASHORN_NashornScriptEngineFactory_CLASS.getConstructor().newInstance();
+				classFilterClass = STANDALONE_NASHORN_ClassFilter_CLASS;
+			}
+            if (nashornScriptEngineFactory == null) {
+                throw new IllegalStateException("Neither jdk.nashorn.api.scripting.NashornScriptEngineFactory or org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory is present");
+            }
+
+			Method getScriptEngine = nashornScriptEngineFactory.getClass().getDeclaredMethod("getScriptEngine", String[].class, ClassLoader.class, classFilterClass);
+            return (ScriptEngine) getScriptEngine.invoke(nashornScriptEngineFactory, params, this.getClass().getClassLoader(),
+					classFilterClass.cast(this.sandboxClassFilter));
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
 	}
 
 	private synchronized void assertScriptEngine() {

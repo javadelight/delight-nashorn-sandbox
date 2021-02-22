@@ -20,7 +20,6 @@ import javax.script.ScriptException;
 
 import delight.nashornsandbox.SecuredJsCache;
 import delight.nashornsandbox.exceptions.BracesException;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 /**
  * JavaScript sanitizer. Check for loops and inserts function call which breaks
@@ -36,6 +35,28 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
  */
 @SuppressWarnings("restriction")
 public class JsSanitizer {
+
+	private static final Class<?> JDK_NASHORN_ScriptObjectMirror_CLASS;
+	private static final Class<?> STANDALONE_NASHORN_ScriptObjectMirror_CLASS;
+
+	static {
+		Class<?> tmp_JDK_NASHORN_ScriptObjectMirror_CLASS = null;
+		// TODO what behavior do we want here?
+		try {
+			tmp_JDK_NASHORN_ScriptObjectMirror_CLASS = Class.forName("jdk.nashorn.api.scripting.ScriptObjectMirror");
+		} catch (ClassNotFoundException e) {
+			System.out.println("JDK Nashorn not found");
+		}
+		JDK_NASHORN_ScriptObjectMirror_CLASS= tmp_JDK_NASHORN_ScriptObjectMirror_CLASS;
+		Class<?> tmp_STANDALONE_NASHORN_ScriptObjectMirror_CLASS = null;
+		try {
+			tmp_STANDALONE_NASHORN_ScriptObjectMirror_CLASS = Class.forName("org.openjdk.nashorn.api.scripting.ScriptObjectMirror");
+		} catch (ClassNotFoundException e) {
+			System.out.println("Standalone Nashorn not found");
+		}
+		STANDALONE_NASHORN_ScriptObjectMirror_CLASS = tmp_STANDALONE_NASHORN_ScriptObjectMirror_CLASS;
+	}
+
 	private static class PoisonPil {
 		Pattern pattern;
 		String replacement;
@@ -103,7 +124,7 @@ public class JsSanitizer {
 	private final ScriptEngine scriptEngine;
 
 	/** JS beautify() function reference. */
-	private final Object jsBeautify;
+	private final Function<String, String> jsBeautify;
 
 	private final SecuredJsCache securedJsCache;
 
@@ -115,7 +136,8 @@ public class JsSanitizer {
 		this.allowNoBraces = allowBraces;
 		this.securedJsCache = createSecuredJsCache(maxPreparedStatements);
 		assertScriptEngine();
-		this.jsBeautify = getBeautifHandler(scriptEngine);
+        Object beautifHandler = getBeautifHandler(scriptEngine);
+        this.jsBeautify = beautifierAsFunction(beautifHandler);
 	}
 
 	JsSanitizer(final ScriptEngine scriptEngine, final boolean allowBraces, SecuredJsCache cache) {
@@ -123,7 +145,8 @@ public class JsSanitizer {
 		this.allowNoBraces = allowBraces;
 		this.securedJsCache = cache;
 		assertScriptEngine();
-		this.jsBeautify = getBeautifHandler(scriptEngine);
+        Object beautifHandler = getBeautifHandler(scriptEngine);
+        this.jsBeautify = beautifierAsFunction(beautifHandler);
 	}
 
 	private void assertScriptEngine() {
@@ -181,7 +204,7 @@ public class JsSanitizer {
 			Pattern.compile("for [^\\{]+$"),
 			Pattern.compile("^\\s*do [^\\{]*$", Pattern.MULTILINE),
 			Pattern.compile("^[^\\}]*while [^\\{]+$", Pattern.MULTILINE));
-	
+
 			/**
 	 * After beautifier every braces should be in place, if not, or too many we need
 	 * to prevent script execution.
@@ -195,12 +218,12 @@ public class JsSanitizer {
 		if (allowNoBraces) {
 			return;
 		}
-		
+
 		String withoutComments = RemoveComments.perform(beautifiedJs);
 		for (final Pattern pattern : LACK_EXPECTED_BRACES) {
 			final Matcher matcher = pattern.matcher(withoutComments);
 			if (matcher.find()) {
-				
+
 				String line = "";
 				int index = matcher.start();
 
@@ -214,7 +237,7 @@ public class JsSanitizer {
 				int commentParaCount = line.length() - line.replace("//", "").length();
 				if (singleParaCount % 2 != 0 || doubleParaCount % 2 != 0 || commentParaCount > 0) {
 					// for in string
-					
+
 				} else {
 					throw new BracesException("Potentially no block braces after function|for|while|do. Found ["+matcher.group()+"]. "+
 					"To disable this exception, please set the option `allowNoBraces(true)`");
@@ -286,11 +309,8 @@ public class JsSanitizer {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	String beautifyJs(final String js) {
-		if (jsBeautify instanceof ScriptObjectMirror) return (String) ((ScriptObjectMirror) jsBeautify).call("beautify", js, BEAUTIFY_OPTIONS);
-		else if (jsBeautify instanceof Function<?, ?>) return (String) ((Function<Object[], Object>) jsBeautify).apply(new Object[] { js, BEAUTIFY_OPTIONS });
-		else throw new RuntimeException("Unsupported handler type for jsBeautify: " + jsBeautify.getClass().getName());
+        return jsBeautify.apply(js);
 	}
 
 	private static String getBeautifyJs() {
@@ -312,4 +332,27 @@ public class JsSanitizer {
 		return script;
 	}
 
+
+    @SuppressWarnings("unchecked")
+	private static Function<String, String> beautifierAsFunction(Object beautifyScript) {
+        if (JDK_NASHORN_ScriptObjectMirror_CLASS != null && JDK_NASHORN_ScriptObjectMirror_CLASS.isInstance(beautifyScript)) {
+			return script -> {
+				jdk.nashorn.api.scripting.ScriptObjectMirror scriptObjectMirror = (jdk.nashorn.api.scripting.ScriptObjectMirror) beautifyScript;
+				return (String) scriptObjectMirror.call("beautify", script, BEAUTIFY_OPTIONS);
+			};
+        }
+
+        if (STANDALONE_NASHORN_ScriptObjectMirror_CLASS != null && STANDALONE_NASHORN_ScriptObjectMirror_CLASS.isInstance(beautifyScript)) {
+			return script -> {
+				org.openjdk.nashorn.api.scripting.ScriptObjectMirror scriptObjectMirror = (org.openjdk.nashorn.api.scripting.ScriptObjectMirror) beautifyScript;
+				return (String) scriptObjectMirror.call("beautify", script, BEAUTIFY_OPTIONS);
+			};
+        }
+
+        if (beautifyScript instanceof Function<?, ?>) {
+            return script -> (String) ((Function<Object[], Object>) beautifyScript).apply(new Object[]{script, BEAUTIFY_OPTIONS});
+        }
+
+        throw new RuntimeException("Unsupported handler type for jsBeautify: " + beautifyScript.getClass().getName());
+    }
 }
