@@ -36,27 +36,6 @@ import delight.nashornsandbox.exceptions.BracesException;
 @SuppressWarnings("restriction")
 public class JsSanitizer {
 
-	private static final Class<?> JDK_NASHORN_ScriptObjectMirror_CLASS;
-	private static final Class<?> STANDALONE_NASHORN_ScriptObjectMirror_CLASS;
-
-	static {
-		Class<?> tmp_JDK_NASHORN_ScriptObjectMirror_CLASS = null;
-		// TODO what behavior do we want here?
-		try {
-			tmp_JDK_NASHORN_ScriptObjectMirror_CLASS = Class.forName("jdk.nashorn.api.scripting.ScriptObjectMirror");
-		} catch (ClassNotFoundException e) {
-			System.out.println("JDK Nashorn not found");
-		}
-		JDK_NASHORN_ScriptObjectMirror_CLASS= tmp_JDK_NASHORN_ScriptObjectMirror_CLASS;
-		Class<?> tmp_STANDALONE_NASHORN_ScriptObjectMirror_CLASS = null;
-		try {
-			tmp_STANDALONE_NASHORN_ScriptObjectMirror_CLASS = Class.forName("org.openjdk.nashorn.api.scripting.ScriptObjectMirror");
-		} catch (ClassNotFoundException e) {
-			System.out.println("Standalone Nashorn not found");
-		}
-		STANDALONE_NASHORN_ScriptObjectMirror_CLASS = tmp_STANDALONE_NASHORN_ScriptObjectMirror_CLASS;
-	}
-
 	private static class PoisonPil {
 		Pattern pattern;
 		String replacement;
@@ -335,14 +314,14 @@ public class JsSanitizer {
 
     @SuppressWarnings("unchecked")
 	private static Function<String, String> beautifierAsFunction(Object beautifyScript) {
-        if (JDK_NASHORN_ScriptObjectMirror_CLASS != null && JDK_NASHORN_ScriptObjectMirror_CLASS.isInstance(beautifyScript)) {
+        if (NashornDetection.isJDKNashornScriptObjectMirror(beautifyScript)) {
 			return script -> {
 				jdk.nashorn.api.scripting.ScriptObjectMirror scriptObjectMirror = (jdk.nashorn.api.scripting.ScriptObjectMirror) beautifyScript;
 				return (String) scriptObjectMirror.call("beautify", script, BEAUTIFY_OPTIONS);
 			};
         }
 
-        if (STANDALONE_NASHORN_ScriptObjectMirror_CLASS != null && STANDALONE_NASHORN_ScriptObjectMirror_CLASS.isInstance(beautifyScript)) {
+        if (NashornDetection.isStandaloneNashornScriptObjectMirror(beautifyScript)) {
 			return script -> {
 				org.openjdk.nashorn.api.scripting.ScriptObjectMirror scriptObjectMirror = (org.openjdk.nashorn.api.scripting.ScriptObjectMirror) beautifyScript;
 				return (String) scriptObjectMirror.call("beautify", script, BEAUTIFY_OPTIONS);
