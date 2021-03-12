@@ -18,20 +18,20 @@ public class NashornDetection {
     private static final Class<?> STANDALONE_NASHORN_ClassFilter_CLASS;
 
     static {
-        JDK_NASHORN_ScriptObjectMirror_CLASS = findClass("jdk.nashorn.api.scripting.ScriptObjectMirror", "JDK-provided Nashorn not found");
+        JDK_NASHORN_ScriptObjectMirror_CLASS = findClass("jdk.nashorn.api.scripting.ScriptObjectMirror", "JDK-provided Nashorn");
         if (JDK_NASHORN_ScriptObjectMirror_CLASS != null) {
-            JDK_NASHORN_NashornScriptEngineFactory_CLASS = findClass("jdk.nashorn.api.scripting.NashornScriptEngineFactory", "");
-            JDK_NASHORN_ClassFilter_CLASS = findClass("jdk.nashorn.api.scripting.ClassFilter", "");
+            JDK_NASHORN_NashornScriptEngineFactory_CLASS = findClass("jdk.nashorn.api.scripting.NashornScriptEngineFactory", "JDK-provided Nashorn");
+            JDK_NASHORN_ClassFilter_CLASS = findClass("jdk.nashorn.api.scripting.ClassFilter", "JDK-provided Nashorn");
         } else {
             // no need to search for those and add more logs
             JDK_NASHORN_NashornScriptEngineFactory_CLASS = null;
             JDK_NASHORN_ClassFilter_CLASS = null;
         }
 
-        STANDALONE_NASHORN_ScriptObjectMirror_CLASS = findClass("org.openjdk.nashorn.api.scripting.ScriptObjectMirror", "Standalone Nashorn not found");
-        if (STANDALONE_NASHORN_ScriptObjectMirror_CLASS == null) {
-            STANDALONE_NASHORN_NashornScriptEngineFactory_CLASS = findClass("org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory", "");
-            STANDALONE_NASHORN_ClassFilter_CLASS = findClass("org.openjdk.nashorn.api.scripting.ClassFilter", "");
+        STANDALONE_NASHORN_ScriptObjectMirror_CLASS = findClass("org.openjdk.nashorn.api.scripting.ScriptObjectMirror", "Standalone Nashorn");
+        if (STANDALONE_NASHORN_ScriptObjectMirror_CLASS != null) {
+            STANDALONE_NASHORN_NashornScriptEngineFactory_CLASS = findClass("org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory", "Standalone Nashorn");
+            STANDALONE_NASHORN_ClassFilter_CLASS = findClass("org.openjdk.nashorn.api.scripting.ClassFilter", "Standalone Nashorn");
         } else {
             STANDALONE_NASHORN_NashornScriptEngineFactory_CLASS = null;
             STANDALONE_NASHORN_ClassFilter_CLASS = null;
@@ -50,12 +50,26 @@ public class NashornDetection {
     public static SandboxClassFilter createSandboxClassFilter() {
         // TODO allow to force one impl?
         if (JDK_NASHORN_ClassFilter_CLASS != null) {
-            return new JdkNashornClassFilter();
+            return JdkNashornClassFilterCreator.createJdkNashornClassFilter();
         }
         if (STANDALONE_NASHORN_ClassFilter_CLASS != null) {
-            return new StandaloneNashornClassFilter();
+            return StandaloneNashornClassFilterCreator.createStandaloneNashornClassFilter();
         }
         throw new IllegalStateException("Neither jdk.nashorn.api.scripting.ClassFilter or org.openjdk.nashorn.api.scripting.ClassFilter is present");
+    }
+
+    // hide the references to the actual class in private inner classes, so the JVM won't ever load a bytecode that reference a class that is missing
+    private static class JdkNashornClassFilterCreator {
+        private static SandboxClassFilter createJdkNashornClassFilter() {
+            return new JdkNashornClassFilter();
+        }
+    }
+
+    private static class StandaloneNashornClassFilterCreator {
+        private static SandboxClassFilter createStandaloneNashornClassFilter() {
+            return new StandaloneNashornClassFilter();
+        }
+
     }
 
     // actually returns an instance of either jdk.nashorn.api.scripting.ClassFilter or org.openjdk.nashorn.api.scripting.ClassFilter
@@ -84,9 +98,11 @@ public class NashornDetection {
     private static Class<?> findClass(String className, String message) {
         try {
             return Class.forName(className);
+        } catch (UnsupportedClassVersionError e) {
+            logger.debug("Class for {} is compiled for a more recent release of java: {}", message, e.getMessage());
         } catch (ClassNotFoundException e) {
-            logger.debug(message);
-            return null;
+            logger.debug("Class for {} was not found", message);
         }
+        return null;
     }
 }
