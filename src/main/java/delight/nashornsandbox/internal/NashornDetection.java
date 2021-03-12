@@ -36,7 +36,14 @@ public class NashornDetection {
             STANDALONE_NASHORN_NashornScriptEngineFactory_CLASS = null;
             STANDALONE_NASHORN_ClassFilter_CLASS = null;
         }
-        // TODO add a report of what was detected and what will be used
+        if (JDK_NASHORN_ScriptObjectMirror_CLASS == null && STANDALONE_NASHORN_ScriptObjectMirror_CLASS == null) {
+            throw new RuntimeException("Neither JDK nor Standalone Nashorn was found. If running on JDK 15 or later, you must add standalone Nashorn to the classpath.");
+        }
+        logger.info("Delight-nashorn-sandbox detected that JDK Nashorn is {} and standalone Nashorn is {}, and will use {}",
+                JDK_NASHORN_ScriptObjectMirror_CLASS != null ? "present" : "absent",
+                STANDALONE_NASHORN_ScriptObjectMirror_CLASS != null ? "present" : "absent",
+                JDK_NASHORN_ScriptObjectMirror_CLASS != null ? "JDK Nashorn" : "Standalone Nashorn"
+        );
     }
 
     public static boolean isJDKNashornScriptObjectMirror(Object script) {
