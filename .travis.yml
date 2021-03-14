@@ -5,7 +5,9 @@ jdk:
 
 sudo: false
 
+script:
+  - jdk_switcher use oraclejdk8
 addons:
   apt:
     packages:
-      - oracle-java8-installer
+      - oracle-java11-installer

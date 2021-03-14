@@ -32,6 +32,14 @@
 			<artifactId>js-beautify</artifactId>
 			<version>1.9.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.openjdk.nashorn</groupId>
+			<artifactId>nashorn-core</artifactId>
+			<version>15.2</version>
+			<optional>true</optional>
+		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

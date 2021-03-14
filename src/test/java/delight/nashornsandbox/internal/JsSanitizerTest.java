@@ -8,7 +8,6 @@ import static org.junit.Assert.fail;
 import java.util.concurrent.Executors;
 
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.junit.Before;
@@ -33,7 +32,7 @@ public class JsSanitizerTest {
 	private final ScriptEngine scriptEngine;
 
 	public JsSanitizerTest() {
-		scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
+		scriptEngine = new NashornSandboxImpl().createNashornScriptEngineFactory();
 	}
 
 	@Before
