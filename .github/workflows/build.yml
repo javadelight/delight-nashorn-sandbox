@@ -42,6 +42,6 @@ jobs:
         run: 
           rm -rf delight-nashorn-sandbox-*-javadoc.jar
           rm -rf delight-nashorn-sandbox-*-sources.jar
-      - run: echo "TODO: Validate JAR in some way"
+# TODO: Validate JAR in some way ...
 
       
