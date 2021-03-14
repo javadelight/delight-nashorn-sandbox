@@ -38,16 +38,10 @@ jobs:
           name: delight-nashorn-sandbox
       - name: Display structure of downloaded files
         run: ls -R
-      - name: Clean files
+      - name: Clean unnecessary files
         run: 
           rm -rf delight-nashorn-sandbox-*-javadoc.jar
           rm -rf delight-nashorn-sandbox-*-sources.jar
-      - name: Get MANIFEST.MF
-        run: 
-          unzip -p delight-nashorn-sandbox-*.jar META-INF/MANIFEST.MF
-      - name: Display structure of downloaded files
-        run: ls -R
-      - name: Show MANIFEST.MF
-        run:
-          cat MANIFEST.MF
+      - run: echo "TODO: Validate JAR in some way"
+
       
