@@ -98,8 +98,11 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 [Marco Ellwanger](https://github.com/mellster2012): Initial support for GraalJS engine by implementing sandbox implementation backed by GraalJS.
 
+[Olivier Bourgain](https://github.com/obourgain): Detection for JDK version and ability to use standalone Nashorn for JDK versions in which it is not included.
+
 ## Version History
 
+- 0.1.33: Dynamically detects what version of the JDK the library is run with, and will either use the included Nashorn version or use Nashorn dependency ([Issue #109](https://github.com/javadelight/delight-nashorn-sandbox/issues/109), [PR #101](https://github.com/javadelight/delight-nashorn-sandbox/pull/111)).
 - 0.1.32: Defaulted `allowNoBraces` to `true` since the check easily leads to false positives ([Issue #102](https://github.com/javadelight/delight-nashorn-sandbox/issues/102) and [Issue #104](https://github.com/javadelight/delight-nashorn-sandbox/issues/104)) 
 - 0.1.28: Upgraded JS Beautify version to 1.9.0 to address failing security checks ([Issue #93](https://github.com/javadelight/delight-nashorn-sandbox/issues/93)) 
 - 0.1.27: Fix bug that Nashorn Sandbox does not guarantee that scripts will be stopped if they consume too much memory or CPU time ([PR #96](https://github.com/javadelight/delight-nashorn-sandbox/pull/96) by [jerome-baudoux](https://github.com/jerome-baudoux))
