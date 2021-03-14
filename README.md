@@ -82,8 +82,9 @@ Just add the following dependency to your projects.
 </dependency>
 ```
 
-This artifact is available on [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cdelight-nashorn-sandbox) and 
-[BinTray](https://bintray.com/javadelight/javadelight/delight-nashorn-sandbox).
+Note that up to version v.0.1.31 the library would only work with Java versions lower than 13. To make the library work with Java version 13 and above, please use a library version 0.2.0+. The compatability with v0.2.0 with lower versions of Java is still experimental. If you encounter issues, specifically in Java 1.8 please use a 0.1.x version (and please report any issues).
+
+This artifact is available on [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cdelight-nashorn-sandbox). 
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.javadelight/delight-nashorn-sandbox.svg)](https://search.maven.org/#search%7Cga%7C1%7Cdelight-nashorn-sandbox)
 
@@ -102,7 +103,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
-- 0.1.33: Dynamically detects what version of the JDK the library is run with, and will either use the included Nashorn version or use Nashorn dependency ([Issue #109](https://github.com/javadelight/delight-nashorn-sandbox/issues/109), [PR #101](https://github.com/javadelight/delight-nashorn-sandbox/pull/111)).
+- 0.2.0: Dynamically detects what version of the JDK the library is run with, and will either use the included Nashorn version or use Nashorn dependency ([Issue #109](https://github.com/javadelight/delight-nashorn-sandbox/issues/109), [PR #101](https://github.com/javadelight/delight-nashorn-sandbox/pull/111)).
 - 0.1.32: Defaulted `allowNoBraces` to `true` since the check easily leads to false positives ([Issue #102](https://github.com/javadelight/delight-nashorn-sandbox/issues/102) and [Issue #104](https://github.com/javadelight/delight-nashorn-sandbox/issues/104)) 
 - 0.1.28: Upgraded JS Beautify version to 1.9.0 to address failing security checks ([Issue #93](https://github.com/javadelight/delight-nashorn-sandbox/issues/93)) 
 - 0.1.27: Fix bug that Nashorn Sandbox does not guarantee that scripts will be stopped if they consume too much memory or CPU time ([PR #96](https://github.com/javadelight/delight-nashorn-sandbox/pull/96) by [jerome-baudoux](https://github.com/jerome-baudoux))

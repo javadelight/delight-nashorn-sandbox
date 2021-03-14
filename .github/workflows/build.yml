@@ -45,5 +45,7 @@ jobs:
       - name: Get MANIFEST.MF
         run: 
           unzip -p delight-nashorn-sandbox-*.jar META-INF/MANIFEST.MF > MANIFEST.MF
+      - name: Show MANIFEST.MF
+        run:
           cat MANIFEST.MF
       
