@@ -1,16 +1,13 @@
 package delight.nashornsandbox.internal;
 
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.script.Bindings;
-import javax.script.Invocable;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
+import javax.script.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +16,6 @@ import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.SecuredJsCache;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 /**
  * Nashorn sandbox implementation.
@@ -41,7 +37,7 @@ public class NashornSandboxImpl implements NashornSandbox {
 
 	static final Logger LOG = LoggerFactory.getLogger(NashornSandbox.class);
 
-	protected final SandboxClassFilter sandboxClassFilter = new SandboxClassFilter();
+	protected final SandboxClassFilter sandboxClassFilter;
 
 	protected final ScriptEngine scriptEngine;
 
@@ -95,13 +91,30 @@ public class NashornSandboxImpl implements NashornSandbox {
 						"The engine parameter --no-java is not supported. Using it would interfere with the injected code to test for infinite loops.");
 			}
 		}
+		sandboxClassFilter = createSandboxClassFilter();
 		this.scriptEngine = engine == null
-				? new NashornScriptEngineFactory().getScriptEngine(params, this.getClass().getClassLoader(),
-						this.sandboxClassFilter)
+				? createNashornScriptEngineFactory(params)
 				: engine;
 		this.maxPreparedStatements = 0;
 		this.allow(InterruptTest.class);
 		this.engineAsserted = new AtomicBoolean(false);
+	}
+
+	private SandboxClassFilter createSandboxClassFilter() {
+		return NashornDetection.createSandboxClassFilter();
+	}
+
+	public ScriptEngine createNashornScriptEngineFactory(String ... params) {
+        try {
+			Object nashornScriptEngineFactory = NashornDetection.getNashornScriptEngineFactory();
+			Class<?> classFilterClass = NashornDetection.getClassFilterClass();
+
+			Method getScriptEngine = nashornScriptEngineFactory.getClass().getDeclaredMethod("getScriptEngine", String[].class, ClassLoader.class, classFilterClass);
+            return (ScriptEngine) getScriptEngine.invoke(nashornScriptEngineFactory, params, this.getClass().getClassLoader(),
+					classFilterClass.cast(this.sandboxClassFilter));
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
 	}
 
 	private synchronized void assertScriptEngine() {

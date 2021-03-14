@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import jdk.nashorn.api.scripting.ClassFilter;
-
 /**
  * The class Filter.
  *
@@ -17,11 +15,9 @@ import jdk.nashorn.api.scripting.ClassFilter;
  * @version $Id$
  */
 @SuppressWarnings("restriction")
-public class SandboxClassFilter implements ClassFilter {
+public abstract class SandboxClassFilter {
   private final Set<Class<?>> allowed;
   private final Set<String> stringCache;
-  
-  @Override
   public boolean exposeToScripts(final String className) {
     return stringCache.contains(className);
   }
