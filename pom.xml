@@ -307,14 +307,14 @@
 			<id>mxro</id>
 			<name>Max Rohde</name>
 			<email>noemail@mxro.de</email>
-			<url>http://www.mxro.de/</url>
+			<url>https://www.mxro.de/</url>
 			<roles>
 				<role>architect</role>
 				<role>developer</role>
 			</roles>
 			<timezone>+10</timezone>
 			<organization>pureleap</organization>
-			<organizationUrl>http://www.pureleap.com</organizationUrl>
+			<organizationUrl>https://www.pureleap.com</organizationUrl>
 		</developer>
 	</developers>
 
