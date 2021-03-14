@@ -44,7 +44,9 @@ jobs:
           rm -rf delight-nashorn-sandbox-*-sources.jar
       - name: Get MANIFEST.MF
         run: 
-          unzip -p delight-nashorn-sandbox-*.jar META-INF/MANIFEST.MF > MANIFEST.MF
+          unzip -p delight-nashorn-sandbox-*.jar META-INF/MANIFEST.MF
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Show MANIFEST.MF
         run:
           cat MANIFEST.MF
