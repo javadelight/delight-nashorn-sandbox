@@ -20,7 +20,7 @@ public class TestIssue47 {
 
 		NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(100);
-		sandbox.setMaxMemory(1000 * 1000);
+		sandbox.setMaxMemory(2000 * 1000);
 		sandbox.allowNoBraces(false);
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		sandbox.setExecutor(executor);

@@ -5,10 +5,10 @@ import java.util.concurrent.Executors;
 
 import javax.script.ScriptException;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
-import junit.framework.Assert;
 
 public class TestGetFunction {
 	
@@ -16,7 +16,7 @@ public class TestGetFunction {
 	public void test() throws ScriptCPUAbuseException, ScriptException {
 		NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(100);
-		sandbox.setMaxMemory(50 * 1024);
+		sandbox.setMaxMemory(100 * 1024);
 		sandbox.allowNoBraces(false);
 		sandbox.setMaxPreparedStatements(30); // because preparing scripts for
 		// execution is expensive
