@@ -8,8 +8,6 @@ Part of the [Java Delight Suite](https://github.com/javadelight/delight-main#jav
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.javadelight/delight-nashorn-sandbox.svg)](https://search.maven.org/#search%7Cga%7C1%7Cdelight-nashorn-sandbox)
 
-[![Build Status](https://travis-ci.org/javadelight/delight-nashorn-sandbox.svg?branch=master)](https://travis-ci.org/javadelight/delight-nashorn-sandbox)
-
 Open Security Issues: [# 73](https://github.com/javadelight/delight-nashorn-sandbox/issues/73)
 
 ## Usage
