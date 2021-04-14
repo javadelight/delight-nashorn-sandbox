@@ -2,10 +2,8 @@ package delight.nashornsandbox;
 
 import java.util.concurrent.Executors;
 
-import javax.script.Invocable;
 import javax.script.ScriptException;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
