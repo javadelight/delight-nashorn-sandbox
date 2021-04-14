@@ -79,7 +79,7 @@ public class JsSanitizer {
 																														// without
 																						// block
 			//
-			new PoisonPil(Pattern.compile("(\\s*([^\"]?function)\\s*[^\"}]*\\([^\\{]*\\)\\s*\\{)"),
+			new PoisonPil(Pattern.compile("(\\s*([^\"]?function)\\s*[^\"}]*\\([\\s]*\\)\\s*\\{)"),
 					JS_INTERRUPTED_FUNCTION + "();"), // function except when enclosed in quotes
 			new PoisonPil(Pattern.compile("(\\s*while\\s*\\([^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION + "();"),
 			new PoisonPil(Pattern.compile("(\\s*do\\s*\\{)"), JS_INTERRUPTED_FUNCTION + "();"));
