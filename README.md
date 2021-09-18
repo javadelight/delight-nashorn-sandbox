@@ -101,7 +101,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
-- 0.2.1: Increased resiliency for killing threads under high load ([PR #118](https://github.com/javadelight/delight-nashorn-sandbox/pull/118) by [tellmewhattodo](https://github.com/tellmewhattodo))
+- 0.2.3: Increased resiliency for killing threads under high load ([PR #118](https://github.com/javadelight/delight-nashorn-sandbox/pull/118) by [tellmewhattodo](https://github.com/tellmewhattodo))
 - 0.2.0: Dynamically detects what version of the JDK the library is run with, and will either use the included Nashorn version or use Nashorn dependency ([Issue #109](https://github.com/javadelight/delight-nashorn-sandbox/issues/109), [PR #101](https://github.com/javadelight/delight-nashorn-sandbox/pull/111)).
 - 0.1.32: Defaulted `allowNoBraces` to `true` since the check easily leads to false positives ([Issue #102](https://github.com/javadelight/delight-nashorn-sandbox/issues/102) and [Issue #104](https://github.com/javadelight/delight-nashorn-sandbox/issues/104)) 
 - 0.1.28: Upgraded JS Beautify version to 1.9.0 to address failing security checks ([Issue #93](https://github.com/javadelight/delight-nashorn-sandbox/issues/93)) 
