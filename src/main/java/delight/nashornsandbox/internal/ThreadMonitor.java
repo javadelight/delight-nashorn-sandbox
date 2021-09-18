@@ -5,6 +5,7 @@ import static delight.nashornsandbox.internal.NashornSandboxImpl.LOG;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * JS executor thread monitor. It is designed to be run in main thread (the JS
@@ -26,6 +27,8 @@ public class ThreadMonitor {
 
 	private final long maxMemory;
 
+	private final int stageOffset;
+
 	private final AtomicBoolean stop;
 
 	/** Check if interrupted script has finished. */
@@ -36,7 +39,7 @@ public class ThreadMonitor {
 
 	private final AtomicBoolean cpuLimitExceeded;
 
-	private final AtomicBoolean memoryLimitExceeded;
+	private final AtomicInteger memoryLimitExceededStage;
 
 	private final Object monitor;
 
@@ -48,16 +51,25 @@ public class ThreadMonitor {
 
 	private final com.sun.management.ThreadMXBean memoryCounter;
 
-	ThreadMonitor(final long maxCPUTime, final long maxMemory) {
+	public ThreadMonitor(final long maxCPUTime, final long maxMemory) {
 		this.maxMemory = maxMemory;
 		this.maxCPUTime = maxCPUTime * 1000000;
 		stop = new AtomicBoolean(false);
 		scriptFinished = new AtomicBoolean(false);
 		scriptKilled = new AtomicBoolean(false);
 		cpuLimitExceeded = new AtomicBoolean(false);
-		memoryLimitExceeded = new AtomicBoolean(false);
+		memoryLimitExceededStage = new AtomicInteger(0);
+
 		monitor = new Object();
-		
+
+		// if maxMemory is larger than 100M, split heap memory count into 4 stage, and offset will be 2
+		// 4 stage count will lose accuracy, only works in large allowed heap memory allocation
+		// this could fix the mis-killing sub-thread behavior, which happened one or two time during about 3 Mill execution ( with thread reusing ).
+		if(maxMemory>1024*1024*100){
+			stageOffset=2;
+		}else {
+			stageOffset=0;
+		}
 		// ensure the ThreadMXBean is supported in the JVM
 		try {
 			threadBean = ManagementFactory.getThreadMXBean();
@@ -68,7 +80,6 @@ public class ThreadMonitor {
 				throw new UnsupportedOperationException("JVM does not support thread CPU time measurement");
 			}
 		}
-		
 		if ((threadBean != null) && (threadBean instanceof com.sun.management.ThreadMXBean)) {
 			memoryCounter = (com.sun.management.ThreadMXBean) threadBean;
 			// ensure this feature is enabled
@@ -80,17 +91,17 @@ public class ThreadMonitor {
 			memoryCounter = null;
 		}
 	}
-
 	private void reset() {
 		stop.set(false);
 		scriptFinished.set(false);
 		scriptKilled.set(false);
 		cpuLimitExceeded.set(false);
+		memoryLimitExceededStage.set(0);
 		threadToMonitor = null;
 	}
 
 	@SuppressWarnings("deprecation")
-	void run() {
+	public void run() {
 		try {
 			// wait, for threadToMonitor to be set in JS evaluator thread
 			synchronized (monitor) {
@@ -99,44 +110,58 @@ public class ThreadMonitor {
 				}
 				if (threadToMonitor == null) {
 					timedOutWaitingForThreadToMonitor = true;
-					throw new IllegalStateException("Executor thread not set after " + maxCPUTime / MILI_TO_NANO + " ms");
+					throw new IllegalStateException("Executor thread not set after " + maxCPUTime / MILI_TO_NANO + " ms，usually this means the sub-thread not started properly");
 				}
 			}
+
 			final long startCPUTime = getCPUTime();
-			final long startMemory = getCurrentMemory();
+
+			//one stage start
+			long stageMemory = getCurrentMemory();
+
 			while (!stop.get()) {
 				final long runtime = getCPUTime() - startCPUTime;
-				final long memory = getCurrentMemory() - startMemory;
-				
-				if (isCpuTimeExided(runtime) || isMemoryExided(memory)) {
-					
+
+				long currentMemory = getCurrentMemory();
+				final long memory = currentMemory - stageMemory;
+
+				boolean stageExided = isStageMemoryExided(memory);
+
+				if(stageExided){
+					//exceeded once , and record it
+					memoryLimitExceededStage.incrementAndGet();
+					//start next stage counting
+					stageMemory=currentMemory;
+				}
+
+				if (isCpuTimeExided(runtime) || isMemoryLimitExceeded()) {
+
 					cpuLimitExceeded.set(isCpuTimeExided(runtime));
-					memoryLimitExceeded.set(isMemoryExided(memory));
 					threadToMonitor.interrupt();
 					synchronized (monitor) {
-						monitor.wait(50);
+						//wait less
+						monitor.wait(5);
 					}
 					if (stop.get()) {
 						return;
 					}
 					if (!scriptFinished.get()) {
-						LOG.error(this.getClass().getSimpleName() + ": Thread hard shutdown!");
 						threadToMonitor.stop();
 						scriptKilled.set(true);
 					}
 					return;
 				} else {
-					
+
 				}
 				synchronized (monitor) {
 					long waitTime = getCheckInterval(runtime);
-					
+
 					if (waitTime == 0) {
 						waitTime = 1;
 					}
 					monitor.wait(waitTime);
 				}
-				
+
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
@@ -150,7 +175,8 @@ public class ThreadMonitor {
 		if (maxMemory == 0) {
 			return Math.max((maxCPUTime - runtime) / MILI_TO_NANO, 5);
 		}
-		return Math.min((maxCPUTime - runtime) / MILI_TO_NANO, 10);
+		//wait less to reduce execution cost
+		return Math.min((maxCPUTime - runtime) / MILI_TO_NANO, 5);
 	}
 
 	private boolean isCpuTimeExided(final long runtime) {
@@ -160,21 +186,27 @@ public class ThreadMonitor {
 		return runtime > maxCPUTime;
 	}
 
-	private boolean isMemoryExided(final long memory) {
+
+	private boolean isStageMemoryExided(final long memory) {
 		if (maxMemory == 0) {
 			return false;
 		}
-		return memory > maxMemory;
+		return memory > (maxMemory>>stageOffset);
 	}
 
 	/**
 	 * Obtain current evaluation thread memory usage.
-	 * 
+	 *
+	 * it must be empathises that the method 'getThreadAllocatedBytes' is not strictly accurate
+	 * so mis killing might happen.
+	 *
 	 * @return current memory usage
 	 */
-	private long getCurrentMemory() {
+	private long getCurrentMemory() throws InterruptedException {
 		if ((maxMemory > 0) && (memoryCounter != null)) {
-			return memoryCounter.getThreadAllocatedBytes(threadToMonitor.getId());
+			synchronized (monitor) {
+				return memoryCounter.getThreadAllocatedBytes(threadToMonitor.getId());
+			}
 		}
 		return 0L;
 	}
@@ -215,7 +247,8 @@ public class ThreadMonitor {
 	}
 
 	public boolean isMemoryLimitExceeded() {
-		return memoryLimitExceeded.get();
+		// return true stage max reached
+		return memoryLimitExceededStage.get()>=(1<<stageOffset);
 	}
 
 	public boolean isScriptKilled() {
