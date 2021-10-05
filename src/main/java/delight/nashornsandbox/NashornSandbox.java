@@ -1,15 +1,15 @@
 package delight.nashornsandbox;
 
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.concurrent.ExecutorService;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
 import javax.script.Bindings;
+import javax.script.CompiledScript;
 import javax.script.Invocable;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
-
-import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.concurrent.ExecutorService;
 
 /**
  * The Nashorn sandbox interface.
@@ -294,4 +294,21 @@ public interface NashornSandbox {
    * @param cache the new cache to use
    */
   void setScriptCache(SecuredJsCache cache);
+
+  /**
+   * Compile the JavaScript string
+   *
+   * @param js the JavaScript script to be compiled
+   * @return a CompiledScript object
+   * @throws ScriptException
+   */
+  CompiledScript compile(final String js) throws ScriptException;
+
+  /**
+   * Run a pre-compiled JavaScript
+   */
+  Object eval(CompiledScript compiledScript) throws ScriptCPUAbuseException, ScriptException;
+  Object eval(CompiledScript compiledScript, Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
+  Object eval(CompiledScript compiledScript, ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException;
+  Object eval(CompiledScript compiledScript, ScriptContext scriptContext,Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
 }
