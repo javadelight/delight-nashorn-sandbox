@@ -68,6 +68,15 @@ while(true) {__if();
 --- JS END ---
 ```
 
+The sandbox also allows precompiling frequently used scripts. Using a precompiled script can substantially increase execution times.
+
+```java
+NashornSandbox sandbox = NashornSandboxes.create();
+CompiledScript script = sandbox.compile("1 + 1");
+int result1 = (int) sandbox.eval(script);
+int result2 = (int) sandbox.eval(script);
+```
+
 ## Maven
 
 Just add the following dependency to your projects.
@@ -80,7 +89,7 @@ Just add the following dependency to your projects.
 </dependency>
 ```
 
-Note that up to version v.0.1.31 the library would only work with Java versions lower than 13. To make the library work with Java version 13 and above, please use a library version 0.2.0+. The compatability with v0.2.0 with lower versions of Java is still experimental. If you encounter issues, specifically in Java 1.8 please use a 0.1.x version (and please report any issues).
+Note that up to version v.0.1.31 the library would only work with Java versions lower than 13. To make the library work with Java version 13 and above, please use a library version 0.2.0+. The compatibility with v0.2.0 with lower versions of Java is still experimental. If you encounter issues, specifically in Java 1.8 please use a 0.1.x version (and please report any issues).
 
 This artifact is available on [Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cdelight-nashorn-sandbox). 
 
@@ -101,6 +110,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.2.5: Support for pre-compiled scripts ([PR #119](https://github.com/javadelight/delight-nashorn-sandbox/pull/119) by [geoffreyharding](https://github.com/geoffreyharding)]
 - 0.2.4: Increased resiliency for killing threads under high load ([PR #118](https://github.com/javadelight/delight-nashorn-sandbox/pull/118) by [tellmewhattodo](https://github.com/tellmewhattodo))
 - 0.2.0: Dynamically detects what version of the JDK the library is run with, and will either use the included Nashorn version or use Nashorn dependency ([Issue #109](https://github.com/javadelight/delight-nashorn-sandbox/issues/109), [PR #101](https://github.com/javadelight/delight-nashorn-sandbox/pull/111)).
 - 0.1.32: Defaulted `allowNoBraces` to `true` since the check easily leads to false positives ([Issue #102](https://github.com/javadelight/delight-nashorn-sandbox/issues/102) and [Issue #104](https://github.com/javadelight/delight-nashorn-sandbox/issues/104)) 
