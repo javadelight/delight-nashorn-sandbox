@@ -27,7 +27,7 @@ import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
  * @version $Id$
  */
 public class TestMemoryLimit {
-	private static final int MEMORY_LIMIT = 700 * 1024;
+	private static final int MEMORY_LIMIT = 700 * 1024 * 20;
 
 	@Test
 	public void test() throws ScriptCPUAbuseException, ScriptException {
