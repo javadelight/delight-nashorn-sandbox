@@ -1,5 +1,19 @@
 package delight.nashornsandbox.internal;
 
+import delight.nashornsandbox.NashornSandbox;
+import delight.nashornsandbox.SecuredJsCache;
+import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
+import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.script.Bindings;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
+import javax.script.Invocable;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -7,15 +21,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.script.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import delight.nashornsandbox.NashornSandbox;
-import delight.nashornsandbox.SecuredJsCache;
-import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
-import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
 
 /**
  * Nashorn sandbox implementation.
@@ -480,5 +485,43 @@ public class NashornSandboxImpl implements NashornSandbox {
 	@Override
 	public void setScriptCache(SecuredJsCache cache) {
 		this.suppliedCache = cache;
+	}
+
+	@Override
+	public CompiledScript compile(final String js) throws ScriptException
+	{
+		assertScriptEngine();
+		final JsSanitizer sanitizer = getSanitizer();
+		final String securedJs = sanitizer.secureJs(js);
+		Compilable compilingEngine = (Compilable) this.scriptEngine;
+		CompiledScript compiledScript = compilingEngine.compile(securedJs);
+		return compiledScript;
+	}
+
+	@Override
+	public Object eval(CompiledScript compiledScript) throws ScriptCPUAbuseException, ScriptException
+	{
+		return eval(compiledScript, null, null);
+	}
+
+	@Override
+	public Object eval(CompiledScript compiledScript, Bindings bindings) throws ScriptCPUAbuseException, ScriptException
+	{
+		return eval(compiledScript, null, bindings);
+	}
+
+	@Override
+	public Object eval(CompiledScript compiledScript, ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException
+	{
+		return eval(compiledScript, scriptContext, null);
+	}
+
+	@Override
+	public Object eval(CompiledScript compiledScript, ScriptContext scriptContext, Bindings bindings) throws ScriptCPUAbuseException, ScriptException
+	{
+		assertScriptEngine();
+		final Bindings securedBindings = secureBindings(bindings);
+		EvaluateCompiledOperation op = new EvaluateCompiledOperation(compiledScript, scriptContext, securedBindings);
+		return executeSandboxedOperation(op);
 	}
 }
