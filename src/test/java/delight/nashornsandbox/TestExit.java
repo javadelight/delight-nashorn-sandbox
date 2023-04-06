@@ -34,11 +34,10 @@ public class TestExit {
   
   
 
-  @Test
-  @Ignore("This will fail as there is no confirmation on Script Contexts")
+  @Test(expected = javax.script.ScriptException.class)
   public void testQuitWithScriptContext() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
-    sandbox.eval("quit();", new SimpleScriptContext());
+    sandbox.eval("quit();", sandbox.createScriptContext());
   }
   
  

@@ -37,11 +37,11 @@ public class TestEvalWithScriptContextWithNewBindings {
 	@Test
 	public void testWithNewBindingsScriptContext() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
-		ScriptContext newContext = new SimpleScriptContext();
+		SandboxScriptContext newContext = sandbox.createScriptContext();
 		// Create new binding to override the ECMAScript Global properties 
 		Bindings newBinding = sandbox.createBindings();
 		newBinding.put("Date", "2112018");
-		newContext.setBindings(newBinding, ScriptContext.ENGINE_SCOPE);
+		newContext.getContext().setBindings(newBinding, ScriptContext.ENGINE_SCOPE);
 
 		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newContext);
     Assert.assertTrue(res.equals(Double.valueOf("2112018.0")) || res.equals(Integer.valueOf(2112018)));
@@ -50,14 +50,12 @@ public class TestEvalWithScriptContextWithNewBindings {
 	@Test
 	public void testWithExistingBindings() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
-		ScriptContext newContext = new SimpleScriptContext();
-		Bindings newBinding = newContext.getBindings(ScriptContext.ENGINE_SCOPE);
-		// This will not be updated by using existing bindings, since Date is a 
-		// ECMAScript "global" properties and it is being in ENGINE_SCOPE
+		SandboxScriptContext newContext = sandbox.createScriptContext();
+		Bindings newBinding = newContext.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
 		newBinding.put("Date", "2112018");
 
 		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newContext);
-		Assert.assertTrue(Double.isNaN((Double)res));
+		Assert.assertTrue(res.equals(2112018));
 	}
 	
 	
