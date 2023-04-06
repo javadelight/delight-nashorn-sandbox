@@ -1,6 +1,7 @@
 package delight.nashornsandbox.internal;
 
 import delight.nashornsandbox.NashornSandbox;
+import delight.nashornsandbox.SandboxScriptContext;
 import delight.nashornsandbox.SecuredJsCache;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
@@ -14,6 +15,8 @@ import javax.script.Invocable;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
+
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -125,9 +128,9 @@ public class NashornSandboxImpl implements NashornSandbox {
 	private synchronized void assertScriptEngine() {
 		try {
 			if (!engineAsserted.get()) {
-				produceSecureBindings();
+				produceSecureBindings(scriptEngine.getContext());
 			} else if (!engineBindingUnchanged()) {
-				resetEngineBindings();
+				resetEngineBindings(scriptEngine.getContext());
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
@@ -146,10 +149,10 @@ public class NashornSandboxImpl implements NashornSandbox {
 		return true;
 	}
 
-	private void produceSecureBindings() {
+	private void produceSecureBindings(ScriptContext context) {
 		try {
 			final StringBuilder sb = new StringBuilder();
-			cached = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+			cached = context.getBindings(ScriptContext.ENGINE_SCOPE);
 			sanitizeBindings(cached);
 			if (!allowExitFunctions) {
 				sb.append("var quit=function(){};var exit=function(){};");
@@ -169,9 +172,9 @@ public class NashornSandboxImpl implements NashornSandbox {
 				sb.append("var $ARG=null;var $ENV=null;var $EXEC=null;");
 				sb.append("var $OPTIONS=null;var $OUT=null;var $ERR=null;var $EXIT=null;");
 			}
-			scriptEngine.eval(sb.toString());
+			scriptEngine.eval(sb.toString(), context);
 
-			resetEngineBindings();
+			resetEngineBindings(context);
 
 			engineAsserted.set(true);
 
@@ -180,11 +183,11 @@ public class NashornSandboxImpl implements NashornSandbox {
 		}
 	}
 
-	protected void resetEngineBindings() {
+	protected void resetEngineBindings(ScriptContext context) {
 		final Bindings bindings = createBindings();
 		sanitizeBindings(bindings);
 		bindings.putAll(cached);
-		scriptEngine.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
+		context.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
 	}
 
 	protected void sanitizeBindings(Bindings bindings) {
@@ -206,7 +209,24 @@ public class NashornSandboxImpl implements NashornSandbox {
 		}
 	}
 
+
+
+	
 	@Override
+  public SandboxScriptContext createScriptContext() {
+		ScriptContext context = new SimpleScriptContext();
+		produceSecureBindings(context);
+    return new SandboxScriptContext() {
+
+			@Override
+			public ScriptContext getContext() {
+				return context;
+			}
+			
+		};
+  }
+
+  @Override
 	public Object eval(final String js) throws ScriptCPUAbuseException, ScriptException {
 		return eval(js, null, null);
 	}
@@ -217,12 +237,12 @@ public class NashornSandboxImpl implements NashornSandbox {
 	}
 
 	@Override
-	public Object eval(String js, ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException {
+	public Object eval(String js, SandboxScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException {
 		return eval(js, scriptContext, null);
 	}
 
 	@Override
-	public Object eval(final String js, final ScriptContext scriptContext, final Bindings bindings)
+	public Object eval(final String js, final SandboxScriptContext scriptContext, final Bindings bindings)
 			throws ScriptCPUAbuseException, ScriptException {
 		assertScriptEngine();
 		final JsSanitizer sanitizer = getSanitizer();
@@ -233,13 +253,17 @@ public class NashornSandboxImpl implements NashornSandbox {
 		if (scriptContext == null) {
 			securedJs = blockAccessToEngine + sanitizer.secureJs(js);
 		} else {
-			// Unfortunately, blocking access to the engine property inteferes with setting
-			// a script context
-			// needs further investigation
+			// Unfortunately, blocking access to the engine property interferes with setting
+			// a script context needs further investigation
 			securedJs = sanitizer.secureJs(js);
 		}
 		final Bindings securedBindings = secureBindings(bindings);
-		EvaluateOperation op = new EvaluateOperation(securedJs, scriptContext, securedBindings);
+    EvaluateOperation op;
+		if (scriptContext != null) {
+		 op = new EvaluateOperation(securedJs, scriptContext.getContext(), securedBindings);
+		} else {
+		 op = new EvaluateOperation(securedJs, null, securedBindings);
+		}
 		return executeSandboxedOperation(op);
 	}
 

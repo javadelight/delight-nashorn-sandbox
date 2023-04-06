@@ -133,7 +133,7 @@ public interface NashornSandbox {
    * @throws ScriptException when script syntax error occurs
    * @see #setMaxCPUTime(long)
    */
-  Object eval(String js,Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
+  Object eval(String js, Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
 
   /**
    * Evaluates the JavaScript string for a given script context
@@ -145,7 +145,7 @@ public interface NashornSandbox {
    * @throws ScriptException when script syntax error occurs
    * @see #setMaxCPUTime(long)
    */
-  Object eval(String js, ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException;
+  Object eval(String js, SandboxScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException;
 
 
   /**
@@ -159,7 +159,7 @@ public interface NashornSandbox {
    * @throws ScriptException when script syntax error occurs
    * @see #setMaxCPUTime(long)
    */
-  Object eval(String js, ScriptContext scriptContext,Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
+  Object eval(String js, SandboxScriptContext scriptContext,Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
   
   /**
    * Obtains the value of the specified JavaScript variable.
@@ -310,5 +310,11 @@ public interface NashornSandbox {
   Object eval(CompiledScript compiledScript) throws ScriptCPUAbuseException, ScriptException;
   Object eval(CompiledScript compiledScript, Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
   Object eval(CompiledScript compiledScript, ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException;
-  Object eval(CompiledScript compiledScript, ScriptContext scriptContext,Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
+  Object eval(CompiledScript compiledScript, ScriptContext scriptContext, Bindings bindings) throws ScriptCPUAbuseException, ScriptException;
+
+  /**
+ * Create a new secured script context
+ */
+SandboxScriptContext createScriptContext();
+
 }

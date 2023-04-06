@@ -110,6 +110,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.3.0: Creating a wrapper for Script Context to be passed to eval to avoid accidental exposure. Resolves [Issue #134](https://github.com/javadelight/delight-nashorn-sandbox/issues/134)
 - 0.2.5: Support for pre-compiled scripts ([PR #119](https://github.com/javadelight/delight-nashorn-sandbox/pull/119) by [geoffreyharding](https://github.com/geoffreyharding)]
 - 0.2.4: Increased resiliency for killing threads under high load ([PR #118](https://github.com/javadelight/delight-nashorn-sandbox/pull/118) by [tellmewhattodo](https://github.com/tellmewhattodo))
 - 0.2.0: Dynamically detects what version of the JDK the library is run with, and will either use the included Nashorn version or use Nashorn dependency ([Issue #109](https://github.com/javadelight/delight-nashorn-sandbox/issues/109), [PR #101](https://github.com/javadelight/delight-nashorn-sandbox/pull/111)).

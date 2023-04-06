@@ -17,12 +17,12 @@ public class TestEvalWithScriptContext {
   @Test
   public void test() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
-    ScriptContext newContext1 = new SimpleScriptContext();
-    Bindings engineScope1 = newContext1.getBindings(ScriptContext.ENGINE_SCOPE);
+    SandboxScriptContext newContext1 = sandbox.createScriptContext(); 
+    Bindings engineScope1 = newContext1.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
     engineScope1.put("y", 2);
     
-    ScriptContext newContext2 = new SimpleScriptContext();
-    Bindings engineScope2 = newContext2.getBindings(ScriptContext.ENGINE_SCOPE);
+    SandboxScriptContext newContext2 = sandbox.createScriptContext();
+    Bindings engineScope2 = newContext2.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
     engineScope2.put("y", 4);
     
     final Object res1 = sandbox.eval("function cal() {var x = y + 1; return x;} cal();", newContext1);
@@ -56,12 +56,12 @@ public class TestEvalWithScriptContext {
     sandbox.setMaxCPUTime(100);
     sandbox.setMaxMemory(1000 * 1024);
     sandbox.setExecutor(Executors.newSingleThreadExecutor());
-    ScriptContext newContext1 = new SimpleScriptContext();
-    Bindings engineScope1 = newContext1.getBindings(ScriptContext.ENGINE_SCOPE);
+    SandboxScriptContext newContext1 = sandbox.createScriptContext();
+    Bindings engineScope1 = newContext1.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
     engineScope1.put("y", 2);
     
-    ScriptContext newContext2 = new SimpleScriptContext();
-    Bindings engineScope2 = newContext2.getBindings(ScriptContext.ENGINE_SCOPE);
+    SandboxScriptContext newContext2 = sandbox.createScriptContext();
+    Bindings engineScope2 = newContext2.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
     engineScope2.put("y", 4);
     
     final Object res1 = sandbox.eval("function cal() {var x = y + 1; return x;} cal();", newContext1);

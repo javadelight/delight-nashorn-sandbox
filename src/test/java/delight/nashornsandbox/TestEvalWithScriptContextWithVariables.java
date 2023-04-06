@@ -16,8 +16,8 @@ public class TestEvalWithScriptContextWithVariables {
   @Test
   public void test() throws ScriptCPUAbuseException, ScriptException {
     final NashornSandbox sandbox = NashornSandboxes.create();
-    ScriptContext newContext1 = new SimpleScriptContext();
-    ScriptContext newContext2 = new SimpleScriptContext();
+    SandboxScriptContext newContext1 = sandbox.createScriptContext(); 
+    SandboxScriptContext newContext2 = sandbox.createScriptContext();
     
     sandbox.eval("function cal() {var x = 1; return x;}", newContext1);
     sandbox.eval("function cal() {var x = 2; return x;}", newContext2);
@@ -36,8 +36,8 @@ public class TestEvalWithScriptContextWithVariables {
     sandbox.setMaxCPUTime(100);
     sandbox.setMaxMemory(1000 * 1024);
     sandbox.setExecutor(Executors.newSingleThreadExecutor());
-    ScriptContext newContext1 = new SimpleScriptContext();
-    ScriptContext newContext2 = new SimpleScriptContext();
+    SandboxScriptContext newContext1 = sandbox.createScriptContext();
+    SandboxScriptContext newContext2 = sandbox.createScriptContext();
     
     sandbox.eval("function cal() {var x = 1; return x;}", newContext1);
     sandbox.eval("function cal() {var x = 2; return x;}", newContext2);
