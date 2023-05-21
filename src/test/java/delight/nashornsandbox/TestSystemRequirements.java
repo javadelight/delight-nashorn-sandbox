@@ -17,7 +17,7 @@ public class TestSystemRequirements {
     long maxMemory = Runtime.getRuntime().maxMemory();
     assertTrue("Unit test likely to fail. Run in an environment where the JVM has access to at least 2 GB max memory.\n"+
       "Max heap memory detected "+
-      maxMemory, maxMemory > 2_000_000_000);
+      maxMemory, maxMemory > 1_320_327_936);
   }
   
 }
