@@ -4,6 +4,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+/**
+ * Asserts that there are enough resources available to prevent flaky tests.
+ * 
+ * For more information, see <a href="https://github.com/javadelight/delight-nashorn-sandbox/issues/137">#137</a>
+ */
 public class TestSystemRequirements {
 
   @Test
