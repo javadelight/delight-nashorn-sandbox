@@ -18,7 +18,7 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - name: Build with Maven
-        run: mvn -B package --file pom.xml -Drun.jvmArguments="-Xmx512m -xms4048"
+        run: mvn -B package --file pom.xml -Drun.jvmArguments="-Xmx4048m -Xms1024"
       - uses: actions/upload-artifact@v2
         with:
           name: delight-nashorn-sandbox
