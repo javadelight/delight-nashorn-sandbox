@@ -115,7 +115,7 @@ public class JsSanitizer {
 		this.allowNoBraces = allowBraces;
 		this.securedJsCache = createSecuredJsCache(maxPreparedStatements);
 		assertScriptEngine();
-        Object beautifHandler = getBeautifHandler(scriptEngine);
+        Object beautifHandler = getBeautifyHandler(scriptEngine);
         this.jsBeautify = beautifierAsFunction(beautifHandler);
 	}
 
@@ -124,7 +124,7 @@ public class JsSanitizer {
 		this.allowNoBraces = allowBraces;
 		this.securedJsCache = cache;
 		assertScriptEngine();
-        Object beautifHandler = getBeautifHandler(scriptEngine);
+        Object beautifHandler = getBeautifyHandler(scriptEngine);
         this.jsBeautify = beautifierAsFunction(beautifHandler);
 	}
 
@@ -141,7 +141,7 @@ public class JsSanitizer {
 		}
 	}
 
-	private static Object getBeautifHandler(final ScriptEngine scriptEngine) {
+	private static Object getBeautifyHandler(final ScriptEngine scriptEngine) {
 		try {
 			for (final String name : BEAUTIFY_FUNCTIONS) {
 				final Object somWindow = scriptEngine.eval(name);
@@ -229,7 +229,10 @@ public class JsSanitizer {
 		String current = str;
 		for (final PoisonPil pp : POISON_PILLS) {
 			final StringBuffer sb = new StringBuffer();
-			final Matcher matcher = pp.pattern.matcher(current);
+			final ThreadLocal<Integer> matchCount = new ThreadLocal<>();
+			matchCount.set(0);
+			final Matcher matcher = pp.pattern.matcher(new SecureInterruptibleCharSequence(current,
+			 matchCount));
 			while (matcher.find()) {
 				matcher.appendReplacement(sb, ("$1" + pp.replacement));
 			}
