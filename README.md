@@ -110,6 +110,8 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.3.2: Updating JSBeautifier dependency ([PR #143](https://github.com/javadelight/delight-nashorn-sandbox/pull/143) by [davejbur](https://github.com/davejbur))
+- 0.3.1: Protect against RegEx attacks in sanitising script input by [PR #139](https://github.com/javadelight/delight-nashorn-sandbox/pull/139)
 - 0.3.0: Creating a wrapper for Script Context to be passed to eval to avoid accidental exposure. Resolves [Issue #134](https://github.com/javadelight/delight-nashorn-sandbox/issues/134)
 - 0.2.5: Support for pre-compiled scripts ([PR #119](https://github.com/javadelight/delight-nashorn-sandbox/pull/119) by [geoffreyharding](https://github.com/geoffreyharding)]
 - 0.2.4: Increased resiliency for killing threads under high load ([PR #118](https://github.com/javadelight/delight-nashorn-sandbox/pull/118) by [tellmewhattodo](https://github.com/tellmewhattodo))
