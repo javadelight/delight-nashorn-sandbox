@@ -209,9 +209,6 @@ public class NashornSandboxImpl implements NashornSandbox {
 		}
 	}
 
-
-
-	
 	@Override
   public SandboxScriptContext createScriptContext() {
 		ScriptContext context = new SimpleScriptContext();

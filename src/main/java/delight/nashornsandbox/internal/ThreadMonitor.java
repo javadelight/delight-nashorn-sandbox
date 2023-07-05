@@ -91,6 +91,7 @@ public class ThreadMonitor {
 			memoryCounter = null;
 		}
 	}
+	
 	private void reset() {
 		stop.set(false);
 		scriptFinished.set(false);
@@ -100,7 +101,6 @@ public class ThreadMonitor {
 		threadToMonitor = null;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void run() {
 		try {
 			// wait, for threadToMonitor to be set in JS evaluator thread
@@ -146,7 +146,8 @@ public class ThreadMonitor {
 						return;
 					}
 					if (!scriptFinished.get()) {
-						threadToMonitor.stop();
+						stop.set(true);
+						threadToMonitor.interrupt();
 						scriptKilled.set(true);
 					}
 					return;
