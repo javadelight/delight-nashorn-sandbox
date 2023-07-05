@@ -22,10 +22,6 @@ public class TestAccessFunction {
   }
 
     private Object findAndCall(Object _get) {
-        if (NashornDetection.isJDKNashornScriptObjectMirror(_get)) {
-            jdk.nashorn.api.scripting.ScriptObjectMirror scriptObjectMirror = (jdk.nashorn.api.scripting.ScriptObjectMirror) _get;
-            return scriptObjectMirror.call(_get);
-        }
 
         if (NashornDetection.isStandaloneNashornScriptObjectMirror(_get)) {
             org.openjdk.nashorn.api.scripting.ScriptObjectMirror scriptObjectMirror = (org.openjdk.nashorn.api.scripting.ScriptObjectMirror) _get;
