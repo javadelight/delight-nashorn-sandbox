@@ -29,8 +29,8 @@ import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
 public class TestMemoryLimit {
 	private static final int MEMORY_LIMIT = 700 * 1024 * 20;
 
-	@Test
-	public void test() throws ScriptCPUAbuseException, ScriptException {
+	@Test(expected = ScriptMemoryAbuseException.class)
+	public void test() throws ScriptCPUAbuseException, ScriptMemoryAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		try {
 			sandbox.setMaxMemory(MEMORY_LIMIT);
@@ -38,8 +38,6 @@ public class TestMemoryLimit {
 			final String js = "var o={},i=0; while (true) {o[i++] = 'abc'}";
 			sandbox.eval(js);
 			fail("Exception should be thrown");
-		} catch (final ScriptMemoryAbuseException e) {
-			assertFalse(e.isScriptKilled());
 		} finally {
 			sandbox.getExecutor().shutdown();
 		}

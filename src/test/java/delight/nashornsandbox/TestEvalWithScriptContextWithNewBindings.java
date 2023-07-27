@@ -4,7 +4,6 @@ import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
-import javax.script.SimpleScriptContext;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -55,7 +54,7 @@ public class TestEvalWithScriptContextWithNewBindings {
 		newBinding.put("Date", "2112018");
 
 		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newContext);
-		Assert.assertTrue(res.equals(2112018));
+		Assert.assertEquals(2112018.0, res);
 	}
 	
 	

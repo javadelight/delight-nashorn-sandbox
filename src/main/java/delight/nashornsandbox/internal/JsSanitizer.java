@@ -317,13 +317,7 @@ public class JsSanitizer {
 
     @SuppressWarnings("unchecked")
 	private static Function<String, String> beautifierAsFunction(Object beautifyScript) {
-        if (NashornDetection.isJDKNashornScriptObjectMirror(beautifyScript)) {
-			return script -> {
-				jdk.nashorn.api.scripting.ScriptObjectMirror scriptObjectMirror = (jdk.nashorn.api.scripting.ScriptObjectMirror) beautifyScript;
-				return (String) scriptObjectMirror.call("beautify", script, BEAUTIFY_OPTIONS);
-			};
-        }
-
+      
         if (NashornDetection.isStandaloneNashornScriptObjectMirror(beautifyScript)) {
 			return script -> {
 				org.openjdk.nashorn.api.scripting.ScriptObjectMirror scriptObjectMirror = (org.openjdk.nashorn.api.scripting.ScriptObjectMirror) beautifyScript;
