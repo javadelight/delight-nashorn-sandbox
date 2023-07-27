@@ -5,7 +5,7 @@
 
 	<groupId>org.javadelight</groupId>
 	<artifactId>delight-nashorn-sandbox</artifactId>
-	<version>0.4.0</version>
+	<version>0.4.1</version>
 	<description>A safe sandbox to execute JavaScript code from Nashorn.</description>
 	<url>https://github.com/javadelight/delight-nashorn-sandbox</url>
 
@@ -67,7 +67,7 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.7</version>
+				<version>1.6.13</version>
 				<extensions>true</extensions>
 				<configuration>
 					<serverId>ossrh</serverId>
