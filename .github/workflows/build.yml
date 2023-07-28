@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         # Build with all versions that can load the nashorn standalone Jar:
-        java: [ 20 ]
+        java: [ 11, 17, 20 ]
     name: Java ${{ matrix.java }} build
     steps:
       - uses: actions/checkout@v2
