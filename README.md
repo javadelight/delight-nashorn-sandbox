@@ -112,6 +112,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.4.2: Ensure compatibility with Java 17
 - 0.4.0: Upgrade to Java 20
 - 0.3.2: Updating JSBeautifier dependency ([PR #143](https://github.com/javadelight/delight-nashorn-sandbox/pull/143) by [davejbur](https://github.com/davejbur))
 - 0.3.1: Protect against RegEx attacks in sanitising script input by [PR #139](https://github.com/javadelight/delight-nashorn-sandbox/pull/139)
