@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>org.webjars.npm</groupId>
 			<artifactId>js-beautify</artifactId>
-			<version>1.14.7</version>
+			<version>1.15.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openjdk.nashorn</groupId>
@@ -172,9 +172,8 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete file="${basedir}/META-INF/MANIFEST.MF" />
-								<copy file="target/classes/META-INF/MANIFEST.MF"
-									tofile="${basedir}/META-INF/MANIFEST.MF" />
+								<delete file="${basedir}/META-INF/MANIFEST.MF"/>
+								<copy file="target/classes/META-INF/MANIFEST.MF" tofile="${basedir}/META-INF/MANIFEST.MF"/>
 							</tasks>
 						</configuration>
 					</execution>
