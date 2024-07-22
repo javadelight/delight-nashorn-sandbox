@@ -47,7 +47,7 @@ public class JsSanitizer {
 	}
 
 	/** The resource name of beautify.min.js script. */
-	private final static String BEAUTIFY_JS = "/META-INF/resources/webjars/js-beautify/1.14.7/js/lib/beautifier.js";
+	private final static String BEAUTIFY_JS = "META-INF/resources/webjars/js-beautify/1.14.7/js/lib/beautifier.js";
 
 	/** The beautify function search list. */
 	private static final List<String> BEAUTIFY_FUNCTIONS = Arrays.asList("exports.beautifier.js;", "window.js_beautify;", "exports.js_beautify;",
@@ -299,7 +299,8 @@ public class JsSanitizer {
 		String script = beautifysScript.get();
 		if (script == null) {
 			try (final BufferedReader reader = new BufferedReader(new InputStreamReader(
-					new BufferedInputStream(JsSanitizer.class.getResourceAsStream(BEAUTIFY_JS)), StandardCharsets.UTF_8))) {
+					new BufferedInputStream(JsSanitizer.class.getClassLoader().getResourceAsStream(BEAUTIFY_JS)),
+					StandardCharsets.UTF_8))) {
 				final StringBuilder sb = new StringBuilder();
 				String line;
 				while ((line = reader.readLine()) != null) {
@@ -317,7 +318,7 @@ public class JsSanitizer {
 
     @SuppressWarnings("unchecked")
 	private static Function<String, String> beautifierAsFunction(Object beautifyScript) {
-      
+
         if (NashornDetection.isStandaloneNashornScriptObjectMirror(beautifyScript)) {
 			return script -> {
 				org.openjdk.nashorn.api.scripting.ScriptObjectMirror scriptObjectMirror = (org.openjdk.nashorn.api.scripting.ScriptObjectMirror) beautifyScript;
