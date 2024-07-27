@@ -30,6 +30,12 @@
 			<groupId>org.webjars.npm</groupId>
 			<artifactId>js-beautify</artifactId>
 			<version>1.14.7</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.openjdk.nashorn</groupId>
@@ -155,6 +161,7 @@
 						</Service-Component>
 						<Bundle-RequiredExecutionEnvironment>JavaSE-1.6
 						</Bundle-RequiredExecutionEnvironment>
+                        <Automatic-Module-Name>org.javadelight.nashornsandbox</Automatic-Module-Name>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -171,11 +178,11 @@
 							<goal>run</goal>
 						</goals>
 						<configuration>
-							<tasks>
+							<target>
 								<delete file="${basedir}/META-INF/MANIFEST.MF" />
 								<copy file="target/classes/META-INF/MANIFEST.MF"
 									tofile="${basedir}/META-INF/MANIFEST.MF" />
-							</tasks>
+							</target>
 						</configuration>
 					</execution>
 				</executions>
