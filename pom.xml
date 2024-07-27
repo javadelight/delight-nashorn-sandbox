@@ -5,7 +5,7 @@
 
 	<groupId>org.javadelight</groupId>
 	<artifactId>delight-nashorn-sandbox</artifactId>
-	<version>0.4.2</version>
+	<version>0.4.3</version>
 	<description>A safe sandbox to execute JavaScript code from Nashorn.</description>
 	<url>https://github.com/javadelight/delight-nashorn-sandbox</url>
 
@@ -30,12 +30,12 @@
 			<groupId>org.webjars.npm</groupId>
 			<artifactId>js-beautify</artifactId>
 			<version>1.14.7</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.openjdk.nashorn</groupId>
@@ -55,9 +55,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
- 		  <groupId>com.github.mifmif</groupId>
-  		<artifactId>generex</artifactId>
-  		<version>1.0.2</version>
+			<groupId>com.github.mifmif</groupId>
+			<artifactId>generex</artifactId>
+			<version>1.0.2</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -86,13 +86,13 @@
 				<artifactId>maven-gpg-plugin</artifactId>
 				<version>1.5</version>
 				<executions>
-						<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-										<goal>sign</goal>
-								</goals>
-						</execution>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
 				</executions>
 				<configuration>
 					<gpgArguments>
@@ -138,7 +138,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.11.0</version>
 				<configuration>
-				  <release>11</release>
+					<release>11</release>
 				</configuration>
 			</plugin>
 
@@ -161,7 +161,7 @@
 						</Service-Component>
 						<Bundle-RequiredExecutionEnvironment>JavaSE-1.6
 						</Bundle-RequiredExecutionEnvironment>
-                        <Automatic-Module-Name>org.javadelight.nashornsandbox</Automatic-Module-Name>
+						<Automatic-Module-Name>org.javadelight.nashornsandbox</Automatic-Module-Name>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -337,9 +337,9 @@
 
 	<distributionManagement>
 		<snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
 	</distributionManagement>
 
 
