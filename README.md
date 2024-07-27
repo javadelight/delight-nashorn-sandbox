@@ -1,6 +1,6 @@
 # Nashorn Sandbox
 
-A secure sandbox for executing JavaScript in Java apps using the [Nashorn](https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/) engine.
+A sandbox for executing JavaScript in Java apps using the [Nashorn](https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/) engine.
 
 Also see [Graal JS Sandbox](https://github.com/javadelight/delight-graaljs-sandbox) and [Rhino Sandbox](https://github.com/javadelight/delight-rhino-sandbox).
 
@@ -9,8 +9,6 @@ Part of the [Java Delight Suite](https://github.com/javadelight/delight-main#jav
 [![Maven Central](https://img.shields.io/maven-central/v/org.javadelight/delight-nashorn-sandbox.svg)](https://search.maven.org/#search%7Cga%7C1%7Cdelight-nashorn-sandbox)
 
 Note: Use version 0.3.x if you are using a Java version older than Java 20.
-
-Open Security Issues: [# 73](https://github.com/javadelight/delight-nashorn-sandbox/issues/73) [# 117](https://github.com/javadelight/delight-nashorn-sandbox/issues/117)
 
 ## Usage
 
