@@ -14,7 +14,56 @@ import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 public class TestIssue151RegEx {
 
 	@Test
-	public void test() throws ScriptCPUAbuseException, ScriptException {
+	public void test_example_1() throws ScriptCPUAbuseException, ScriptException {
+		NashornSandbox sandbox = NashornSandboxes.create();
+
+		String script = "function(data) {\n" +
+				"  if (data.get(\"propertyA\") == \"a special value 1\" || data.get(\"propertyA\") == \"a special value 2\") {\n"
+				+
+				"    return \"a special value 1\";\n" +
+				"  } else if (data.get(\"propertyB\") == \"a special value 3\" && (data.get(\"propertyC\") == \"a special value 1\" || data.get(\"propertyJ\") == \"a special value 1\" || data.get(\"propertyV\") == \"a special value 1\")) {\n"
+				+
+				"    return \"a special value 1\";\n" +
+				"  } else if (data.get(\"propertyB\") == \"4\" && (data.get(\"propertyD\") == \"a special value 1\" || data.get(\"propertyV\") == \"a special value 1\" || data.get(\"propertyW\") == \"a special value 1\")) {\n"
+				+
+				"    return \"a special value 1\";\n" +
+				"  } else if (data.get(\"propertyB\") == \"a special value 2\" && (data.get(\"propertyE\") == \"a special value 1\" || data.get(\"propertyF\") == \"a special value 1\" || data.get(\"propertyL\") == \"a special value 1\")) {\n"
+				+
+				"    return \"a special value 1\";\n" +
+				"  } else if (data.get(\"propertyB\") == \"a special value 3\" && (data.get(\"propertyE\") == \"a special value 1\" || data.get(\"propertyF\") == \"a special value 1\" || data.get(\"propertyL\") == \"a special value 1\")) {\n"
+				+
+				"    return \"a special value 1\";\n" +
+				"  } else if (data.get(\"propertyB\") == \"a special value 3\" && (data.get(\"propertyM\") == \"a special value 1\" || data.get(\"propertyY\") == \"a special value 1\" || data.get(\"propertyH\") == \"a special value 1\")) {\n"
+				+
+				"    return \"a special value 1\";\n" +
+				"  } else if (data.get(\"propertyB\") == \"a special value 3\" && (data.get(\"propertyM\") == \"a special value 1\" || data.get(\"propertyY\") == \"a special value 1\" || data.get(\"propertyH\") == \"a special value 1\")) {\n"
+				+
+				"    return \"a special value 1\";\n" +
+				"  } else if (data.get(\"propertyB\") == \"a special value 3\" && (data.get(\"propertyM\") == \"a special value 1\" || data.get(\"propertyY\") == \"a special value 1\" || data.get(\"propertyH\") == \"a special value 1\")) {\n"
+				+
+				"    return \"a special value 1\";\n" +
+				"  } else if (data.get(\"propertyB\") == \"a special value 3\" && (data.get(\"propertyM\") == \"a special value 1\" || data.get(\"propertyY\") == \"a special value 1\" || data.get(\"propertyH\") == \"a special value 1\")) {\n"
+				+
+				"    return \"a special value 1\";\n" +
+				"  } else if (data.get(\"propertyB\") == \"a special value 3\" && (data.get(\"propertyM\") == \"a special value 1\" || data.get(\"propertyY\") == \"a special value 1\" || data.get(\"propertyH\") == \"a special value 1\")) {\n"
+				+
+				"    return \"a special value 1\";\n" +
+				"  }  else if (data.get(\"propertyB\") == \"a special value 3\" && (data.get(\"propertyM\") == \"a special value 1\" || data.get(\"propertyY\") == \"a special value 1\" || data.get(\"propertyH\") == \"a special value 1\")) {\n"
+				+
+				"    return \"a special value 1\";\n" +
+				"  } else if (data.get(\"propertyB\") == \"a special value 3\" && (data.get(\"propertyM\") == \"a special value 1\" || data.get(\"propertyY\") == \"a special value 1\" || data.get(\"propertyH\") == \"a special value 1\")) {\n"
+				+
+				"    return \"a special value 1\";\n" +
+				"  } else {\n" +
+				"     return \"0\"\n" +
+				"  };\n" +
+				"}\n";
+
+		sandbox.eval(script);
+	}
+
+	@Test
+	public void test_example_2() throws ScriptCPUAbuseException, ScriptException {
 		NashornSandbox sandbox = NashornSandboxes.create();
 		SandboxScriptContext context = sandbox.createScriptContext();
 
