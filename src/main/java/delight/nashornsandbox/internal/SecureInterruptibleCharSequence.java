@@ -15,7 +15,7 @@ public class SecureInterruptibleCharSequence  implements CharSequence {
 		@Override
 		public char charAt(int index) {
 			matchCount.set(matchCount.get()+1);
-			if (matchCount.get() > 5000000){
+			if (matchCount.get() >= Integer.MAX_VALUE){
 				Thread thread = Thread.currentThread();
 				thread.interrupt();
 			}
