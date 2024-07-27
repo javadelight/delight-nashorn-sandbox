@@ -110,6 +110,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.4.5: Increasing limits for iterations for RegEx resolutions. Resolves [Issue #151](https://github.com/javadelight/delight-nashorn-sandbox/issues/151)
 - 0.4.4: Adds additional check for completed execution. Resolves [Issue #153](https://github.com/javadelight/delight-nashorn-sandbox/issues/153)
 - 0.4.3: Ensure compatibility with Java Platform Module System (JPMS) ([PR #154](https://github.com/javadelight/delight-nashorn-sandbox/pull/154) by [nea89o](https://github.com/nea89o))
 - 0.4.2: Ensure compatibility with Java 17
