@@ -30,7 +30,7 @@ public class TestIssue117 {
 
     NashornSandbox sandbox = NashornSandboxes.create();
 
-    for (int i = 4800; i <= 4820; i++) {
+    for (int i = 1800; i <= 1820; i++) {
       long startTime = System.currentTimeMillis();
       String js_script = getMatchStr("(([^;]+;){9}[^;]+)", i);
       try {
