@@ -205,57 +205,6 @@ public interface NashornSandbox {
    * </p>
    */
   void allowGlobalsObjects(boolean v);
-
-  /**
-   * Force, to check if all blocks are enclosed with curly braces "{}".
-   * <p>
-   * <b>Warning</b> This option is useful to identify potential abuse but is 
-   * also prone to identify false positives. Please use with caution. Alternatively
-   * you can use <code>setMaxCPUTime</code> to prevent abusive script execution.
-   * </p>
-   * <p>
-   *   Explanation: all loops (for, do-while, while, and if-else, and functions
-   *   should use braces, because poison_pill() function will be inserted after
-   *   each open brace "{", to ensure interruption checking. Otherwise simple
-   *   code like:
-   *   <pre>
-   *     while(true) while(true) {
-   *       // do nothing
-   *     }
-   *   </pre>
-   *   or even:
-   *   <pre>
-   *     while(true)
-   *   </pre>
-   *   cause unbreakable loop, which force this sandbox to use {@link Thread#stop()}
-   *   which make JVM unstable.
-   * </p>
-   * <p>
-   *   Properly written code (even in bad intention) like:
-   *   <pre>
-   *     while(true) { while(true) {
-   *       // do nothing
-   *     }}
-   *   </pre>
-   *   will be changed into:
-   *   <pre>
-   *     while(true) {poison_pill(); 
-   *       while(true) {poison_pill();
-   *         // do nothing
-   *       }
-   *     }
-   *   </pre>
-   *   which finish nicely when interrupted.
-   * <p>
-   *   For legacy code, this check can be turned off, but with no guarantee, the
-   *   JS thread will gracefully finish when interrupted.
-   * </p>
-   * 
-   * @param v <code>true</code> when sandbox should check if all required braces 
-   *      are placed into JS code, <code>false</code> when no check should be 
-   *      performed
-   */
-  void allowNoBraces(boolean v);
   
   /**
    * The size of prepared statements LRU cache. Default 0 (disabled).

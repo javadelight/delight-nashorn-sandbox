@@ -67,8 +67,6 @@ public class NashornSandboxImpl implements NashornSandbox {
 
 	protected boolean allowGlobalsObjects = false;
 
-	protected boolean allowNoBraces = true;
-
 	protected JsEvaluator evaluator;
 
 	protected JsSanitizer sanitizer;
@@ -328,9 +326,9 @@ public class NashornSandboxImpl implements NashornSandbox {
 	protected JsSanitizer getSanitizer() {
 		if (sanitizer == null) {
 			if (suppliedCache == null) {
-				sanitizer = new JsSanitizer(scriptEngine, maxPreparedStatements, allowNoBraces);
+				sanitizer = new JsSanitizer(scriptEngine, maxPreparedStatements);
 			} else {
-				sanitizer = new JsSanitizer(scriptEngine, allowNoBraces, suppliedCache);
+				sanitizer = new JsSanitizer(scriptEngine, suppliedCache);
 			}
 		}
 		return sanitizer;
@@ -420,14 +418,6 @@ public class NashornSandboxImpl implements NashornSandbox {
 			throw new IllegalStateException("Please set this property before calling eval.");
 		}
 		allowGlobalsObjects = v;
-	}
-
-	@Override
-	public void allowNoBraces(final boolean v) {
-		if (allowNoBraces != v) {
-			sanitizer = null;
-		}
-		allowNoBraces = v;
 	}
 
 	@Override

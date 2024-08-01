@@ -61,21 +61,17 @@ public class JsSanitizer {
 
 	private final SecuredJsCache securedJsCache;
 
-	/** <code>true</code> when lack of braces is allowed. */
-	private final boolean allowNoBraces;
 
-	JsSanitizer(final ScriptEngine scriptEngine, final int maxPreparedStatements, final boolean allowBraces) {
+	JsSanitizer(final ScriptEngine scriptEngine, final int maxPreparedStatements) {
 		this.scriptEngine = scriptEngine;
-		this.allowNoBraces = allowBraces;
 		this.securedJsCache = createSecuredJsCache(maxPreparedStatements);
 		assertScriptEngine();
 		Object beautifHandler = getInjectHandler(scriptEngine);
 		this.jsInject = injectAsFunction(beautifHandler);
 	}
 
-	JsSanitizer(final ScriptEngine scriptEngine, final boolean allowBraces, SecuredJsCache cache) {
+	JsSanitizer(final ScriptEngine scriptEngine, SecuredJsCache cache) {
 		this.scriptEngine = scriptEngine;
-		this.allowNoBraces = allowBraces;
 		this.securedJsCache = cache;
 		assertScriptEngine();
 		Object injectHandler = getInjectHandler(scriptEngine);
@@ -129,7 +125,7 @@ public class JsSanitizer {
 				return size() > maxPreparedStatements;
 			}
 		};
-		return new LinkedHashMapSecuredJsCache(linkedHashMap, allowNoBraces);
+		return new LinkedHashMapSecuredJsCache(linkedHashMap);
 	}
 
 	private String getPreamble() {
@@ -153,7 +149,7 @@ public class JsSanitizer {
 			return secureJsImpl(js);
 		}
 		ScriptException[] ex = new ScriptException[1];
-		String securedJs = securedJsCache.getOrCreate(js, allowNoBraces, ()->{
+		String securedJs = securedJsCache.getOrCreate(js, ()->{
 			try {
 				return secureJsImpl(js);
 			} catch (BracesException e) {

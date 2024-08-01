@@ -50,7 +50,6 @@ public class TestLimitCPU {
 				// nothing to do
 			}
 			// allow evaluate bad js
-			sandbox.allowNoBraces(true);
 			sandbox.eval(js);
 		} finally {
 			sandbox.getExecutor().shutdown();
@@ -75,7 +74,6 @@ public class TestLimitCPU {
 	@Test(expected = ScriptCPUAbuseException.class)
 	public void test_only_while() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
-		sandbox.allowNoBraces(false);
 		sandbox.setMaxCPUTime(50);
 		sandbox.setExecutor(Executors.newSingleThreadExecutor());
 		try {
@@ -94,7 +92,6 @@ public class TestLimitCPU {
 		sandbox.setExecutor(Executors.newSingleThreadExecutor());
 		try {
 			final String badScript = "while (true);\n";
-			sandbox.allowNoBraces(true);
 			sandbox.eval(badScript);
 		} finally {
 			sandbox.getExecutor().shutdown();
@@ -108,7 +105,6 @@ public class TestLimitCPU {
 		sandbox.setExecutor(Executors.newSingleThreadExecutor());
 		try {
 			final String goodScript = "while (true); {i=1;}";
-			sandbox.allowNoBraces(true);
 			sandbox.eval(goodScript);
 		} finally {
 			sandbox.getExecutor().shutdown();
@@ -118,7 +114,6 @@ public class TestLimitCPU {
 	@Test(expected = ScriptCPUAbuseException.class)
 	public void test_while_plus_iteration_bad_script() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
-		sandbox.allowNoBraces(false);
 		try {
 			sandbox.setMaxCPUTime(50);
 			sandbox.setExecutor(Executors.newSingleThreadExecutor());
@@ -136,7 +131,6 @@ public class TestLimitCPU {
 			sandbox.setMaxCPUTime(50);
 			sandbox.setExecutor(Executors.newSingleThreadExecutor());
 			final String badScirpt = "var x=0;\nwhile (true) x++;\n";
-			sandbox.allowNoBraces(true);
 			sandbox.eval(badScirpt);
 		} finally {
 			sandbox.getExecutor().shutdown();
@@ -184,7 +178,6 @@ public class TestLimitCPU {
 			NashornSandbox sandbox = NashornSandboxes.create();
 			sandbox.setMaxCPUTime(100); // in millis
 			sandbox.setMaxMemory(1000 * 1000); // 1 MB
-			sandbox.allowNoBraces(false);
 			sandbox.setMaxPreparedStatements(30);
 			sandbox.setExecutor(Executors.newSingleThreadExecutor());
 			Exception exp = null;

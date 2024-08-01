@@ -38,7 +38,6 @@ public class TestIssue34 {
 		sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(6000); // in millis
 		sandbox.setMaxMemory(1000 * 10000); // 1000 MB
-		sandbox.allowNoBraces(false);
 		sandbox.allowPrintFunctions(true);
 		sandbox.setMaxPreparedStatements(30);
 		sandbox.setExecutor(Executors.newSingleThreadExecutor());

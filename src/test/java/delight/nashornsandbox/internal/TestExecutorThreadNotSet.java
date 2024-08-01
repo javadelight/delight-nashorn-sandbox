@@ -34,7 +34,6 @@ public class TestExecutorThreadNotSet {
         NashornSandbox sandbox = NashornSandboxes.create();
         sandbox.setMaxCPUTime(1000); // in millis
         sandbox.setMaxMemory(1000 * 1000 * 10); // 10 MB
-        sandbox.allowNoBraces(false);
         sandbox.allowPrintFunctions(true);
         sandbox.setMaxPreparedStatements(30);
         sandbox.setExecutor(executor);

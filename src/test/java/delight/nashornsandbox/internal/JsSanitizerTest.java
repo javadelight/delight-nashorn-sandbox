@@ -35,7 +35,7 @@ public class JsSanitizerTest {
 
 	@Before
 	public void setUp() {
-		jsSanitizer = new JsSanitizer(scriptEngine, 0, false);
+		jsSanitizer = new JsSanitizer(scriptEngine, 0);
 	}
 
 	@Test
@@ -114,7 +114,6 @@ public class JsSanitizerTest {
 		try {
 			sandbox.setMaxCPUTime(6000);
 			sandbox.setMaxMemory(50 * 1024 * 1024L);
-			sandbox.allowNoBraces(true);
 			sandbox.allowExitFunctions(true);
 			sandbox.allowGlobalsObjects(true);
 			sandbox.allowLoadFunctions(true);
@@ -145,7 +144,6 @@ public class JsSanitizerTest {
 		try {
 			sandbox.setMaxCPUTime(6000);
 			sandbox.setMaxMemory(50 * 1024 * 1024L);
-			sandbox.allowNoBraces(true);
 			sandbox.allowExitFunctions(true);
 			sandbox.allowGlobalsObjects(true);
 			sandbox.allowLoadFunctions(true);

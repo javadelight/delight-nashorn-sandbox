@@ -13,28 +13,19 @@ import delight.nashornsandbox.SecuredJsCache;
 class LinkedHashMapSecuredJsCache implements SecuredJsCache {
 
 	private final LinkedHashMap<String, String> map;
-	private final boolean allowNoBraces;
 
-	public LinkedHashMapSecuredJsCache(LinkedHashMap<String, String> linkedHashMap, boolean allowNoBraces) {
+	public LinkedHashMapSecuredJsCache(LinkedHashMap<String, String> linkedHashMap) {
 		this.map = linkedHashMap;
-		this.allowNoBraces = allowNoBraces;
 	}
 
 	@Override
-	public String getOrCreate(String js, boolean allowNoBraces, Supplier<String> producer) {
-		assertConfiguration(allowNoBraces);
+	public String getOrCreate(String js, Supplier<String> producer) {
 		String result = map.get(js);
 		if (result == null) {
 			result = producer.get();
 			map.put(js, result);
 		}
 		return result;
-	}
-
-	private void assertConfiguration(boolean allowNoBraces) {
-		if (allowNoBraces != this.allowNoBraces) {
-			throw new IllegalArgumentException("Non-matching cache configuration");
-		}
 	}
 
 }

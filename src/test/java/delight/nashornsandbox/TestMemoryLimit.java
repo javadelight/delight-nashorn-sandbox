@@ -1,6 +1,5 @@
 package delight.nashornsandbox;
 
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
@@ -9,10 +8,8 @@ import java.util.concurrent.Executors;
 import javax.script.Bindings;
 import javax.script.ScriptException;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-import delight.nashornsandbox.exceptions.BracesException;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
 
@@ -46,7 +43,6 @@ public class TestMemoryLimit {
 	@Test(expected = ScriptMemoryAbuseException.class)
 	public void test_noexpectedbraces() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
-		sandbox.allowNoBraces(false);
 		try {
 			sandbox.setMaxMemory(MEMORY_LIMIT);
 			sandbox.setExecutor(Executors.newSingleThreadExecutor());
@@ -64,7 +60,6 @@ public class TestMemoryLimit {
 		try {
 			sandbox.setMaxMemory(MEMORY_LIMIT);
 			sandbox.setExecutor(Executors.newSingleThreadExecutor());
-			sandbox.allowNoBraces(true);
 			final String js = "var o={},i=0; while (true) o[i++] = 'abc'";
 			sandbox.eval(js);
 			fail("Exception should be thrown");

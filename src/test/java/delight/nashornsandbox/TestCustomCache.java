@@ -21,7 +21,7 @@ public class TestCustomCache {
 		private String source;
 
 		@Override
-		public String getOrCreate(String js, boolean allowNoBraces, Supplier<String> producer) {
+		public String getOrCreate(String js, Supplier<String> producer) {
 			consulted = true;
 			source = js;
 			produced = producer.get();
