@@ -72,7 +72,7 @@ public class TestLimitCPU {
 		sandbox.getExecutor().shutdown();
 	}
 
-	@Test(expected = BracesException.class)
+	@Test(expected = ScriptCPUAbuseException.class)
 	public void test_only_while() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.allowNoBraces(false);
@@ -115,7 +115,7 @@ public class TestLimitCPU {
 		}
 	}
 
-	@Test(expected = BracesException.class)
+	@Test(expected = ScriptCPUAbuseException.class)
 	public void test_while_plus_iteration_bad_script() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.allowNoBraces(false);

@@ -171,7 +171,7 @@ public class JsSanitizer {
 		checkJs(js);
 		final String injectedJs = injectInterruptionCalls(js);
 		// if no injection, no need to add preamble
-		if (injectedJs.equals(js)) {
+		if (!injectedJs.contains(JS_INTERRUPTED_FUNCTION)) {
 			return injectedJs;
 		} else {
 			final String preamble = getPreamble();

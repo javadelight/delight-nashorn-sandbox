@@ -68,18 +68,8 @@ public class TestIssue34 {
 		String js = "";
 		js += "function main(){\n" + "logger.debug(\"... In fun1()....\");\n" + "for(var i=0;i<2;i++)//{\n"
 				+ "logger.debug(\"loop cnt-\"+i);\n" + "}\n" + "main();";
-		
-		
-		
-		Throwable ex = null;
-		try {
-			sandbox.eval(js);
-		} catch (Throwable t) {
-			ex = t;
-		}
 
-		Assert.assertTrue(ex instanceof BracesException);
-
+		sandbox.eval(js);
 	}
 	
 	

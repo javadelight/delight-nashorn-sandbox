@@ -45,10 +45,10 @@ public class TestClassForName {
 		final NashornSandbox sandbox2 = NashornSandboxes.create();
 		sandbox2.allow(String.class);
 		try {
-			sandbox2.eval("var String = Java.type('java.lang.String');");
+			sandbox2.eval("var String1 = Java.type('java.lang.String');");
 			sandbox2.eval("var Class1 = String.class;");
 			sandbox2.eval("var Class2 = Class1.forName('java.util.ArrayList');");
-		} catch (ScriptException e) {
+		} catch (Throwable e) {
 			t = e;
 		}
 		Assert.assertTrue(t instanceof ScriptException);

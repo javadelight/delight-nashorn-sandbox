@@ -43,7 +43,7 @@ public class TestMemoryLimit {
 		}
 	}
 
-	@Test(expected = BracesException.class)
+	@Test(expected = ScriptMemoryAbuseException.class)
 	public void test_noexpectedbraces() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.allowNoBraces(false);

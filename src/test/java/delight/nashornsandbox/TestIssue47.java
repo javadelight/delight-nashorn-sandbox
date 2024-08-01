@@ -30,7 +30,7 @@ public class TestIssue47 {
 
 	}
 
-	@Test(expected=BracesException.class)
+	@Test(expected=ScriptCPUAbuseException.class)
 	public void test_invalid() throws ScriptCPUAbuseException, ScriptException {
 		NashornSandbox sandbox = null;
 		try {

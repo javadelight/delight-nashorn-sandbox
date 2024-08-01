@@ -1,11 +1,6 @@
 package delight.nashornsandbox;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.script.ScriptContext;
 import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
 
 import org.junit.Test;
 
@@ -17,7 +12,7 @@ public class TestIssue151RegEx {
 	public void test_example_1() throws ScriptCPUAbuseException, ScriptException {
 		NashornSandbox sandbox = NashornSandboxes.create();
 
-		String script = "function(data) {\n" +
+		String script = "function test(data) {\n" +
 				"  if (data.get(\"propertyA\") == \"a special value 1\" || data.get(\"propertyA\") == \"a special value 2\") {\n"
 				+
 				"    return \"a special value 1\";\n" +
