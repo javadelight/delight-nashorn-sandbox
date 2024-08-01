@@ -7,7 +7,6 @@ import javax.script.ScriptException;
 
 import org.junit.Test;
 
-import delight.nashornsandbox.exceptions.BracesException;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
 public class TestIssue47 {

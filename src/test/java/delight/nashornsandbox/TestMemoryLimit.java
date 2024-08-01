@@ -71,7 +71,7 @@ public class TestMemoryLimit {
 	}
 
 	@Test
-	public void test_no_abuse() throws ScriptCPUAbuseException, ScriptException {
+	public void test_no_abuse() throws ScriptCPUAbuseException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		try {
 			sandbox.setMaxMemory(MEMORY_LIMIT);

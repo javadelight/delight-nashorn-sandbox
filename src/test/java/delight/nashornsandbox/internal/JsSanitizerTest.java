@@ -2,6 +2,7 @@ package delight.nashornsandbox.internal;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.Executors;
@@ -102,7 +103,7 @@ public class JsSanitizerTest {
 		final String js1 = "sum(a) + avg(b);";
 		assertEquals(js1, jsSanitizer.secureJs(js1));
 		final String js2 = "while(true) {sum(a) + avg(b);}";
-		assertFalse(js2.equals(jsSanitizer.secureJs(js2)));
+        assertNotEquals(js2, jsSanitizer.secureJs(js2));
 	}
 
 	@Test
