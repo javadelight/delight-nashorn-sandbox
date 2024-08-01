@@ -34,7 +34,7 @@ import delight.nashornsandbox.exceptions.BracesException;
 public class JsSanitizer {
 
 	/** The resource name of inject.js script. */
-	private final static String INJECT_JS = "/inject.js";
+	private final static String INJECT_JS = "resources/inject.js";
 
 
 	private static final List<String> inject_FUNCTIONS = Arrays.asList("exports.injectJs;", "window.injectJs;", "exports.injectJs;", "global.injectJs;");
