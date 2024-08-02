@@ -5,7 +5,7 @@ module.exports = {
   target: ["web", "es5"],
   output: {
     filename: 'inject.js',
-    path: path.resolve(__dirname, '../cxengine/src/main/resources'),
+    path: path.resolve(__dirname, '../src/main/java/delight/nashornsandbox/internal/resources'),
     library: 'injectJs',
     libraryTarget: 'umd',
     globalObject: "typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : this"

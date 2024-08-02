@@ -18,6 +18,14 @@ for (var i = 0; i < 10; i++) {
 }
 for (var i = 0; i < 10; i++) 
     console.log(i);
+const object = { a: 1, b: 2, c: 3 };
+for (const property in object) {
+  console.log(property);
+}
+
+for (const element of object) {
+  console.log(element);
+}
     `;
     const expectedOutputCode = `
 for (var i = 0; i < 10; i++) {
@@ -27,6 +35,19 @@ for (var i = 0; i < 10; i++) {
 for (var i = 0; i < 10; i++) {
     __if();
     console.log(i);
+}
+const object = {
+    a: 1,
+    b: 2,
+    c: 3
+};
+for (const property in object) {
+    __if();
+    console.log(property);
+}
+for (const element of object) {
+    __if();
+    console.log(element);
 }
     `;
     testSanitizer(inputCode, expectedOutputCode);

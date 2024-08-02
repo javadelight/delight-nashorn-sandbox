@@ -65,7 +65,7 @@ var injectJs = function (code, insertCode) {
       }
 
       // insert code at the beginning of function body, for, while and do-while loops
-      if (node.type === "FunctionDeclaration" || node.type === "FunctionExpression" || node.type === "ForStatement" || node.type === "WhileStatement" || node.type === "DoWhileStatement") {
+      if (node.type === "FunctionDeclaration" || node.type === "FunctionExpression" || node.type === "ForStatement" || node.type === "ForInStatement" || node.type === "ForOfStatement" || node.type === "WhileStatement" || node.type === "DoWhileStatement") {
         if (node.body.type === "BlockStatement") {
           node.body.body.unshift(insertCodeBody);
         } else {
