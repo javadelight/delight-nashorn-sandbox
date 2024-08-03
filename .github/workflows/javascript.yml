@@ -16,6 +16,7 @@ jobs:
       - name: Test JS
         working-directory: ./injectJs
         run: |
+          npm install
           npm run build --if-present
           npm test
           npm audit
