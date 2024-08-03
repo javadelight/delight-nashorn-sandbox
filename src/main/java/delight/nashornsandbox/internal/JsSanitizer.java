@@ -7,13 +7,10 @@ import java.io.InputStreamReader;
 import java.lang.ref.SoftReference;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -36,24 +33,11 @@ import delight.nashornsandbox.exceptions.BracesException;
 @SuppressWarnings("restriction")
 public class JsSanitizer {
 
-	private static class PoisonPil {
-		Pattern pattern;
-		String replacement;
-
-		PoisonPil(final Pattern pattern, final String replacement) {
-			this.pattern = pattern;
-			this.replacement = replacement;
-		}
-	}
-
-	/** The resource name of beautify.min.js script. */
-	private final static String BEAUTIFY_JS = "META-INF/resources/webjars/js-beautify/1.14.7/js/lib/beautifier.js";
-
-	/** The beautify function search list. */
-	private static final List<String> BEAUTIFY_FUNCTIONS = Arrays.asList("exports.beautifier.js;", "window.js_beautify;", "exports.js_beautify;",
-			"global.js_beautify;");
+	/** The resource name of inject.js script. */
+	private final static String INJECT_JS = "resources/inject.js";
 
 
+	private static final List<String> inject_FUNCTIONS = Arrays.asList("exports.injectJs;", "window.injectJs;", "exports.injectJs;", "global.injectJs;");
 
 	/**
 	 * The name of the JS function to be inserted into user script. To prevent
@@ -67,65 +51,31 @@ public class JsSanitizer {
 	 */
 	final static String JS_INTERRUPTED_TEST = "__it";
 
-	private final static List<PoisonPil> POISON_PILLS = Arrays.asList(
-			// every 10th statements ended with semicolon put interrupt checking function
-			new PoisonPil(Pattern.compile("(([^;]+;){9}[^;]+(?<!break|continue);\\n(?![\\W]*(\\/\\/.+[\\W]+)*else))"),
-					JS_INTERRUPTED_FUNCTION + "();\n"),
-			// every (except switch) block start brace put interrupt checking function
-			new PoisonPil(Pattern.compile("(\\s*for\\s*\\([^\\{]+\\)\\s*\\{)"), JS_INTERRUPTED_FUNCTION + "();"), // for
-																													// with
-																													// block
-			new PoisonPil(Pattern.compile("(\\s*for\\s*\\([^\\{]+\\)\\s*[^\\{]+;)"), JS_INTERRUPTED_FUNCTION + "();"), // for
-																														// without
-																						// block
-			//
-			new PoisonPil(Pattern.compile("(\\s*([^\"]?function)\\s*[^\"}]*\\([\\s]*\\)\\s*\\{)"),
-					JS_INTERRUPTED_FUNCTION + "();"), // function except when enclosed in quotes
-			new PoisonPil(Pattern.compile("(\\s*while\\s*\\([^\\{]+\\{)"), JS_INTERRUPTED_FUNCTION + "();"),
-			new PoisonPil(Pattern.compile("(\\s*do\\s*\\{)"), JS_INTERRUPTED_FUNCTION + "();"));
-
-	/**
-	 * The beautifier options. Don't change if you are not know what you are doing,
-	 * because regexps are depended on it.
-	 */
-	private final static Map<String, Object> BEAUTIFY_OPTIONS = new HashMap<>();
-
-	static {
-		BEAUTIFY_OPTIONS.put("brace_style", "collapse");
-		BEAUTIFY_OPTIONS.put("preserve_newlines", false);
-		BEAUTIFY_OPTIONS.put("indent_size", 1);
-		BEAUTIFY_OPTIONS.put("max_preserve_newlines", 0);
-	}
-
 	/** Soft reference to the text of the js script. */
-	private static SoftReference<String> beautifysScript = new SoftReference<>(null);
+	private static SoftReference<String> injectScript = new SoftReference<>(null);
 
 	private final ScriptEngine scriptEngine;
 
 	/** JS beautify() function reference. */
-	private final Function<String, String> jsBeautify;
+	private final Function<String, String> jsInject;
 
 	private final SecuredJsCache securedJsCache;
 
-	/** <code>true</code> when lack of braces is allowed. */
-	private final boolean allowNoBraces;
 
-	JsSanitizer(final ScriptEngine scriptEngine, final int maxPreparedStatements, final boolean allowBraces) {
+	JsSanitizer(final ScriptEngine scriptEngine, final int maxPreparedStatements) {
 		this.scriptEngine = scriptEngine;
-		this.allowNoBraces = allowBraces;
 		this.securedJsCache = createSecuredJsCache(maxPreparedStatements);
 		assertScriptEngine();
-        Object beautifHandler = getBeautifyHandler(scriptEngine);
-        this.jsBeautify = beautifierAsFunction(beautifHandler);
+		Object beautifHandler = getInjectHandler(scriptEngine);
+		this.jsInject = injectAsFunction(beautifHandler);
 	}
 
-	JsSanitizer(final ScriptEngine scriptEngine, final boolean allowBraces, SecuredJsCache cache) {
+	JsSanitizer(final ScriptEngine scriptEngine, SecuredJsCache cache) {
 		this.scriptEngine = scriptEngine;
-		this.allowNoBraces = allowBraces;
 		this.securedJsCache = cache;
 		assertScriptEngine();
-        Object beautifHandler = getBeautifyHandler(scriptEngine);
-        this.jsBeautify = beautifierAsFunction(beautifHandler);
+		Object injectHandler = getInjectHandler(scriptEngine);
+		this.jsInject = injectAsFunction(injectHandler);
 	}
 
 	private void assertScriptEngine() {
@@ -135,15 +85,15 @@ public class JsSanitizer {
 			scriptEngine.eval("var global = {};");
 			// Object.assign polyfill
 			scriptEngine.eval("\"function\"!=typeof Object.assign&&Object.defineProperty(Object,\"assign\",{value:function(e,t){\"use strict\";if(null==e)throw new TypeError(\"Cannot convert undefined or null to object\");for(var n=Object(e),r=1;r<arguments.length;r++){var o=arguments[r];if(null!=o)for(var c in o)Object.prototype.hasOwnProperty.call(o,c)&&(n[c]=o[c])}return n},writable:!0,configurable:!0});");
-			scriptEngine.eval(getBeautifyJs());
+			scriptEngine.eval(getInjectJs());
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private static Object getBeautifyHandler(final ScriptEngine scriptEngine) {
+	private static Object getInjectHandler(final ScriptEngine scriptEngine) {
 		try {
-			for (final String name : BEAUTIFY_FUNCTIONS) {
+			for (final String name : inject_FUNCTIONS) {
 				final Object somWindow = scriptEngine.eval(name);
 				if (somWindow != null) {
 					return somWindow;
@@ -175,71 +125,7 @@ public class JsSanitizer {
 				return size() > maxPreparedStatements;
 			}
 		};
-		return new LinkedHashMapSecuredJsCache(linkedHashMap, allowNoBraces);
-	}
-
-	/** Pattern for back braces. */
-	private final static List<Pattern> LACK_EXPECTED_BRACES = Arrays.asList(
-			Pattern.compile("for [^\\{]+$"),
-			Pattern.compile("^\\s*do [^\\{]*$", Pattern.MULTILINE),
-			Pattern.compile("^[^\\}]*while [^\\{]+$", Pattern.MULTILINE));
-
-			/**
-	 * After beautifier every braces should be in place, if not, or too many we need
-	 * to prevent script execution.
-	 *
-	 * @param beautifiedJs
-	 *            evaluated script
-	 * @throws BracesException
-	 *             when braces are incorrect
-	 */
-	void checkBraces(final String beautifiedJs) throws BracesException {
-		if (allowNoBraces) {
-			return;
-		}
-
-		String withoutComments = RemoveComments.perform(beautifiedJs);
-		for (final Pattern pattern : LACK_EXPECTED_BRACES) {
-			final Matcher matcher = pattern.matcher(withoutComments);
-			if (matcher.find()) {
-
-				String line = "";
-				int index = matcher.start();
-
-				while (index >= 0 && withoutComments.charAt(index) != '\n' ) {
-					line = withoutComments.charAt(index)+line;
-					index--;
-				}
-
-				int singleParaCount = line.length() - line.replace("'", "").length();
-				int doubleParaCount = line.length() - line.replace("\"", "").length();
-				int commentParaCount = line.length() - line.replace("//", "").length();
-				if (singleParaCount % 2 != 0 || doubleParaCount % 2 != 0 || commentParaCount > 0) {
-					// for in string
-
-				} else {
-					throw new BracesException("Potentially no block braces after function|for|while|do. Found ["+matcher.group()+"]. "+
-					"To disable this exception, please set the option `allowNoBraces(true)`");
-				}
-			}
-		}
-	}
-
-	String injectInterruptionCalls(final String str) {
-		String current = str;
-		for (final PoisonPil pp : POISON_PILLS) {
-			final StringBuffer sb = new StringBuffer();
-			final ThreadLocal<Integer> matchCount = new ThreadLocal<>();
-			matchCount.set(0);
-			final Matcher matcher = pp.pattern.matcher(new SecureInterruptibleCharSequence(current,
-			 matchCount));
-			while (matcher.find()) {
-				matcher.appendReplacement(sb, ("$1" + pp.replacement));
-			}
-			matcher.appendTail(sb);
-			current = sb.toString();
-		}
-		return current;
+		return new LinkedHashMapSecuredJsCache(linkedHashMap);
 	}
 
 	private String getPreamble() {
@@ -263,7 +149,7 @@ public class JsSanitizer {
 			return secureJsImpl(js);
 		}
 		ScriptException[] ex = new ScriptException[1];
-		String securedJs = securedJsCache.getOrCreate(js, allowNoBraces, ()->{
+		String securedJs = securedJsCache.getOrCreate(js, ()->{
 			try {
 				return secureJsImpl(js);
 			} catch (BracesException e) {
@@ -279,28 +165,25 @@ public class JsSanitizer {
 
 	private String secureJsImpl(final String js) throws BracesException {
 		checkJs(js);
-		final String beautifiedJs = beautifyJs(js);
-		checkBraces(beautifiedJs);
-		final String injectedJs = injectInterruptionCalls(beautifiedJs);
+		final String injectedJs = injectInterruptionCalls(js);
 		// if no injection, no need to add preamble
-		if (beautifiedJs.equals(injectedJs)) {
-			return beautifiedJs;
+		if (!injectedJs.contains(JS_INTERRUPTED_FUNCTION)) {
+			return injectedJs;
 		} else {
 			final String preamble = getPreamble();
 			return preamble + injectedJs;
 		}
 	}
 
-	String beautifyJs(final String js) {
-        return jsBeautify.apply(js);
+	String injectInterruptionCalls(final String js) {
+		return jsInject.apply(js);
 	}
 
-	private static String getBeautifyJs() {
-		String script = beautifysScript.get();
+	private static String getInjectJs() {
+		String script = injectScript.get();
 		if (script == null) {
 			try (final BufferedReader reader = new BufferedReader(new InputStreamReader(
-					new BufferedInputStream(JsSanitizer.class.getClassLoader().getResourceAsStream(BEAUTIFY_JS)),
-					StandardCharsets.UTF_8))) {
+					new BufferedInputStream(JsSanitizer.class.getResourceAsStream(INJECT_JS)), StandardCharsets.UTF_8))) {
 				final StringBuilder sb = new StringBuilder();
 				String line;
 				while ((line = reader.readLine()) != null) {
@@ -308,28 +191,28 @@ public class JsSanitizer {
 				}
 				script = sb.toString();
 			} catch (final IOException e) {
-				throw new RuntimeException("Cannot find file: " + BEAUTIFY_JS, e);
+				throw new RuntimeException("Cannot find file: " + INJECT_JS, e);
 			}
-			beautifysScript = new SoftReference<>(script);
+			injectScript = new SoftReference<>(script);
 		}
 		return script;
 	}
 
 
-    @SuppressWarnings("unchecked")
-	private static Function<String, String> beautifierAsFunction(Object beautifyScript) {
+	@SuppressWarnings("unchecked")
+	private static Function<String, String> injectAsFunction(Object injectScript) {
 
-        if (NashornDetection.isStandaloneNashornScriptObjectMirror(beautifyScript)) {
+		if (NashornDetection.isStandaloneNashornScriptObjectMirror(injectScript)) {
 			return script -> {
-				org.openjdk.nashorn.api.scripting.ScriptObjectMirror scriptObjectMirror = (org.openjdk.nashorn.api.scripting.ScriptObjectMirror) beautifyScript;
-				return (String) scriptObjectMirror.call("beautify", script, BEAUTIFY_OPTIONS);
+				org.openjdk.nashorn.api.scripting.ScriptObjectMirror scriptObjectMirror = (org.openjdk.nashorn.api.scripting.ScriptObjectMirror) injectScript;
+				return (String) scriptObjectMirror.call("injectJs", script, JS_INTERRUPTED_FUNCTION);
 			};
-        }
+		}
 
-        if (beautifyScript instanceof Function<?, ?>) {
-            return script -> (String) ((Function<Object[], Object>) beautifyScript).apply(new Object[]{script, BEAUTIFY_OPTIONS});
-        }
+		if (injectScript instanceof Function<?, ?>) {
+			return script -> (String) ((Function<Object[], Object>) injectScript).apply(new Object[]{script, JS_INTERRUPTED_FUNCTION});
+		}
 
-        throw new RuntimeException("Unsupported handler type for jsBeautify: " + beautifyScript.getClass().getName());
-    }
+		throw new RuntimeException("Unsupported handler type for sanitizerJs: " + injectScript.getClass().getName());
+	}
 }

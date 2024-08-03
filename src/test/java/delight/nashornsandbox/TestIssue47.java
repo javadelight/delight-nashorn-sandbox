@@ -7,7 +7,6 @@ import javax.script.ScriptException;
 
 import org.junit.Test;
 
-import delight.nashornsandbox.exceptions.BracesException;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
 public class TestIssue47 {
@@ -21,7 +20,6 @@ public class TestIssue47 {
 		NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(100);
 		sandbox.setMaxMemory(2000 * 1000);
-		sandbox.allowNoBraces(false);
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		sandbox.setExecutor(executor);
 		sandbox.eval(js);
@@ -30,7 +28,7 @@ public class TestIssue47 {
 
 	}
 
-	@Test(expected=BracesException.class)
+	@Test(expected=ScriptCPUAbuseException.class)
 	public void test_invalid() throws ScriptCPUAbuseException, ScriptException {
 		NashornSandbox sandbox = null;
 		try {
@@ -40,7 +38,6 @@ public class TestIssue47 {
 			sandbox = NashornSandboxes.create();
 			sandbox.setMaxCPUTime(100);
 			sandbox.setMaxMemory(1000 * 1000);
-			sandbox.allowNoBraces(false);
 			ExecutorService executor = Executors.newSingleThreadExecutor();
 			sandbox.setExecutor(executor);
 			sandbox.eval(js);

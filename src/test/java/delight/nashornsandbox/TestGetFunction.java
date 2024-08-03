@@ -17,7 +17,6 @@ public class TestGetFunction {
 		NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(100);
 		sandbox.setMaxMemory(100 * 1024 * 100);
-		sandbox.allowNoBraces(false);
 		sandbox.setMaxPreparedStatements(30); // because preparing scripts for
 		// execution is expensive
 		ExecutorService executor = Executors.newSingleThreadExecutor();

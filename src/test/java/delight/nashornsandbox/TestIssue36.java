@@ -17,7 +17,6 @@ public class TestIssue36 {
 		NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(100);
 		sandbox.setMaxMemory(1000 * 1000);
-		sandbox.allowNoBraces(false);
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		sandbox.setExecutor(executor);
 		Boolean done = (Boolean) sandbox.eval("done = false;");

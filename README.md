@@ -41,7 +41,6 @@ NashornSandbox sandbox = NashornSandboxes.create();
      
 sandbox.setMaxCPUTime(100);
 sandbox.setMaxMemory(50*1024);
-sandbox.allowNoBraces(false);
 sandbox.setMaxPreparedStatements(30); // because preparing scripts for execution is expensive
 sandbox.setExecutor(Executors.newSingleThreadExecutor());
      

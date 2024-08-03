@@ -11,7 +11,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import delight.nashornsandbox.exceptions.BracesException;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import junit.framework.Assert;
 
@@ -38,7 +37,6 @@ public class TestIssue34 {
 		sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(6000); // in millis
 		sandbox.setMaxMemory(1000 * 10000); // 1000 MB
-		sandbox.allowNoBraces(false);
 		sandbox.allowPrintFunctions(true);
 		sandbox.setMaxPreparedStatements(30);
 		sandbox.setExecutor(Executors.newSingleThreadExecutor());
@@ -68,18 +66,8 @@ public class TestIssue34 {
 		String js = "";
 		js += "function main(){\n" + "logger.debug(\"... In fun1()....\");\n" + "for(var i=0;i<2;i++)//{\n"
 				+ "logger.debug(\"loop cnt-\"+i);\n" + "}\n" + "main();";
-		
-		
-		
-		Throwable ex = null;
-		try {
-			sandbox.eval(js);
-		} catch (Throwable t) {
-			ex = t;
-		}
 
-		Assert.assertTrue(ex instanceof BracesException);
-
+		sandbox.eval(js);
 	}
 	
 	

@@ -13,14 +13,13 @@ import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 public class TestIssue54 {
 
 	@Test
-	public void test_valid() throws ScriptCPUAbuseException, ScriptException {
+	public void test_valid() throws ScriptCPUAbuseException {
 
 		String js = "var x = 1;\nwhile (true) { }\n";
 
 		NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(100);
 		sandbox.setMaxMemory(1000 * 1000);
-		sandbox.allowNoBraces(false);
 		sandbox.disallowAllClasses();
 
 		try {
