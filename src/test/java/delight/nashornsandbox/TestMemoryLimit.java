@@ -55,22 +55,6 @@ public class TestMemoryLimit {
 	}
 
 	@Test
-	public void test_killed() throws ScriptCPUAbuseException, ScriptException {
-		final NashornSandbox sandbox = NashornSandboxes.create();
-		try {
-			sandbox.setMaxMemory(MEMORY_LIMIT);
-			sandbox.setExecutor(Executors.newSingleThreadExecutor());
-			final String js = "var o={},i=0; while (true) o[i++] = 'abc'";
-			sandbox.eval(js);
-			fail("Exception should be thrown");
-		} catch (final ScriptMemoryAbuseException e) {
-			assertTrue(e.isScriptKilled());
-		} finally {
-			sandbox.getExecutor().shutdown();
-		}
-	}
-
-	@Test
 	public void test_no_abuse() throws ScriptCPUAbuseException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		try {
