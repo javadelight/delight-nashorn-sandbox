@@ -205,12 +205,12 @@ public class JsSanitizer {
 		if (NashornDetection.isStandaloneNashornScriptObjectMirror(injectScript)) {
 			return script -> {
 				org.openjdk.nashorn.api.scripting.ScriptObjectMirror scriptObjectMirror = (org.openjdk.nashorn.api.scripting.ScriptObjectMirror) injectScript;
-				return (String) scriptObjectMirror.call("injectJs", script, JS_INTERRUPTED_FUNCTION);
+				return (String) scriptObjectMirror.call("injectJs", script, JS_INTERRUPTED_FUNCTION + "();");
 			};
 		}
 
 		if (injectScript instanceof Function<?, ?>) {
-			return script -> (String) ((Function<Object[], Object>) injectScript).apply(new Object[]{script, JS_INTERRUPTED_FUNCTION});
+			return script -> (String) ((Function<Object[], Object>) injectScript).apply(new Object[]{script, JS_INTERRUPTED_FUNCTION + "();"});
 		}
 
 		throw new RuntimeException("Unsupported handler type for sanitizerJs: " + injectScript.getClass().getName());

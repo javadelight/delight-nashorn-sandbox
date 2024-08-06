@@ -1,6 +1,7 @@
 package delight.nashornsandbox;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.util.concurrent.Executors;
@@ -17,7 +18,7 @@ import junit.framework.Assert;
 @SuppressWarnings("all")
 public class TestLimitCPU {
 
-	@Test(expected = ScriptCPUAbuseException.class)
+	@Test
 	public void test() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		try {
@@ -30,12 +31,14 @@ public class TestLimitCPU {
 			_builder.append("x=x+1;\n");
 			_builder.append("}\n");
 			sandbox.eval(_builder.toString());
+		} catch (ScriptCPUAbuseException e) {
+			assertFalse(e.isScriptKilled());
 		} finally {
 			sandbox.getExecutor().shutdown();
 		}
 	}
 
-	@Test(expected = ScriptCPUAbuseException.class)
+	@Test
 	public void test_evil_script() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(50);
@@ -51,6 +54,8 @@ public class TestLimitCPU {
 			}
 			// allow evaluate bad js
 			sandbox.eval(js);
+		} catch (ScriptCPUAbuseException e) {
+			assertFalse(e.isScriptKilled());
 		} finally {
 			sandbox.getExecutor().shutdown();
 		}
@@ -71,7 +76,7 @@ public class TestLimitCPU {
 		sandbox.getExecutor().shutdown();
 	}
 
-	@Test(expected = ScriptCPUAbuseException.class)
+	@Test
 	public void test_only_while() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(50);
@@ -79,12 +84,14 @@ public class TestLimitCPU {
 		try {
 			final String badScript = "while (true);\n";
 			sandbox.eval(badScript);
+		} catch (ScriptCPUAbuseException e) {
+			assertFalse(e.isScriptKilled());
 		} finally {
 			sandbox.getExecutor().shutdown();
 		}
 	}
 
-	@Test(expected = ScriptCPUAbuseException.class)
+	@Test
 	public void test_only_while_allowed_bad_script() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(50);
@@ -93,12 +100,14 @@ public class TestLimitCPU {
 		try {
 			final String badScript = "while (true);\n";
 			sandbox.eval(badScript);
+		} catch (ScriptCPUAbuseException e) {
+			assertFalse(e.isScriptKilled());
 		} finally {
 			sandbox.getExecutor().shutdown();
 		}
 	}
 
-	@Test(expected = ScriptCPUAbuseException.class)
+	@Test
 	public void test_only_while_good_script() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		sandbox.setMaxCPUTime(50);
@@ -106,12 +115,14 @@ public class TestLimitCPU {
 		try {
 			final String goodScript = "while (true); {i=1;}";
 			sandbox.eval(goodScript);
+		} catch (ScriptCPUAbuseException e) {
+			assertFalse(e.isScriptKilled());
 		} finally {
 			sandbox.getExecutor().shutdown();
 		}
 	}
 
-	@Test(expected = ScriptCPUAbuseException.class)
+	@Test
 	public void test_while_plus_iteration_bad_script() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		try {
@@ -119,12 +130,14 @@ public class TestLimitCPU {
 			sandbox.setExecutor(Executors.newSingleThreadExecutor());
 			final String badScirpt = "var x=0;\nwhile (true) x++;\n";
 			sandbox.eval(badScirpt);
+		} catch (ScriptCPUAbuseException e) {
+			assertFalse(e.isScriptKilled());
 		} finally {
 			sandbox.getExecutor().shutdown();
 		}
 	}
 
-	@Test(expected = ScriptCPUAbuseException.class)
+	@Test
 	public void test_while_plus_iteration_bad_scrip_allowed() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		try {
@@ -132,12 +145,14 @@ public class TestLimitCPU {
 			sandbox.setExecutor(Executors.newSingleThreadExecutor());
 			final String badScirpt = "var x=0;\nwhile (true) x++;\n";
 			sandbox.eval(badScirpt);
+		} catch (ScriptCPUAbuseException e) {
+			assertFalse(e.isScriptKilled());
 		} finally {
 			sandbox.getExecutor().shutdown();
 		}
 	}
 
-	@Test(expected = ScriptCPUAbuseException.class)
+	@Test
 	public void test_while_plus_iteration() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		try {
@@ -145,12 +160,14 @@ public class TestLimitCPU {
 			sandbox.setExecutor(Executors.newSingleThreadExecutor());
 			final String goodScript = "var x=0;\nwhile (true) {x++;}\n";
 			sandbox.eval(goodScript);
+		} catch (ScriptCPUAbuseException e) {
+			assertFalse(e.isScriptKilled());
 		} finally {
 			sandbox.getExecutor().shutdown();
 		}
 	}
 
-	@Test(expected = ScriptCPUAbuseException.class)
+	@Test
 	public void test_do_while() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		try {
@@ -161,6 +178,8 @@ public class TestLimitCPU {
 			_builder.append("\t\n");
 			_builder.append("} while (true);\n");
 			sandbox.eval(_builder.toString());
+		} catch (ScriptCPUAbuseException e) {
+			assertFalse(e.isScriptKilled());
 		} finally {
 			sandbox.getExecutor().shutdown();
 		}

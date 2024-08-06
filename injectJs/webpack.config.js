@@ -10,9 +10,9 @@ module.exports = {
     libraryTarget: 'umd',
     globalObject: "typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : this"
   },
-  mode: 'none',
+  mode: 'production',
   optimization: {
-    minimize: false
+    minimize: true
   },
   module: {
     rules: [ { 
