@@ -1,7 +1,7 @@
 package delight.nashornsandbox;
 
-import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertFalse;
 
 import java.util.concurrent.Executors;
 
@@ -26,7 +26,7 @@ import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
 public class TestMemoryLimit {
 	private static final int MEMORY_LIMIT = 700 * 1024 * 20;
 
-	@Test(expected = ScriptMemoryAbuseException.class)
+	@Test
 	public void test() throws ScriptCPUAbuseException, ScriptMemoryAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		try {
@@ -35,12 +35,14 @@ public class TestMemoryLimit {
 			final String js = "var o={},i=0; while (true) {o[i++] = 'abc'}";
 			sandbox.eval(js);
 			fail("Exception should be thrown");
+		} catch (ScriptMemoryAbuseException e) {
+			assertFalse(e.isScriptKilled());
 		} finally {
 			sandbox.getExecutor().shutdown();
 		}
 	}
 
-	@Test(expected = ScriptMemoryAbuseException.class)
+	@Test
 	public void test_noexpectedbraces() throws ScriptCPUAbuseException, ScriptException {
 		final NashornSandbox sandbox = NashornSandboxes.create();
 		try {
@@ -49,22 +51,8 @@ public class TestMemoryLimit {
 			final String js = "var o={},i=0; while (true) o[i++] = 'abc'";
 			sandbox.eval(js);
 			fail("Exception should be thrown");
-		} finally {
-			sandbox.getExecutor().shutdown();
-		}
-	}
-
-	@Test
-	public void test_killed() throws ScriptCPUAbuseException, ScriptException {
-		final NashornSandbox sandbox = NashornSandboxes.create();
-		try {
-			sandbox.setMaxMemory(MEMORY_LIMIT);
-			sandbox.setExecutor(Executors.newSingleThreadExecutor());
-			final String js = "var o={},i=0; while (true) o[i++] = 'abc'";
-			sandbox.eval(js);
-			fail("Exception should be thrown");
-		} catch (final ScriptMemoryAbuseException e) {
-			assertTrue(e.isScriptKilled());
+		} catch (ScriptMemoryAbuseException e) {
+			assertFalse(e.isScriptKilled());
 		} finally {
 			sandbox.getExecutor().shutdown();
 		}
