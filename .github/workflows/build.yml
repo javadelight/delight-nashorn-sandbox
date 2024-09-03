@@ -33,7 +33,7 @@ jobs:
         java: [ 17, 20 ]
     name: Java ${{ matrix.java }} test
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: delight-nashorn-sandbox
       - name: Display structure of downloaded files
