@@ -21,7 +21,7 @@ jobs:
         run: mvn -B package --file pom.xml -Drun.jvmArguments="-Xmx4048m -Xms1024m"
       - uses: actions/upload-artifact@v4
         with:
-          name: delight-nashorn-sandbox
+          name: delight-nashorn-sandbox-${{ matrix.java }}
           path: target/delight-nashorn-sandbox-*.jar
 
   test:
@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4.1.7
         with:
-          name: delight-nashorn-sandbox
+          name: delight-nashorn-sandbox-${{ matrix.java }}
       - name: Display structure of downloaded files
         run: ls -R
       - name: Clean unnecessary files
