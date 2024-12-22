@@ -8,7 +8,6 @@ import javax.script.ScriptException;
 import org.junit.Test;
 
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
-import junit.framework.Assert;
 
 public class TestES6 {
 
