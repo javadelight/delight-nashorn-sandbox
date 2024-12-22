@@ -25,7 +25,7 @@ public class NashornSandboxes {
 	}
 	
 	/**
-	 * <p>Create a sandbox while supplying arguments for the engine such as '--no-java'.
+	 * <p>Create a sandbox while supplying arguments for the engine such as '--language=es6'.
 	 * <p>More information on available parameters can be found in the following:
 	 * <ul>
 	 * <li><a href='http://hg.openjdk.java.net/jdk8/jdk8/nashorn/file/tip/docs/DEVELOPER_README'>Nashorn DEVELOPER README</a></li>
