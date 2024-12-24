@@ -112,33 +112,6 @@ public class NashornSandboxImpl implements NashornSandbox {
 		this.allow(InterruptTest.class);
 		this.engineAsserted = new AtomicBoolean(false);
 
-		// for (String param : params) {
-		// 	if (param.equals("--language=es6")) {
-		// 		this.allow(java.util.Timer.class);
-		// 		try (final BufferedReader reader = new BufferedReader(new InputStreamReader(
-		// 				new BufferedInputStream(JsSanitizer.class.getResourceAsStream("resources/es6/nashorn-ext-for-es6.js")),
-		// 				StandardCharsets.UTF_8))) {
-		// 			final StringBuilder sb = new StringBuilder();
-		// 			String line;
-		// 			while ((line = reader.readLine()) != null) {
-		// 				sb.append(line).append('\n');
-		// 			}
-		// 			final String script = sb.toString();
-		// 			try {
-		// 				this.allowGlobalsObjects(true);
-		// 				this.allowLoadFunctions(true);
-		// 				this.allowGlobalsObjects(true);
-		// 				this.scriptEngine.eval(script+"\nArray.from(1,2,3);");
-		// 			} catch (ScriptCPUAbuseException e) {
-		// 				throw new RuntimeException("CPU usage exceeded from loading Nashorn ES6 extension..");
-		// 			} catch (ScriptException e) {
-		// 				throw new RuntimeException("Script error while loading Nashorn ES6 extension.", e);
-		// 			}
-		// 		} catch (final IOException e) {
-		// 			throw new RuntimeException("Cannot find file: resources/es6/nashorn-ext-for-es6.js", e);
-		// 		}
-		// 	}
-		// }
 	}
 
 	private SandboxClassFilter createSandboxClassFilter() {
