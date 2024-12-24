@@ -17,11 +17,18 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -104,23 +111,25 @@ public class NashornSandboxImpl implements NashornSandbox {
 		this.maxPreparedStatements = 0;
 		this.allow(InterruptTest.class);
 		this.engineAsserted = new AtomicBoolean(false);
+
 	}
 
 	private SandboxClassFilter createSandboxClassFilter() {
 		return NashornDetection.createSandboxClassFilter();
 	}
 
-	public ScriptEngine createNashornScriptEngineFactory(String ... params) {
-        try {
+	public ScriptEngine createNashornScriptEngineFactory(String... params) {
+		try {
 			Object nashornScriptEngineFactory = NashornDetection.getNashornScriptEngineFactory();
 			Class<?> classFilterClass = NashornDetection.getClassFilterClass();
 
-			Method getScriptEngine = nashornScriptEngineFactory.getClass().getDeclaredMethod("getScriptEngine", String[].class, ClassLoader.class, classFilterClass);
-            return (ScriptEngine) getScriptEngine.invoke(nashornScriptEngineFactory, params, this.getClass().getClassLoader(),
+			Method getScriptEngine = nashornScriptEngineFactory.getClass().getDeclaredMethod("getScriptEngine",
+					String[].class, ClassLoader.class, classFilterClass);
+			return (ScriptEngine) getScriptEngine.invoke(nashornScriptEngineFactory, params, this.getClass().getClassLoader(),
 					classFilterClass.cast(this.sandboxClassFilter));
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private synchronized void assertScriptEngine() {
@@ -208,20 +217,20 @@ public class NashornSandboxImpl implements NashornSandbox {
 	}
 
 	@Override
-  public SandboxScriptContext createScriptContext() {
+	public SandboxScriptContext createScriptContext() {
 		ScriptContext context = new SimpleScriptContext();
 		produceSecureBindings(context);
-    return new SandboxScriptContext() {
+		return new SandboxScriptContext() {
 
 			@Override
 			public ScriptContext getContext() {
 				return context;
 			}
-			
-		};
-  }
 
-  @Override
+		};
+	}
+
+	@Override
 	public Object eval(final String js) throws ScriptCPUAbuseException, ScriptException {
 		return eval(js, null, null);
 	}
@@ -253,11 +262,11 @@ public class NashornSandboxImpl implements NashornSandbox {
 			securedJs = sanitizer.secureJs(js);
 		}
 		final Bindings securedBindings = secureBindings(bindings);
-    EvaluateOperation op;
+		EvaluateOperation op;
 		if (scriptContext != null) {
-		 op = new EvaluateOperation(securedJs, scriptContext.getContext(), securedBindings);
+			op = new EvaluateOperation(securedJs, scriptContext.getContext(), securedBindings);
 		} else {
-		 op = new EvaluateOperation(securedJs, null, securedBindings);
+			op = new EvaluateOperation(securedJs, null, securedBindings);
 		}
 		return executeSandboxedOperation(op);
 	}
@@ -499,8 +508,7 @@ public class NashornSandboxImpl implements NashornSandbox {
 	}
 
 	@Override
-	public CompiledScript compile(final String js) throws ScriptException
-	{
+	public CompiledScript compile(final String js) throws ScriptException {
 		assertScriptEngine();
 		final JsSanitizer sanitizer = getSanitizer();
 		final String securedJs = sanitizer.secureJs(js);
@@ -510,26 +518,24 @@ public class NashornSandboxImpl implements NashornSandbox {
 	}
 
 	@Override
-	public Object eval(CompiledScript compiledScript) throws ScriptCPUAbuseException, ScriptException
-	{
+	public Object eval(CompiledScript compiledScript) throws ScriptCPUAbuseException, ScriptException {
 		return eval(compiledScript, null, null);
 	}
 
 	@Override
-	public Object eval(CompiledScript compiledScript, Bindings bindings) throws ScriptCPUAbuseException, ScriptException
-	{
+	public Object eval(CompiledScript compiledScript, Bindings bindings) throws ScriptCPUAbuseException, ScriptException {
 		return eval(compiledScript, null, bindings);
 	}
 
 	@Override
-	public Object eval(CompiledScript compiledScript, ScriptContext scriptContext) throws ScriptCPUAbuseException, ScriptException
-	{
+	public Object eval(CompiledScript compiledScript, ScriptContext scriptContext)
+			throws ScriptCPUAbuseException, ScriptException {
 		return eval(compiledScript, scriptContext, null);
 	}
 
 	@Override
-	public Object eval(CompiledScript compiledScript, ScriptContext scriptContext, Bindings bindings) throws ScriptCPUAbuseException, ScriptException
-	{
+	public Object eval(CompiledScript compiledScript, ScriptContext scriptContext, Bindings bindings)
+			throws ScriptCPUAbuseException, ScriptException {
 		assertScriptEngine();
 		final Bindings securedBindings = secureBindings(bindings);
 		EvaluateCompiledOperation op = new EvaluateCompiledOperation(compiledScript, scriptContext, securedBindings);

@@ -17,7 +17,7 @@ The sandbox by default **blocks access to all** Java classes.
 Classes, which should be used in JavaScript, must be explicitly allowed.
 
 ```java
-NashornSandbox sandbox = NashornSandboxes.create();
+NashornSandbox sandbox = NashornSandboxes.create("--language=es6"));
      
 sandbox.allow(File.class);
      
@@ -27,7 +27,7 @@ sandbox.eval("var File = Java.type('java.io.File'); File;")
 Or you can inject your Java object as a JS global variable
 
 ```java
-NashornSandbox sandbox = NashornSandboxes.create();
+NashornSandbox sandbox = NashornSandboxes.create("--language=es6"));
 
 sandbox.inject("fromJava", new Object());
 
@@ -37,7 +37,7 @@ sandbox.eval("fromJava.getClass();");
 The sandbox also allows limiting the CPU time and memory usage of scripts. This allows terminating scripts which contain infinite loops and other problematic code.
 
 ```java
-NashornSandbox sandbox = NashornSandboxes.create();
+NashornSandbox sandbox = NashornSandboxes.create("--language=es6"));
      
 sandbox.setMaxCPUTime(100);
 sandbox.setMaxMemory(50*1024);
@@ -70,7 +70,7 @@ while(true) {__if();
 The sandbox also allows precompiling frequently used scripts. Using a precompiled script can substantially increase execution times.
 
 ```java
-NashornSandbox sandbox = NashornSandboxes.create();
+NashornSandbox sandbox = NashornSandboxes.create("--language=es6"));
 CompiledScript script = sandbox.compile("1 + 1");
 int result1 = (int) sandbox.eval(script);
 int result2 = (int) sandbox.eval(script);
