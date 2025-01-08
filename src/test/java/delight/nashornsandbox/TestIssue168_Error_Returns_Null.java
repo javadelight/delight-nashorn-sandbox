@@ -18,13 +18,20 @@ import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
  */
 public class TestIssue168_Error_Returns_Null {
 
-  @Test(expected = javax.script.ScriptException.class)
+  public static class IFail {
+    public void doIt() {
+      throw new Error("I tried my best but I failed");
+    }
+  }
+
+  @Test(expected = java.lang.Error.class)
   public void test() throws ScriptCPUAbuseException, ScriptException, NoSuchMethodException {
 
     NashornSandbox sandbox = NashornSandboxes.create();
     try {
       sandbox.setExecutor(Executors.newSingleThreadExecutor());
-      String code = "throw new Error('Something bad happened!!')";
+      sandbox.inject("iFail", new IFail());
+      String code = "iFail.doIt();";
       sandbox.eval(code);
     } finally {
       sandbox.getExecutor().shutdown();
