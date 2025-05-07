@@ -111,6 +111,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- 0.5.1: Fixed issue in JS sanitisation that would prevent the sandbox to process the whole JS script ([PR #171](https://github.com/javadelight/delight-nashorn-sandbox/pull/171) by [tim0-12432](https://github.com/tim0-12432))
 - 0.5.0: Code injection performed via AST rather than RegEx for improved performance and accuracy ([PR #157](https://github.com/javadelight/delight-nashorn-sandbox/pull/157)). Option `allowNoBraces` no longer supported, since not required.
 - 0.4.5: Increasing limits for iterations for RegEx resolutions. Resolves [Issue #151](https://github.com/javadelight/delight-nashorn-sandbox/issues/151)
 - 0.4.4: Adds additional check for completed execution. Resolves [Issue #153](https://github.com/javadelight/delight-nashorn-sandbox/issues/153)
