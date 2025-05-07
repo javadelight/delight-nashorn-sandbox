@@ -451,4 +451,58 @@ exampleFunction();
     `
     testSanitizer(inputCode, expectedOutputCode);
   });
+
+  it('should not duplicate code if is function, for, ...', () => {
+    const inputCode = `
+function exampleFunction() {
+    print("init");
+            
+    var data = [];
+    data.push("a1");
+    data.push("a2");
+    data.push("a3");
+    data.push("a4");
+    data.push("a5");
+    data.push("a6");
+    data.push("a7");
+    data.push("a8");
+    data.push("a9");
+
+    print("pushed mandatory columns");
+    
+    for (var i = 0; i < data.length; i++) {
+        print(data[i]);
+    }
+    
+    print("finished");
+}
+
+exampleFunction();
+    `;
+    var expectedOutputCode = `
+function exampleFunction() {
+    __if();
+    print('init');
+    var data = [];
+    data.push('a1');
+    data.push('a2');
+    data.push('a3');
+    data.push('a4');
+    data.push('a5');
+    data.push('a6');
+    data.push('a7');
+    __if();
+    data.push('a8');
+    data.push('a9');
+    print('pushed mandatory columns');
+    for (var i = 0; i < data.length; i++) {
+        __if();
+        print(data[i]);
+    }
+    print('finished');
+}
+exampleFunction();
+    `
+    testSanitizer(inputCode, expectedOutputCode);
+  });
 });
