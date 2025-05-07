@@ -63,7 +63,6 @@ const injectJs = function (code, insertCode) {
           node.body = newBody;
         }
         statementCount = 0;
-        return node;
       }
     },
     leave: function (node, parent) {
