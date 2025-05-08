@@ -13,6 +13,11 @@ jobs:
         run: |
           cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
+      - name: Build JS
+        working-directory: ./injectJs
+        run: |
+          npm install
+          npm run build --if-present
       - name: Set up Maven Central Repository
         uses: actions/setup-java@v2
         with:
