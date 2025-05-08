@@ -26,4 +26,4 @@ jobs:
         run: mvn --batch-mode -Dgpg.passphrase= deploy -DskipTests
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_SECRET }}
