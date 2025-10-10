@@ -62,7 +62,7 @@ public class JsSanitizer {
 	private final SecuredJsCache securedJsCache;
 
 
-	JsSanitizer(final ScriptEngine scriptEngine, final int maxPreparedStatements) {
+	protected JsSanitizer(final ScriptEngine scriptEngine, final int maxPreparedStatements) {
 		this.scriptEngine = scriptEngine;
 		this.securedJsCache = createSecuredJsCache(maxPreparedStatements);
 		assertScriptEngine();
@@ -70,7 +70,7 @@ public class JsSanitizer {
 		this.jsInject = injectAsFunction(beautifHandler);
 	}
 
-	JsSanitizer(final ScriptEngine scriptEngine, SecuredJsCache cache) {
+	protected JsSanitizer(final ScriptEngine scriptEngine, SecuredJsCache cache) {
 		this.scriptEngine = scriptEngine;
 		this.securedJsCache = cache;
 		assertScriptEngine();
