@@ -62,7 +62,7 @@ public class JsSanitizer {
 	private final SecuredJsCache securedJsCache;
 
 
-	JsSanitizer(final ScriptEngine scriptEngine, final int maxPreparedStatements) {
+	protected JsSanitizer(final ScriptEngine scriptEngine, final int maxPreparedStatements) {
 		this.scriptEngine = scriptEngine;
 		this.securedJsCache = createSecuredJsCache(maxPreparedStatements);
 		assertScriptEngine();
@@ -70,7 +70,7 @@ public class JsSanitizer {
 		this.jsInject = injectAsFunction(beautifHandler);
 	}
 
-	JsSanitizer(final ScriptEngine scriptEngine, SecuredJsCache cache) {
+	protected JsSanitizer(final ScriptEngine scriptEngine, SecuredJsCache cache) {
 		this.scriptEngine = scriptEngine;
 		this.securedJsCache = cache;
 		assertScriptEngine();
@@ -131,10 +131,28 @@ public class JsSanitizer {
 	private String getPreamble() {
 		final String clazzName = InterruptTest.class.getName();
 		final StringBuilder sb = new StringBuilder();
-		sb.append("var ").append(JS_INTERRUPTED_TEST).append("=Java.type('").append(clazzName).append("');");
+		if (isRhino()) {
+			sb.append("var ").append(JS_INTERRUPTED_TEST).append("=Packages." + clazzName + ";");
+		} else {
+			sb.append("var ").append(JS_INTERRUPTED_TEST).append("=Java.type('").append(clazzName).append("');");
+		}
 		sb.append("var ").append(JS_INTERRUPTED_FUNCTION).append("=function(){");
-		sb.append(JS_INTERRUPTED_TEST).append(".test();};\n");
+		if (isRhino()) {
+			sb.append(JS_INTERRUPTED_TEST).append(".getMethod(\"test\").invoke(null);};\n");
+		} else {
+			sb.append(JS_INTERRUPTED_TEST).append(".test();};\n");
+		}
 		return sb.toString();
+	}
+
+	private boolean isRhino() {
+		try {
+			if (Class.forName("org.mozilla.javascript.engine.RhinoScriptEngine").isInstance(scriptEngine)) {
+				return true;
+			}
+		} catch (ClassNotFoundException e) {
+		}
+		return false;
 	}
 
 	private void checkJs(final String js) {
@@ -200,7 +218,7 @@ public class JsSanitizer {
 
 
 	@SuppressWarnings("unchecked")
-	private static Function<String, String> injectAsFunction(Object injectScript) {
+	protected Function<String, String> injectAsFunction(Object injectScript) {
 
 		if (NashornDetection.isStandaloneNashornScriptObjectMirror(injectScript)) {
 			return script -> {
