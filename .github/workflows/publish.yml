@@ -13,18 +13,6 @@ jobs:
         run: |
           cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
-
-          # Get the key ID and fingerprint in batch-friendly format
-          KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | head -1 | awk '{print $2}' | cut -d'/' -f2)
-          KEY_FINGERPRINT=$(gpg --list-secret-keys --fingerprint | grep -A 1 "$KEY_ID" | tail -1 | tr -d ' ' | cut -c 25-)
-
-          # Extend key expiry to 10 years from now (non-interactive)
-          gpg --batch --quick-set-expire $KEY_FINGERPRINT 10y
-
-          # Trust the key for signing using batch mode
-          echo "$KEY_FINGERPRINT:5:" | gpg --import-ownertrust
-
-          echo "key-id=$KEY_ID" >> $GITHUB_OUTPUT
       - name: Build JS
         working-directory: ./injectJs
         run: |
