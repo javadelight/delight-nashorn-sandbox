@@ -13,6 +13,17 @@ jobs:
         run: |
           cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
+
+          # Get the key ID
+          KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | head -1 | awk '{print $2}' | cut -d'/' -f2)
+
+          # Extend key expiry to 10 years from now
+          echo -e "expire\n10y\ny\nsave\n" | gpg --command-fd 0 --edit-key $KEY_ID
+
+          # Trust the key for signing
+          echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key $KEY_ID trust
+
+          echo "key-id=$KEY_ID" >> $GITHUB_OUTPUT
       - name: Build JS
         working-directory: ./injectJs
         run: |
