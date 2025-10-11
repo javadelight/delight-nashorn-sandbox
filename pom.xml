@@ -27,11 +27,6 @@
 			<version>1.7.25</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mozilla</groupId>
-			<artifactId>rhino</artifactId>
-			<version>1.7.15</version>
-		</dependency>
-		<dependency>
 			<groupId>org.webjars.npm</groupId>
 			<artifactId>js-beautify</artifactId>
 			<version>1.14.7</version>
