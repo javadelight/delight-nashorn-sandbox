@@ -1,5 +1,13 @@
-class RhinoSandboxImpl extends NashornSandboxImpl {
-    public RhinoSandboxImpl(javax.script.ScriptEngine engine, String... params) {
+package delight.nashornsandbox.internal;
+
+import javax.script.ScriptEngine;
+
+import delight.nashornsandbox.internal.JsSanitizer;
+import delight.nashornsandbox.internal.NashornSandboxImpl;
+import delight.nashornsandbox.internal.RhinoJsSanitizer;
+
+public class RhinoSandboxImpl extends NashornSandboxImpl {
+    public RhinoSandboxImpl(ScriptEngine engine, String... params) {
         super(engine, params);
     }
 

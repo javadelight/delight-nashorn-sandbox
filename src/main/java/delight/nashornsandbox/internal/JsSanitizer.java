@@ -218,7 +218,7 @@ public class JsSanitizer {
 
 
 	@SuppressWarnings("unchecked")
-	private static Function<String, String> injectAsFunction(Object injectScript) {
+	protected Function<String, String> injectAsFunction(Object injectScript) {
 
 		if (NashornDetection.isStandaloneNashornScriptObjectMirror(injectScript)) {
 			return script -> {

@@ -1,12 +1,22 @@
+package delight.nashornsandbox.internal;
+
+import javax.script.ScriptEngine;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
+
+import delight.nashornsandbox.SecuredJsCache;
+import delight.nashornsandbox.internal.JsSanitizer;
+import java.util.function.Function;
+
 class RhinoJsSanitizer extends JsSanitizer {
 
     static String JS_INTERRUPTED_FUNCTION = "__if";
 
-    protected RhinoJsSanitizer(javax.script.ScriptEngine scriptEngine, int maxPreparedStatements) {
+    protected RhinoJsSanitizer(ScriptEngine scriptEngine, int maxPreparedStatements) {
         super(scriptEngine, maxPreparedStatements);
     }
 
-    public RhinoJsSanitizer(javax.script.ScriptEngine scriptEngine, SecuredJsCache cache) {
+    public RhinoJsSanitizer(ScriptEngine scriptEngine, SecuredJsCache cache) {
         super(scriptEngine, cache);
     }
 

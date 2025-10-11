@@ -1,5 +1,3 @@
-package delight.nashornsandbox;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
@@ -17,7 +15,7 @@ import org.junit.Test;
 import delight.nashornsandbox.exceptions.BracesException;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
-import junit.framework.Assert;
+import delight.nashornsandbox.internal.RhinoSandboxImpl;
 
 @SuppressWarnings("all")
 public class TestIssue173_AddingRhinoSupport {
