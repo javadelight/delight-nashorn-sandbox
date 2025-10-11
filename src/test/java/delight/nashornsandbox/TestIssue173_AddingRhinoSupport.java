@@ -12,6 +12,7 @@ import javax.script.ScriptException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.exceptions.BracesException;
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 import delight.nashornsandbox.exceptions.ScriptMemoryAbuseException;
