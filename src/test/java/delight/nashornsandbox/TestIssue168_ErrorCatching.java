@@ -9,7 +9,7 @@ import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
 public class TestIssue168_ErrorCatching {
 
-public static class IFail {
+  public static class IFail {
     public void doIt() {
       throw new Error("I tried my best but I failed");
     }
