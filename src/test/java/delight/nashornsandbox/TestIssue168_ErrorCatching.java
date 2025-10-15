@@ -48,16 +48,18 @@ public class TestIssue168_ErrorCatching {
   public void test_catch_error() throws ScriptCPUAbuseException, ScriptException, NoSuchMethodException {
 
     NashornSandbox sandbox = NashornSandboxes.create();
+    Error e = null;
     try {
       sandbox.setExecutor(Executors.newSingleThreadExecutor());
       String code = "function f() { f(); } f()";
       try {
         sandbox.eval(code);
-      } catch (Error e) {
-        assertEquals(StackOverflowError.class, e.getClass());
+      } catch (Error err) {
+        e = err;
       }
     } finally {
       sandbox.getExecutor().shutdown();
     }
+    assertEquals(StackOverflowError.class, e.getClass());
   }	
 }
