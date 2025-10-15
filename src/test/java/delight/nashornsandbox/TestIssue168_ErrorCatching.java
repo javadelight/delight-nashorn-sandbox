@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import delight.nashornsandbox.exceptions.ScriptCPUAbuseException;
 
+import static org.junit.Assert.assertEquals;
+
 public class TestIssue168_ErrorCatching {
 
   public static class IFail {
@@ -37,6 +39,23 @@ public class TestIssue168_ErrorCatching {
       sandbox.setExecutor(Executors.newSingleThreadExecutor());
       String code = "function f() { f(); } f()";
       sandbox.eval(code);
+    } finally {
+      sandbox.getExecutor().shutdown();
+    }
+  }	
+
+  @Test
+  public void test_catch_error() throws ScriptCPUAbuseException, ScriptException, NoSuchMethodException {
+
+    NashornSandbox sandbox = NashornSandboxes.create();
+    try {
+      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      String code = "function f() { f(); } f()";
+      try {
+        sandbox.eval(code);
+      } catch (Error e) {
+        assertEquals(StackOverflowError.class, e.getClass());
+      }
     } finally {
       sandbox.getExecutor().shutdown();
     }
