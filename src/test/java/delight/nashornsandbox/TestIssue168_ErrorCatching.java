@@ -61,5 +61,42 @@ public class TestIssue168_ErrorCatching {
       sandbox.getExecutor().shutdown();
     }
     assertEquals(StackOverflowError.class, e.getClass());
-  }	
+  }
+
+  /**
+   * Test case for calling Java static method from JS that creates stack overflow in Java code.
+   * This captures the use case where JS calls back into Java, instantiating an object,
+   * and in that Java class a Runtime Exception (StackOverflowError) is thrown.
+   */
+  @Test
+  public void test_java_stack_overflow_from_js() throws ScriptCPUAbuseException, ScriptException, NoSuchMethodException {
+
+    NashornSandbox sandbox = NashornSandboxes.create();
+    Error e = null;
+    try {
+      sandbox.setExecutor(Executors.newSingleThreadExecutor());
+      sandbox.inject("stackOverflowCreator", new StackOverflowCreator());
+      String code = "stackOverflowCreator.createStackOverflow();";
+      try {
+        sandbox.eval(code);
+      } catch (Error err) {
+        e = err;
+      }
+    } finally {
+      sandbox.getExecutor().shutdown();
+    }
+    assertEquals(StackOverflowError.class, e.getClass());
+  }
+
+  /**
+   * Static class that creates stack overflow when its method is called.
+   */
+  public static class StackOverflowCreator {
+    /**
+     * Creates a stack overflow by recursively calling itself.
+     */
+    public void createStackOverflow() {
+      createStackOverflow();
+    }
+  }
 }
