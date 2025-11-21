@@ -220,14 +220,8 @@ public class NashornSandboxImpl implements NashornSandbox {
 	public SandboxScriptContext createScriptContext() {
 		ScriptContext context = new SimpleScriptContext();
 		produceSecureBindings(context);
-		return new SandboxScriptContext() {
-
-			@Override
-			public ScriptContext getContext() {
-				return context;
-			}
-
-		};
+		sanitizeBindings(context.getBindings(ScriptContext.ENGINE_SCOPE));
+		return new SandboxScriptContextImpl(context);
 	}
 
 	@Override
@@ -536,6 +530,10 @@ public class NashornSandboxImpl implements NashornSandbox {
 	@Override
 	public Object eval(CompiledScript compiledScript, ScriptContext scriptContext, Bindings bindings)
 			throws ScriptCPUAbuseException, ScriptException {
+		if (scriptContext != null && !(scriptContext instanceof SandboxScriptContextImpl)) {
+			LOG.warn("ScriptContext passed to eval is potentially dangerous. Use sandbox.createScriptContext() instead.");
+			
+		}
 		assertScriptEngine();
 		final Bindings securedBindings = secureBindings(bindings);
 		EvaluateCompiledOperation op = new EvaluateCompiledOperation(compiledScript, scriptContext, securedBindings);
