@@ -56,6 +56,23 @@ public class TestEvalWithScriptContextWithNewBindings {
 		final Object res = sandbox.eval("function method() { return parseInt(Date);} method();", newContext);
 		Assert.assertEquals(2112018.0, res);
 	}
-	
-	
+
+	@Test
+	public void testBothScriptContextAndBindings() throws ScriptCPUAbuseException, ScriptException {
+		final NashornSandbox sandbox = NashornSandboxes.create();
+
+		// Create a script context and put a variable in its engine bindings
+		SandboxScriptContext scriptContext = sandbox.createScriptContext();
+		scriptContext.getContext().getBindings(ScriptContext.ENGINE_SCOPE).put("contextVar", "fromContext");
+
+		// Create separate bindings with another variable
+		Bindings bindings = sandbox.createBindings();
+		bindings.put("bindingVar", "fromBinding");
+
+		// Eval with both scriptContext and bindings
+		final Object res = sandbox.eval("contextVar + ' ' + bindingVar", scriptContext, bindings);
+
+		// Verify both variables are accessible
+		Assert.assertEquals("fromContext fromBinding", res);
+	}
 }
