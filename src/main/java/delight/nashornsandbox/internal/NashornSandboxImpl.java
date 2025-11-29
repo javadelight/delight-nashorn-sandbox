@@ -242,6 +242,10 @@ public class NashornSandboxImpl implements NashornSandbox {
 	@Override
 	public Object eval(final String js, final SandboxScriptContext scriptContext, final Bindings bindings)
 			throws ScriptCPUAbuseException, ScriptException {
+		if (scriptContext != null && !(scriptContext instanceof SandboxScriptContextImpl)) {
+			LOG.warn(
+					"ScriptContext passed to eval is potentially dangerous. Use sandbox.createScriptContext() instead to initialise the context.");
+		}
 		assertScriptEngine();
 		final JsSanitizer sanitizer = getSanitizer();
 		// see https://github.com/javadelight/delight-nashorn-sandbox/issues/73
@@ -530,10 +534,7 @@ public class NashornSandboxImpl implements NashornSandbox {
 	@Override
 	public Object eval(CompiledScript compiledScript, ScriptContext scriptContext, Bindings bindings)
 			throws ScriptCPUAbuseException, ScriptException {
-		if (scriptContext != null && !(scriptContext instanceof SandboxScriptContextImpl)) {
-			LOG.warn("ScriptContext passed to eval is potentially dangerous. Use sandbox.createScriptContext() instead to initialise the context.");
-		}
-	
+
 		assertScriptEngine();
 		final Bindings securedBindings = secureBindings(bindings);
 		EvaluateCompiledOperation op = new EvaluateCompiledOperation(compiledScript, scriptContext, securedBindings);

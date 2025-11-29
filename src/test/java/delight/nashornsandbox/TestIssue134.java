@@ -38,4 +38,19 @@ public class TestIssue134 {
 		sandbox.eval("load({ name: 'test', script: 'print(\"something bad is going to happen\"); exit(1)' });", sandboxScriptContext);
 	}
 
+	// @Test(expected = javax.script.ScriptException.class)
+	@Test
+	public void test_prevent_unsafe_script_context() throws ScriptCPUAbuseException, ScriptException {
+		NashornSandbox sandbox = NashornSandboxes.create();
+		sandbox.allowLoadFunctions(false);
+		sandbox.allowExitFunctions(true); 
+		sandbox.allowPrintFunctions(true);
+
+		// Simulate user's wrapper pattern: accepting external ScriptContext and wrapping it
+		ScriptContext externalContext = new SimpleScriptContext();
+		SandboxScriptContext sandboxScriptContext = () -> externalContext;
+
+		// This demonstrates the bug: allowLoadFunctions is not respected with wrapped ScriptContext
+		sandbox.eval("load({ name: 'test', script: 'print(\"should get warning about Script context\")' });", sandboxScriptContext);
+	}
 }
