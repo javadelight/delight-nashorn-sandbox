@@ -39,9 +39,12 @@ public class EvaluateOperation implements ScriptEngineOperation {
             LOG.debug(js);
             LOG.debug("--- JS END ---");
         }
-       
+
         if (bindings != null && scriptContext != null) {
-            // Merge both: create a new context with scriptContext settings + merged engine bindings
+            LOG.warn(
+                    "Providing both ScriptContext and Bindings in eval is not natively supported by the SDK. The sandbox provides emulated support for now but it is recommend to avoid supplying both at the same time");
+            // Merge both: create a new context with scriptContext settings + merged engine
+            // bindings
             ScriptContext combinedContext = createMergedContext(scriptContext, bindings, scriptEngine);
             return scriptEngine.eval(js, combinedContext);
         } else if (bindings != null) {
@@ -53,7 +56,8 @@ public class EvaluateOperation implements ScriptEngineOperation {
         }
     }
 
-    private ScriptContext createMergedContext(ScriptContext scriptContext, Bindings additionalBindings, ScriptEngine scriptEngine) {
+    private ScriptContext createMergedContext(ScriptContext scriptContext, Bindings additionalBindings,
+            ScriptEngine scriptEngine) {
         SimpleScriptContext combined = new SimpleScriptContext();
 
         // Copy global scope bindings
