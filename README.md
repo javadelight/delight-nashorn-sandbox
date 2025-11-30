@@ -111,6 +111,8 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- [0.5.5](https://github.com/javadelight/delight-nashorn-sandbox/releases/tag/0.5.5): Improving support for providing ScriptContext parameters and adding warning methods, see issue [#134](https://github.com/javadelight/delight-nashorn-sandbox/issues/134) and PR [#176](https://github.com/javadelight/delight-nashorn-sandbox/pull/176)
+- [0.5.4](https://github.com/javadelight/delight-nashorn-sandbox/releases/tag/0.5.4): Changing JsSantiser constructor methods to be overriable in [#174](https://github.com/javadelight/delight-nashorn-sandbox/pull/174)
 - 0.5.2: [Migrated to Maven Central](https://maxrohde.com/2025/05/08/migrating-maven-namespace-to-central-portal/) for artifact publishing.
 - 0.5.1: Fixed issue in JS sanitisation that would prevent the sandbox to process the whole JS script ([PR #171](https://github.com/javadelight/delight-nashorn-sandbox/pull/171) by [tim0-12432](https://github.com/tim0-12432))
 - 0.5.0: Code injection performed via AST rather than RegEx for improved performance and accuracy ([PR #157](https://github.com/javadelight/delight-nashorn-sandbox/pull/157)). Option `allowNoBraces` no longer supported, since not required.
