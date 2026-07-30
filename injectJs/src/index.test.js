@@ -3,8 +3,6 @@ const sanitizerJs = require('./index');
 function testSanitizer(inputCode, expectedOutputCode) {
   const insertCode = "__if();";
   const result = sanitizerJs(inputCode, insertCode);
-  console.log(result);
-
   const normalize = (str) => str.replace(/\r\n/g, '\n').replace(/\n\s*\n/g, '\n\n').trim();
 
   expect(normalize(result)).toBe(normalize(expectedOutputCode));

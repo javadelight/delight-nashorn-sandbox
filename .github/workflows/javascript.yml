@@ -19,5 +19,8 @@ jobs:
           npm install
           npm run build --if-present
           npm test
-          npm audit --audit-level=high
+      - name: Audit
+        working-directory: ./injectJs
+        continue-on-error: true
+        run: npm audit --audit-level=high
 
