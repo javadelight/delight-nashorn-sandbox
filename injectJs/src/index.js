@@ -30,7 +30,12 @@ const injectJs = function (code, insertCode) {
 
         if (statementCount >= 10) {
           if (parent.body) {
-            parent.body.splice(parent.body.indexOf(node) + 1, 0, insertCodeBody);
+            const idx = parent.body.indexOf(node);
+            if (parent.type === 'Program' && idx === parent.body.length - 1) {
+              parent.body.splice(idx, 0, insertCodeBody);
+            } else {
+              parent.body.splice(idx + 1, 0, insertCodeBody);
+            }
             statementCount = 0;
           } else if (parent.consequent) {
             if (parent.type === "SwitchCase") {
