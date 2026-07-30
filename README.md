@@ -111,6 +111,7 @@ for JS evaluation and better handling of monitoring for threads for possible CPU
 
 ## Version History
 
+- [0.5.6](https://github.com/javadelight/delight-nashorn-sandbox/releases/tag/0.5.6): Fixed injectJs inserting `__if()` as last statement, overriding the eval return value, see issue [#186](https://github.com/javadelight/delight-nashorn-sandbox/issues/186) and PR [#187](https://github.com/javadelight/delight-nashorn-sandbox/pull/187)
 - [0.5.5](https://github.com/javadelight/delight-nashorn-sandbox/releases/tag/0.5.5): Improving support for providing ScriptContext parameters and adding warning methods, see issue [#134](https://github.com/javadelight/delight-nashorn-sandbox/issues/134) and PR [#176](https://github.com/javadelight/delight-nashorn-sandbox/pull/176)
 - [0.5.4](https://github.com/javadelight/delight-nashorn-sandbox/releases/tag/0.5.4): Changing JsSantiser constructor methods to be overriable in [#174](https://github.com/javadelight/delight-nashorn-sandbox/pull/174)
 - 0.5.2: [Migrated to Maven Central](https://maxrohde.com/2025/05/08/migrating-maven-namespace-to-central-portal/) for artifact publishing.
